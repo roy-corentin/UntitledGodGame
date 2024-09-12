@@ -23,7 +23,7 @@ jobs:
       # Generate a new SSH key pair if you want to use SSH-based authentication
       - name: Add remote repository
         run: |
-          git remote add target-repo https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com:EpitechMscProPromo2025/T-ESP-901-60294-BDX-Untitled-Tek-Game-2.git
+          git remote add target-repo https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/EpitechMscProPromo2025/T-ESP-901-60294-BDX-Untitled-Tek-Game-2.git
           git fetch target-repo
 
       # This will push the changes to the target repository
