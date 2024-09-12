@@ -1,4 +1,4 @@
-name: Push to Another Repo
+name: Push to Another Repo Using SSH
 
 on:
   push:
@@ -13,23 +13,30 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v3
 
-      # If you need to make changes to files or run build steps, add them here
+      # Set up SSH agent and add the private key from the GitHub secret
+      - name: Setup SSH for pushing to another repo
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+      # Set up Git user for commits
       - name: Set up Git user
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
-      # Generate a new SSH key pair if you want to use SSH-based authentication
-      - name: Add remote repository
+      # Add the target repository via SSH
+      - name: Add target repository remote
         run: |
-          git remote add target-repo https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/EpitechMscProPromo2025/T-ESP-901-60294-BDX-Untitled-Tek-Game-2.git
+          git remote add target-repo git@github.com:EpitechMscProPromo2025/T-ESP-901-60294-BDX-Untitled-Tek-Game-2.git
           git fetch target-repo
 
-      # This will push the changes to the target repository
-      - name: Push to target repository
+      # Push changes to the target repository
+      - name: Push changes to target repository
         run: |
           git push target-repo main
 
-    # Optionally, use a different branch in the target repo:
+    # Optionally, specify a different branch in the target repo if necessary
     # git push target-repo main:target-branch
