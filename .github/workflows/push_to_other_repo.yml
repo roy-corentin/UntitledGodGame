@@ -32,6 +32,7 @@ jobs:
         run: |
           git remote add target-repo git@github.com:EpitechMscProPromo2025/T-ESP-901-60294-BDX-Untitled-Tek-Game-2.git
           git fetch target-repo
+          git pull target-repo
 
       # Push changes to the target repository
       - name: Push changes to target repository
