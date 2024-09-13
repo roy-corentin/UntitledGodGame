@@ -5,6 +5,9 @@ on:
     branches:
       - main # Change this to the branch you want to trigger the action
 
+  pull_request:
+    types: [opened, synchronize, reopened]
+
 jobs:
   push_to_mirror:
     if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main' }}
@@ -17,3 +20,14 @@ jobs:
         with:
           target_repo_url: ${{ secrets.MIRROR_URL }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+  DiscordNotification:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Discord notification for pull request
+        env:
+          DISCORD_WEBHOOK: https://discord.com/api/webhooks/1284121847390273608/FGs8yWQDZVXOMBrO1Q7PCt_5-s0H-c0yzDKGvWkUVJI_tZEl-UCSCwLwoh6MKN0jvktu
+          DISCORD_USERNAME: CocoMexico
+          DISCORD_AVATAR: https://media.discordapp.net/attachments/487002983557627936/1173697654564327525/1659194713576.jpg
+        uses: Ilshidur/action-discord@master
