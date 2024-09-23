@@ -1,63 +1,63 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class PerlinNoiseHeightMapGenerator : MonoBehaviour
 {
-    // Dimensions de l'image
-    public int width = 512;
-    public int height = 512;
+    [HideInInspector] public static float scale = 20f;
+    [HideInInspector] public static float randomOffsetRange = 100f;
+    private readonly static string folderName = "Heightmaps";
 
-    // Facteur d'échelle pour le bruit de Perlin
-    public float scale = 20f;
-
-    // Position de départ pour générer des variations dans le bruit
-    public float offsetX = 100f;
-    public float offsetY = 100f;
-
-    // Nom du fichier à sauvegarder
-    public string fileName = "heightmap.png";
-
-    // Nom du répertoire pour sauvegarder les Heightmaps
-    private string folderName = "Heightmaps";
-
-    void Start()
+    public static List<float> GenerateHeightMapTexture(int width, int height, out Texture2D texture, bool saveHasFile = false)
     {
-        // Générer et sauvegarder la HeightMap
-        GenerateAndSaveHeightMap();
-    }
+        List<float> heightMap = GenerateHeightMap(width, height);
+        texture = GenerateTexture(width, height, heightMap);
 
-    void GenerateAndSaveHeightMap()
-    {
-        // Créer une texture 2D
-        Texture2D texture = GenerateHeightMapTexture();
+        if (!saveHasFile) return heightMap;
 
-        // Encoder la texture en PNG
         byte[] bytes = texture.EncodeToPNG();
-
-        // Chemin du répertoire "Heightmaps"
         string folderPath = Path.Combine(Application.dataPath, folderName);
 
-        // Vérifier si le répertoire existe, sinon le créer
         if (!Directory.Exists(folderPath))
-        {
             Directory.CreateDirectory(folderPath);
-            Debug.Log($"Created directory: {folderPath}");
-        }
 
-        // Chemin complet du fichier PNG
-        string filePath = Path.Combine(folderPath, fileName);
+        string filename = $"heightmap_{System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.png";
+        string filePath = Path.Combine(folderPath, filename);
 
-        // Sauvegarder l'image PNG dans le répertoire Heightmaps
         File.WriteAllBytes(filePath, bytes);
-        Debug.Log($"HeightMap saved at: {filePath}");
+
+        Debug.Log($"Heightmap saved as {filename} in {folderPath}");
+
+        return heightMap;
     }
 
-    Texture2D GenerateHeightMapTexture()
+    static Texture2D GenerateTexture(int width, int height, List<float> heightMap)
     {
-        // Créer une nouvelle texture vide
-        Texture2D texture = new Texture2D(width, height);
+        Texture2D texture = new(width, height);
+        int index = 0;
 
-        // Remplir chaque pixel avec du bruit de Perlin
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                float sample = heightMap[index++];
+                Color color = new(sample, sample, sample);
+                texture.SetPixel(x, y, color);
+            }
+        }
+
+        texture.Apply();
+
+        return texture;
+    }
+
+    static List<float> GenerateHeightMap(int width, int height)
+    {
+        List<float> heightMap = new();
+
+        float offsetX = Random.Range(0f, randomOffsetRange);
+        float offsetY = Random.Range(0f, randomOffsetRange);
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -65,18 +65,11 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
                 float xCoord = (float)x / width * scale + offsetX;
                 float yCoord = (float)y / height * scale + offsetY;
 
-                // Générer une valeur de hauteur avec Perlin Noise
                 float sample = Mathf.PerlinNoise(xCoord, yCoord);
-
-                // Appliquer cette valeur comme niveau de gris (HeightMap)
-                Color color = new Color(sample, sample, sample);
-                texture.SetPixel(x, y, color);
+                heightMap.Add(sample);
             }
         }
 
-        // Appliquer les modifications à la texture
-        texture.Apply();
-
-        return texture;
+        return heightMap;
     }
 }
