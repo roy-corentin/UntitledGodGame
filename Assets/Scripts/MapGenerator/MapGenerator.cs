@@ -10,7 +10,7 @@ namespace MapGenerator
         private readonly List<List<Dot>> mapDots = new();
         [SerializeField] private Transform mapParent;
         [SerializeField] private float mapDimension = 1f;
-        [SerializeField] private float nbDotsPerLine = 30;
+        public int nbDotsPerLine = 30;
         private GameObject meshMap;
 
         private void Start()
@@ -102,6 +102,11 @@ namespace MapGenerator
             if (GUILayout.Button("Create Mesh"))
             {
                 map.CreateMesh();
+            }
+
+            if (GUILayout.Button("Generate Heightmap"))
+            {
+                PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(map.nbDotsPerLine, map.nbDotsPerLine, out Texture2D _, true);
             }
         }
     }
