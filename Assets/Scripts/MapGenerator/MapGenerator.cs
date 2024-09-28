@@ -1,28 +1,26 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MapGenerator
 {
     public class Map : MonoBehaviour
     {
         [SerializeField] private GameObject mapDotPrefab;
-        private readonly List<List<Dot>> mapDots = new();
-        [SerializeField] private Transform mapParent;
+        [HideInInspector] public readonly List<List<Dot>> mapDots = new();
+        public Transform mapParent;
         [SerializeField] private float mapDimension = 1f;
         public int nbDotsPerLine = 30;
-        private GameObject meshMap;
         private Texture2D heightMap;
         private Texture2D temperatureMap;
         private List<float> heightMapValues;
         private List<float> temperatureMapValues;
         public float perlinScale = 20f;
         public float emplitude = 10f;
-
-        private void Start()
-        {
-            GenerateAll();
-        }
+        public float moveYBy = 0.5f;
+        [HideInInspector] public GameObject meshMap;
+        [SerializeField] private Material meshMaterial;
 
         public void GenerateAll()
         {
@@ -30,36 +28,50 @@ namespace MapGenerator
 
             heightMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out heightMap, false);
             temperatureMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out temperatureMap, false);
+            var heights = ConvertToListList(heightMapValues, nbDotsPerLine);
+            var temperatures = ConvertToListList(temperatureMapValues, nbDotsPerLine);
+
+            meshMaterial.SetTexture("_TempNoise", temperatureMap);
+            meshMaterial.SetTexture("_HeightNoise", heightMap);
 
             for (int x = 0; x < mapDots.Count; x++)
             {
                 for (int z = 0; z < mapDots[x].Count; z++)
                 {
-                    float height = heightMapValues[x * nbDotsPerLine + z] / emplitude;
-                    float temperature = temperatureMapValues[x * nbDotsPerLine + z];
-
-                    mapDots[x][z].SetYPosition(height);
-                    mapDots[x][z].SetTemperature(temperature);
+                    int invertedZ = nbDotsPerLine - z - 1;
+                    Dot dot = mapDots[x][z];
+                    dot.SetYPosition((heights[x][invertedZ] / emplitude) - moveYBy);
+                    dot.SetTemperature(temperatures[x][invertedZ]);
                 }
             }
 
             CreateMesh();
         }
 
-        private void GenerateDots()
+        public static List<List<float>> ConvertToListList(List<float> list, int size)
         {
+            List<List<float>> result = new();
+            for (int i = 0; i < list.Count; i += size)
+                result.Add(list.GetRange(i, Mathf.Min(size, list.Count - i)));
+            return result;
+        }
+
+
+        public void GenerateDots()
+        {
+            ClearDots();
+
             Vector3 center = mapParent.position;
             Vector3 topLeft = center + new Vector3(-mapDimension / 2, 0, mapDimension / 2);
-            Vector3 bottomRight = center + new Vector3(mapDimension / 2, 0, -mapDimension / 2);
             float stepX = mapDimension / nbDotsPerLine;
 
-            for (float x = topLeft.x; x < bottomRight.x; x += stepX)
+            for (float x = topLeft.x, indexX = 0; mapDots.Count < nbDotsPerLine; x += stepX, indexX++)
             {
                 var line = new List<Dot>();
 
-                for (float z = topLeft.z; z > bottomRight.z; z -= stepX)
+                for (float z = topLeft.z, indexZ = 0; line.Count < nbDotsPerLine; z -= stepX, indexZ++)
                 {
-                    Vector3 position = new(x, 0, z);
+                    Vector3 position = new(x + (stepX / 2), 0, z - (stepX / 2));
                     Dot dot = Instantiate(mapDotPrefab, position, Quaternion.identity, mapParent).GetComponent<Dot>();
                     line.Add(dot);
                 }
@@ -68,15 +80,47 @@ namespace MapGenerator
             }
         }
 
+        public void ClearDots()
+        {
+            foreach (var line in mapDots)
+            {
+                foreach (var dot in line)
+                {
+#if UNITY_EDITOR
+                    DestroyImmediate(dot.gameObject);
+#else
+                    Destroy(dot.gameObject);
+#endif
+                }
+            }
+
+            // Si le mode editeur décide de ne pas être sympa, il faut supprimer manuellement les enfants et lancer cette fonction plusieurs fois
+            if (mapDots.Count == 0 && mapParent.childCount > 0)
+            {
+                foreach (Transform child in mapParent)
+                {
+#if UNITY_EDITOR
+                    DestroyImmediate(child.gameObject);
+#else
+                    Destroy(child.gameObject);
+#endif
+                }
+
+                ClearDots();
+            }
+
+            mapDots.Clear();
+        }
+
         public void CreateMesh()
         {
-            if (meshMap != null) Destroy(meshMap);
+            ClearMesh();
             meshMap = new GameObject("Mesh Map");
             meshMap.transform.SetParent(this.gameObject.transform);
 
             MeshFilter meshFilter = meshMap.AddComponent<MeshFilter>();
             MeshRenderer meshRenderer = meshMap.AddComponent<MeshRenderer>();
-            meshRenderer.material = new Material(Shader.Find("Standard"));
+            meshRenderer.material = meshMaterial;
 
             Mesh mesh = new();
             List<Vector3> vertices = new();
@@ -111,9 +155,25 @@ namespace MapGenerator
 
             mesh.vertices = vertices.ToArray();
             mesh.triangles = triangles.ToArray();
+
             mesh.RecalculateNormals();
+            mesh.RecalculateUVDistributionMetrics();
+            mesh.RecalculateTangents();
+            mesh.RecalculateUVDistributionMetrics();
 
             meshFilter.mesh = mesh;
+        }
+
+        public void ClearMesh()
+        {
+            if (meshMap != null)
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(meshMap);
+#else
+                Destroy(meshMap);
+#endif
+            }
         }
     }
 
@@ -127,15 +187,30 @@ namespace MapGenerator
             base.OnInspectorGUI();
 
             Map map = (Map)target;
-            if (GUILayout.Button("Create Mesh"))
+
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Generate Dots"))
             {
-                map.CreateMesh();
+                map.GenerateDots();
             }
 
+            if (GUILayout.Button("Clear Dots"))
+                map.ClearDots();
+
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Generate Mesh"))
+                map.CreateMesh();
+
+            if (GUILayout.Button("Clear Mesh"))
+                map.ClearMesh();
+
+            GUILayout.EndHorizontal();
+
             if (GUILayout.Button("Generate All"))
-            {
                 map.GenerateAll();
-            }
 
             if (GUILayout.Button("Generate Heightmap"))
             {
