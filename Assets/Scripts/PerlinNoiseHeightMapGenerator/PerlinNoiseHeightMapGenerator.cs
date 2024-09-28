@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class PerlinNoiseHeightMapGenerator : MonoBehaviour
 {
-    [HideInInspector] public static float scale = 20f;
     [HideInInspector] public static float randomOffsetRange = 100f;
     private readonly static string folderName = "Heightmaps";
 
-    public static List<float> GenerateHeightMapTexture(int width, int height, out Texture2D texture, bool saveHasFile = false)
+    public static List<float> GenerateHeightMapTexture(int width, int height, float scale, out Texture2D texture, bool saveHasFile = false)
     {
-        List<float> heightMap = GenerateHeightMap(width, height);
-        texture = GenerateTexture(width, height, heightMap);
+        List<float> heightMap = GenerateHeightMap(width, height, scale);
+        texture = GenerateTexture(width, height, scale, heightMap);
 
         if (!saveHasFile) return heightMap;
 
@@ -31,7 +30,7 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
         return heightMap;
     }
 
-    static Texture2D GenerateTexture(int width, int height, List<float> heightMap)
+    static Texture2D GenerateTexture(int width, int height, float scale, List<float> heightMap)
     {
         Texture2D texture = new(width, height);
         int index = 0;
@@ -51,7 +50,7 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
         return texture;
     }
 
-    static List<float> GenerateHeightMap(int width, int height)
+    static List<float> GenerateHeightMap(int width, int height, float scale)
     {
         List<float> heightMap = new();
 

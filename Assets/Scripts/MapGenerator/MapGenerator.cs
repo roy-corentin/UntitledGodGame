@@ -12,10 +12,38 @@ namespace MapGenerator
         [SerializeField] private float mapDimension = 1f;
         public int nbDotsPerLine = 30;
         private GameObject meshMap;
+        private Texture2D heightMap;
+        private Texture2D temperatureMap;
+        private List<float> heightMapValues;
+        private List<float> temperatureMapValues;
+        public float perlinScale = 20f;
+        public float emplitude = 10f;
 
         private void Start()
         {
+            GenerateAll();
+        }
+
+        public void GenerateAll()
+        {
             GenerateDots();
+
+            heightMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out heightMap, false);
+            temperatureMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out temperatureMap, false);
+
+            for (int x = 0; x < mapDots.Count; x++)
+            {
+                for (int z = 0; z < mapDots[x].Count; z++)
+                {
+                    float height = heightMapValues[x * nbDotsPerLine + z] / emplitude;
+                    float temperature = temperatureMapValues[x * nbDotsPerLine + z];
+
+                    mapDots[x][z].SetYPosition(height);
+                    mapDots[x][z].SetTemperature(temperature);
+                }
+            }
+
+            CreateMesh();
         }
 
         private void GenerateDots()
@@ -104,9 +132,14 @@ namespace MapGenerator
                 map.CreateMesh();
             }
 
+            if (GUILayout.Button("Generate All"))
+            {
+                map.GenerateAll();
+            }
+
             if (GUILayout.Button("Generate Heightmap"))
             {
-                PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(map.nbDotsPerLine, map.nbDotsPerLine, out Texture2D _, true);
+                PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(map.nbDotsPerLine, map.nbDotsPerLine, map.perlinScale, out Texture2D _, true);
             }
         }
     }
