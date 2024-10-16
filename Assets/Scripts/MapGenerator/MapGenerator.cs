@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -21,10 +22,48 @@ namespace MapGenerator
         public float moveYBy = 0.5f;
         [HideInInspector] public GameObject meshMap;
         [SerializeField] private Material meshMaterial;
+        public static Map Instance;
+        private Coroutine generateDotsCoroutine;
+        private bool areDotsGenerated = false;
+        private Coroutine generateAllCoroutine;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+        public void Update()
+        {
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.G)) GenerateAll();
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                ClearDots();
+                ClearMesh();
+            }
+#endif
+
+            if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
+            else if (OVRInput.GetDown(OVRInput.Button.Four)) // Y
+            {
+                ClearDots();
+                ClearMesh();
+            }
+        }
 
         public void GenerateAll()
         {
-            GenerateDots();
+            if (generateAllCoroutine != null) StopCoroutine(generateAllCoroutine);
+            if (generateDotsCoroutine != null) StopCoroutine(generateDotsCoroutine);
+
+            generateAllCoroutine = StartCoroutine(GenerateAllCacoutine());
+        }
+
+        public IEnumerator GenerateAllCacoutine()
+        {
+            areDotsGenerated = false;
+            generateDotsCoroutine = StartCoroutine(GenerateDots());
+            yield return new WaitUntil(() => areDotsGenerated);
 
             heightMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out heightMap, false);
             temperatureMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out temperatureMap, false);
@@ -43,9 +82,49 @@ namespace MapGenerator
                     dot.SetYPosition((heights[x][invertedZ] / emplitude) - moveYBy);
                     dot.SetTemperature(temperatures[x][invertedZ]);
                 }
+
+                yield return null;
             }
 
             CreateMesh();
+        }
+
+        public void UpdateHeightMap(SelectedDots dots)
+        {
+            int centerIndex = dots.centerDot.i * nbDotsPerLine - dots.centerDot.j;
+            heightMapValues[centerIndex] = dots.centerDot.dot.transform.position.y * emplitude + moveYBy;
+
+            foreach (List<SelectedDot> circle in dots.surroundingCircles)
+            {
+                foreach (SelectedDot dot in circle)
+                {
+                    int index = dot.i * nbDotsPerLine - dot.j;
+                    if (index < 0 || index >= heightMapValues.Count) continue;
+                    heightMapValues[index] = dot.dot.transform.position.y * emplitude + moveYBy;
+                }
+            }
+
+            heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, heightMapValues);
+            meshMaterial.SetTexture("_HeightNoise", heightMap);
+        }
+
+        public void UpdateTemperatureMap(SelectedDots dots)
+        {
+            int centerIndex = dots.centerDot.i * nbDotsPerLine - dots.centerDot.j;
+            temperatureMapValues[centerIndex] = dots.centerDot.dot.temperature;
+
+            foreach (List<SelectedDot> circle in dots.surroundingCircles)
+            {
+                foreach (SelectedDot dot in circle)
+                {
+                    int index = dot.i * nbDotsPerLine - dot.j;
+                    if (index < 0 || index >= temperatureMapValues.Count) continue;
+                    temperatureMapValues[index] = dot.dot.temperature;
+                }
+            }
+
+            temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, temperatureMapValues);
+            meshMaterial.SetTexture("_TempNoise", temperatureMap);
         }
 
         public static List<List<float>> ConvertToListList(List<float> list, int size)
@@ -57,9 +136,11 @@ namespace MapGenerator
         }
 
 
-        public void GenerateDots()
+        public IEnumerator GenerateDots()
         {
             ClearDots();
+
+            yield return null;
 
             Vector3 center = mapParent.position;
             Vector3 topLeft = center + new Vector3(-mapDimension / 2, 0, mapDimension / 2);
@@ -77,7 +158,11 @@ namespace MapGenerator
                 }
 
                 mapDots.Add(line);
+
+                yield return null;
             }
+
+            areDotsGenerated = true;
         }
 
         public void ClearDots()
@@ -190,19 +275,8 @@ namespace MapGenerator
 
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Generate Dots"))
-            {
-                map.GenerateDots();
-            }
-
             if (GUILayout.Button("Clear Dots"))
                 map.ClearDots();
-
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Generate Mesh"))
-                map.CreateMesh();
 
             if (GUILayout.Button("Clear Mesh"))
                 map.ClearMesh();
