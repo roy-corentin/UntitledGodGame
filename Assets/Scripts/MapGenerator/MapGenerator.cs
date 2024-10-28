@@ -94,14 +94,16 @@ namespace MapGenerator
         public void UpdateHeightMap(SelectedDots dots)
         {
             float parentY = mapParent.position.y;
-            int centerIndex = dots.centerDot.i * nbDotsPerLine - dots.centerDot.j;
-            heightMapValues[centerIndex] = dots.centerDot.dot.transform.position.y * emplitude + parentY;
+            int centerIndex = GetIndex(dots.centerDot.i, dots.centerDot.j);
+
+            try { heightMapValues[centerIndex] = dots.centerDot.dot.transform.position.y * emplitude + parentY; }
+            catch (System.Exception e) { Debug.Log(e); return; }
 
             foreach (List<SelectedDot> circle in dots.surroundingCircles)
             {
                 foreach (SelectedDot dot in circle)
                 {
-                    int index = dot.i * nbDotsPerLine - dot.j;
+                    int index = GetIndex(dot.i, dot.j);
                     if (index < 0 || index >= heightMapValues.Count) continue;
                     heightMapValues[index] = dot.dot.transform.position.y * emplitude + parentY;
                 }
@@ -113,14 +115,16 @@ namespace MapGenerator
 
         public void UpdateTemperatureMap(SelectedDots dots)
         {
-            int centerIndex = dots.centerDot.i * nbDotsPerLine - dots.centerDot.j;
-            temperatureMapValues[centerIndex] = dots.centerDot.dot.temperature;
+            int centerIndex = GetIndex(dots.centerDot.i, dots.centerDot.j);
+
+            try { temperatureMapValues[centerIndex] = dots.centerDot.dot.temperature; }
+            catch (System.Exception e) { Debug.Log(e); return; }
 
             foreach (List<SelectedDot> circle in dots.surroundingCircles)
             {
                 foreach (SelectedDot dot in circle)
                 {
-                    int index = dot.i * nbDotsPerLine - dot.j;
+                    int index = GetIndex(dot.i, dot.j);
                     if (index < 0 || index >= temperatureMapValues.Count) continue;
                     temperatureMapValues[index] = dot.dot.temperature;
                 }
@@ -130,11 +134,16 @@ namespace MapGenerator
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
         }
 
+        private int GetIndex(int i, int j)
+        {
+            return (i + 1) * nbDotsPerLine - (j + 1);
+        }
+
         public static List<List<float>> ConvertToListList(List<float> list, int size)
         {
             List<List<float>> result = new();
             for (int i = 0; i < list.Count; i += size)
-                result.Add(list.GetRange(i, Mathf.Min(size, list.Count - i)));
+                result.Add(list.GetRange(i, size));
             return result;
         }
 
@@ -157,6 +166,7 @@ namespace MapGenerator
                 {
                     Vector3 position = new(x + (stepX / 2), 0, z - (stepX / 2));
                     Dot dot = Instantiate(mapDotPrefab, position, Quaternion.identity, mapParent).GetComponent<Dot>();
+                    dot.gameObject.SetActive(false);
                     line.Add(dot);
                 }
 

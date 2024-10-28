@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 950431731598698169, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
+      propertyPath: instanceId
+      value: 44eabaf7-ab84-4f24-bad2-46b57d0d1b28
+      objectReference: {fileID: 0}
     - target: {fileID: 3202472771411013554, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.167
@@ -52,6 +56,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HeightTools Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 5007033763002708216, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
+      propertyPath: instanceId
+      value: 804ec5ce-b3a4-43dc-9cf8-387b2e635ac8
+      objectReference: {fileID: 0}
     - target: {fileID: 7044005956143488769, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: _interactorFilters.Array.size
       value: 0
@@ -59,5 +67,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4930866391679784052, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5282619557027093915}
   m_SourcePrefab: {fileID: 100100000, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
+--- !u!1 &281486235134637440 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4930866391679784052, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
+  m_PrefabInstance: {fileID: 5153805616428409332}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5282619557027093915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 281486235134637440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 642ee8192a87d48809b3e89281d7469d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionType: 0
+  toolGO: {fileID: 0}
+  range: 0
+  numberOfCircles: 2
+  direction: 1
+  centerMoveValue: 0.02
+  surroundingMoveValue: 0.01
