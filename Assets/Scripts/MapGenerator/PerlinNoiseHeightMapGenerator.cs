@@ -46,6 +46,7 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
         }
 
         texture.Apply();
+        texture.wrapMode = TextureWrapMode.Clamp;
 
         return texture;
     }
