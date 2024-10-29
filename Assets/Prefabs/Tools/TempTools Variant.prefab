@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 950431731598698169, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: instanceId
-      value: b89787c6-b303-4163-ba44-4420b32b3802
+      value: 904567c2-aa0d-4289-90b2-01d4f91a7d26
       objectReference: {fileID: 0}
     - target: {fileID: 3202472771411013554, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: m_LocalPosition.x
@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5007033763002708216, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: instanceId
-      value: 3b3c0cb6-698d-4e02-a446-14071fcd17c2
+      value: 024e85c2-1248-4437-bd42-87f99f8f9e84
       objectReference: {fileID: 0}
     - target: {fileID: 6516765578017820893, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -98,9 +98,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionType: 0
-  toolGO: {fileID: 0}
-  range: 0
-  numberOfCircles: 2
+  range: 0.1
+  numberOfCircles: 3
   direction: 1
-  centerTempValue: 0.02
-  surroundingTempValue: 0.01
+  showSelectedDots: 1
+  centerTempValue: 0.005
+  surroundingTempValue: 0

@@ -6,6 +6,7 @@ public enum PlayerAction
 {
     ChangeHeight,
     ChangeTemperature,
+    Flatten,
     None
 }
 
@@ -30,6 +31,8 @@ public class PlayerActions : MonoBehaviour
     private GameObject playerHand = null;
     public static PlayerActions Instance;
     private SelectedDots lastSelectedDots;
+    public float actionCooldown = 0.1f;
+    private float nextActionTime = 0f;
 
     private void Awake()
     {
@@ -60,7 +63,12 @@ public class PlayerActions : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space)
             && playerHand != null
-            && actionMap.ContainsKey(currentAction)) actionMap[currentAction].Action(1f);
+            && actionMap.ContainsKey(currentAction)
+            && Time.time >= nextActionTime)
+        {
+            actionMap[currentAction].Action(1f);
+            nextActionTime = Time.time + actionCooldown;
+        }
 #else
         if (OVRInput.GetDown(OVRInput.Button.Two)) direction = -1; // B
         else if (OVRInput.GetDown(OVRInput.Button.One)) direction = 1; // A
@@ -68,7 +76,11 @@ public class PlayerActions : MonoBehaviour
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
             && playerHand != null
-            && actionMap.ContainsKey(currentAction)) actionMap[currentAction].Action(pressure);
+            && actionMap.ContainsKey(currentAction)
+            && Time.time >= nextActionTime) {
+                actionMap[currentAction].Action(pressure);
+                nextActionTime = Time.time + actionCooldown;
+            }
 #endif
     }
 

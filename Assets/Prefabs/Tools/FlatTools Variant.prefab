@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &5153805616428409332
+--- !u!1001 &8978018440334605162
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,13 +8,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 950431731598698169, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
-      propertyPath: instanceId
-      value: c396c34b-d218-4af8-b656-1b8a7e3fbf9a
-      objectReference: {fileID: 0}
     - target: {fileID: 3202472771411013554, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.167
+      value: 0.1118
       objectReference: {fileID: 0}
     - target: {fileID: 3202472771411013554, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: m_LocalPosition.y
@@ -54,45 +50,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4930866391679784052, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       propertyPath: m_Name
-      value: HeightTools Variant
+      value: FlatTools Variant 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5007033763002708216, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
-      propertyPath: instanceId
-      value: e2a76004-da50-4135-98d9-b5a2c53a26ec
-      objectReference: {fileID: 0}
-    - target: {fileID: 7044005956143488769, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
-      propertyPath: _interactorFilters.Array.size
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 6516765578017820893, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f5c72b19e744444208796e1e5727322c, type: 2}
+    - target: {fileID: 8746683578084709428, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 65fe6a96898144944a666749346b8cbc, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4930866391679784052, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5282619557027093915}
+      addedObject: {fileID: 3457610896883662976}
   m_SourcePrefab: {fileID: 100100000, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
---- !u!1 &281486235134637440 stripped
+--- !u!1 &4104363586157063966 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4930866391679784052, guid: 4d31f3799633649e5a94cd7b411d16ab, type: 3}
-  m_PrefabInstance: {fileID: 5153805616428409332}
+  m_PrefabInstance: {fileID: 8978018440334605162}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5282619557027093915
+--- !u!114 &3457610896883662976
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281486235134637440}
+  m_GameObject: {fileID: 4104363586157063966}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 642ee8192a87d48809b3e89281d7469d, type: 3}
+  m_Script: {fileID: 11500000, guid: 50ecb2da96ab849648031852c111c96b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   actionType: 0
   range: 0.1
-  numberOfCircles: 3
+  numberOfCircles: 2
   direction: 1
   showSelectedDots: 1
-  centerMoveValue: 0.005
-  surroundingMoveValue: 0

@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Glass_green
+  m_Name: MapDot
   m_Shader: {fileID: -6465566751694194690, guid: 2676a8b2a86e84f778667dc0463c455d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -50,10 +50,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Edge: 2.77
+    - _Edge: 0.48
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Smoothness: 0.39
+    - _Smoothness: 0
     m_Colors:
-    - _MainColor: {r: 0, g: 1, b: 0.010046244, a: 0}
+    - _MainColor: {r: 0.1658535, g: 0.754717, b: 0.09611962, a: 1}
   m_BuildTextureStacks: []
