@@ -19,7 +19,6 @@ namespace MapGenerator
         private List<float> temperatureMapValues;
         public float perlinScale = 20f;
         public float emplitude = 10f;
-        public float moveYBy = 0.5f;
         [HideInInspector] public GameObject meshMap;
         [SerializeField] private Material meshMaterial;
         public static Map Instance;
@@ -73,13 +72,14 @@ namespace MapGenerator
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
 
+            float parentY = mapParent.position.y;
             for (int x = 0; x < mapDots.Count; x++)
             {
                 for (int z = 0; z < mapDots[x].Count; z++)
                 {
                     int invertedZ = nbDotsPerLine - z - 1;
                     Dot dot = mapDots[x][z];
-                    dot.SetYPosition((heights[x][invertedZ] / emplitude) - moveYBy);
+                    dot.SetYPosition((heights[x][invertedZ] / emplitude) + parentY);
                     dot.SetTemperature(temperatures[x][invertedZ]);
                 }
 
@@ -91,8 +91,9 @@ namespace MapGenerator
 
         public void UpdateHeightMap(SelectedDots dots)
         {
+            float parentY = mapParent.position.y;
             int centerIndex = dots.centerDot.i * nbDotsPerLine - dots.centerDot.j;
-            heightMapValues[centerIndex] = dots.centerDot.dot.transform.position.y * emplitude + moveYBy;
+            heightMapValues[centerIndex] = dots.centerDot.dot.transform.position.y * emplitude + parentY;
 
             foreach (List<SelectedDot> circle in dots.surroundingCircles)
             {
@@ -100,7 +101,7 @@ namespace MapGenerator
                 {
                     int index = dot.i * nbDotsPerLine - dot.j;
                     if (index < 0 || index >= heightMapValues.Count) continue;
-                    heightMapValues[index] = dot.dot.transform.position.y * emplitude + moveYBy;
+                    heightMapValues[index] = dot.dot.transform.position.y * emplitude + parentY;
                 }
             }
 
