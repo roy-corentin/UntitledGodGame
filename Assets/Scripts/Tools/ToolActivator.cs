@@ -1,15 +1,16 @@
 using UnityEngine;
 
-public class IsMoving : MonoBehaviour
+public class ToolActivator : MonoBehaviour
 {
     private Vector3 lastPosition;
-    [SerializeField] private PlayerAction playerAction;
+    private PlayerAction playerAction;
     private bool isMoving;
 
     public void Start()
     {
         lastPosition = transform.position;
         isMoving = false;
+        playerAction = GetComponent<ToolAction>().actionType;
     }
 
     public void FixedUpdate()
@@ -44,5 +45,6 @@ public class IsMoving : MonoBehaviour
     {
         isMoving = false;
         PlayerActions.Instance.SetAction(PlayerAction.None);
+        PlayerActions.Instance.HideAllSelectedDots();
     }
 }

@@ -25,27 +25,11 @@ public struct SelectedDots
 public class PlayerActions : MonoBehaviour
 {
     public PlayerAction currentAction = PlayerAction.None;
-    public Dictionary<PlayerAction, Action<float>> actionMap = new();
+    public List<ToolAction> toolActions = new();
+    private readonly Dictionary<PlayerAction, ToolAction> actionMap = new();
     private GameObject playerHand = null;
     public static PlayerActions Instance;
-
-    [Header("General")]
-    public float range;
-    public int numberOfCircles = 2;
-    private int direction = 1;
-
-
-    [Header("Height Dots")]
-    public GameObject heightTools;
-    private IsMoving heightIsMoving;
-    public float centerMoveValue = 0.02f;
-    public float surroundingMoveValue = 0.01f;
-
-    [Header("Temp Dots")]
-    public GameObject tempTools;
-    private IsMoving tempIsMoving;
-    public float centerTempValue = 0.02f;
-    public float surroundingTempValue = 0.01f;
+    private SelectedDots lastSelectedDots;
 
     private void Awake()
     {
@@ -54,18 +38,15 @@ public class PlayerActions : MonoBehaviour
 
     private void Start()
     {
-        actionMap.Add(PlayerAction.ChangeHeight, (pressure) => ChangeHeight(pressure));
-        actionMap.Add(PlayerAction.ChangeTemperature, (pressure) => ChangeTemperature(pressure));
-
-        heightIsMoving = heightTools.GetComponent<IsMoving>();
-        tempIsMoving = tempTools.GetComponent<IsMoving>();
+        foreach (ToolAction toolAction in toolActions)
+            actionMap.Add(toolAction.actionType, toolAction);
     }
 
     private void Update()
     {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.DownArrow)) direction = -1;
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) direction = 1;
+        if (Input.GetKeyDown(KeyCode.DownArrow)) SetDirection(-1);
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) SetDirection(1);
 
         if (playerHand != null)
         {
@@ -79,7 +60,7 @@ public class PlayerActions : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space)
             && playerHand != null
-            && actionMap.ContainsKey(currentAction)) actionMap[currentAction].Invoke(1f);
+            && actionMap.ContainsKey(currentAction)) actionMap[currentAction].Action(1f);
 #else
         if (OVRInput.GetDown(OVRInput.Button.Two)) direction = -1; // B
         else if (OVRInput.GetDown(OVRInput.Button.One)) direction = 1; // A
@@ -87,25 +68,32 @@ public class PlayerActions : MonoBehaviour
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
             && playerHand != null
-            && actionMap.ContainsKey(currentAction)) actionMap[currentAction].Invoke(pressure);
+            && actionMap.ContainsKey(currentAction)) actionMap[currentAction].Action(pressure);
 #endif
+    }
+
+    private void SetDirection(int direction)
+    {
+        if (actionMap.ContainsKey(currentAction)) actionMap[currentAction].direction = direction;
     }
 
     public void SetAction(PlayerAction action)
     {
         currentAction = action;
 
-        playerHand = currentAction switch
+        if (!actionMap.ContainsKey(currentAction))
         {
-            PlayerAction.ChangeHeight => heightTools,
-            PlayerAction.ChangeTemperature => tempTools,
-            _ => null,
-        };
+            playerHand = null;
+            return;
+        }
+
+        playerHand = actionMap[currentAction].Select();
     }
 
-    private SelectedDots GetSelectedDots()
+    public SelectedDots GetSelectedDots()
     {
         if (playerHand == null) return new SelectedDots();
+        if (!actionMap.ContainsKey(currentAction)) return new SelectedDots();
 
         List<List<MapGenerator.Dot>> mapDots = MapGenerator.Map.Instance.mapDots;
         Vector3 playerHandPosition = playerHand.transform.position;
@@ -121,7 +109,9 @@ public class PlayerActions : MonoBehaviour
             for (int j = 0; j < mapDots[i].Count; j++)
             {
                 MapGenerator.Dot dot = mapDots[i][j];
-                float distance = Vector3.Distance(dot.transform.position, playerHandPosition);
+                Vector2 playerHandPosition2D = new(playerHandPosition.x, playerHandPosition.z);
+                Vector2 dotPosition2D = new(dot.transform.position.x, dot.transform.position.z);
+                float distance = Vector2.Distance(playerHandPosition2D, dotPosition2D);
 
                 if (distance < nearestDistance)
                 {
@@ -130,16 +120,19 @@ public class PlayerActions : MonoBehaviour
                     selectedDot.i = i;
                     selectedDot.j = j;
                 }
+
+                if (dot.gameObject.activeSelf) dot.gameObject.SetActive(false);
             }
         }
 
         // if the nearest dot is too far, return an empty SelectedDots
-        if (nearestDistance > range) return new SelectedDots();
+        if (nearestDistance > actionMap[currentAction].range) return new SelectedDots();
+        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > actionMap[currentAction].range) return new SelectedDots();
 
         SelectedDots selectedDots = new() { centerDot = selectedDot, surroundingCircles = new() };
 
         // add the 8 surrounding dots to the selectedDots
-        for (int circle = 1; circle <= numberOfCircles; circle++)
+        for (int circle = 1; circle <= actionMap[currentAction].numberOfCircles; circle++)
         {
             List<SelectedDot> currentCircleDots = new();
 
@@ -154,56 +147,31 @@ public class PlayerActions : MonoBehaviour
                     if ((Mathf.Abs(iOffset) == circle || Mathf.Abs(jOffset) == circle) &&
                         indexI >= 0 && indexI < mapDots.Count &&
                         indexJ >= 0 && indexJ < mapDots[indexI].Count)
-                    {
                         currentCircleDots.Add(new SelectedDot { dot = mapDots[indexI][indexJ], i = indexI, j = indexJ });
-                    }
+
+                    try { if (mapDots[indexI][indexJ].gameObject.activeSelf) mapDots[indexI][indexJ].gameObject.SetActive(false); }
+                    catch (ArgumentOutOfRangeException) { }
                 }
             }
 
-            // Add the current circle to the list of surrounding circles
             if (currentCircleDots.Count > 0)
                 selectedDots.surroundingCircles.Add(currentCircleDots);
         }
 
+        lastSelectedDots = selectedDots;
+
         return selectedDots;
     }
 
-    private void ChangeHeight(float pressure)
+    public void HideAllSelectedDots()
     {
-        SelectedDots selectedDots = GetSelectedDots();
-
-        if (selectedDots.centerDot.dot == null) return;
-
-        selectedDots.centerDot.dot.SetYPosition(selectedDots.centerDot.dot.transform.position.y + centerMoveValue * direction * pressure);
-        for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
+        try
         {
-            List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
-            float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(circleIndex + 1) / numberOfCircles);
-
-            foreach (SelectedDot dot in currentCircle)
-                dot.dot.SetYPosition(dot.dot.transform.position.y + moveValue * direction * pressure);
+            if (lastSelectedDots.centerDot.dot != null) lastSelectedDots.centerDot.dot.gameObject.SetActive(false);
+            foreach (List<SelectedDot> circle in lastSelectedDots.surroundingCircles)
+                foreach (SelectedDot dot in circle)
+                    if (dot.dot != null) dot.dot.gameObject.SetActive(false);
         }
-
-        MapGenerator.Map.Instance.CreateMesh();
-        MapGenerator.Map.Instance.UpdateHeightMap(selectedDots);
-    }
-
-    private void ChangeTemperature(float pressure)
-    {
-        SelectedDots selectedDots = GetSelectedDots();
-
-        if (selectedDots.centerDot.dot == null) return;
-
-        selectedDots.centerDot.dot.SetTemperature(selectedDots.centerDot.dot.temperature + centerTempValue * direction * pressure);
-        for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
-        {
-            List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
-            float moveValue = Mathf.Lerp(centerMoveValue, surroundingTempValue, (float)(circleIndex + 1) / numberOfCircles);
-
-            foreach (SelectedDot dot in currentCircle)
-                dot.dot.SetTemperature(dot.dot.temperature + moveValue * direction * pressure);
-        }
-
-        MapGenerator.Map.Instance.UpdateTemperatureMap(selectedDots);
+        catch (NullReferenceException) { }
     }
 }

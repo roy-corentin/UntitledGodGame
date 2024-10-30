@@ -35,13 +35,13 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
         Texture2D texture = new(width, height);
         int index = 0;
 
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < width; y++)
         {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < height; x++)
             {
                 float sample = heightMap[index++];
                 Color color = new(sample, sample, sample);
-                texture.SetPixel(x, y, color);
+                texture.SetPixel(y, x, color);
             }
         }
 
@@ -58,9 +58,9 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
         float offsetX = Random.Range(0f, randomOffsetRange);
         float offsetY = Random.Range(0f, randomOffsetRange);
 
-        for (int x = 0; x < width; x++)
+        for (int y = 0; y < width; y++)
         {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < height; x++)
             {
                 float xCoord = (float)x / width * scale + offsetX;
                 float yCoord = (float)y / height * scale + offsetY;
