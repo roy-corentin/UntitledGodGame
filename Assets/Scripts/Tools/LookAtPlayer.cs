@@ -7,5 +7,6 @@ public class LookAtPlayer : MonoBehaviour
     public void Update()
     {
         transform.LookAt(playerCamera.transform);
+        transform.Rotate(0, 180, 0);
     }
 }
