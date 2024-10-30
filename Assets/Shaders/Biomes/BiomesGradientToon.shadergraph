@@ -2097,7 +2097,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "16e1e2b62a5d4e67831d8e3729909503",
     "m_Id": 0,
-    "m_DisplayName": "Offset",
+    "m_DisplayName": "Offset_Height",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -5483,7 +5483,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "946a8bad2f1a49ac897392c33a0e0f66",
     "m_Id": 0,
-    "m_DisplayName": "Offset (1)",
+    "m_DisplayName": "Offset_Temp",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -7365,11 +7365,11 @@
     "m_Guid": {
         "m_GuidSerialized": "07875ed7-3b3e-4f20-b1b1-330e1416f740"
     },
-    "m_Name": "Offset",
+    "m_Name": "Offset_Height",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Offset",
-    "m_DefaultReferenceName": "_Offset",
-    "m_OverrideReferenceName": "",
+    "m_RefNameGeneratedByDisplayName": "Offset_Height",
+    "m_DefaultReferenceName": "_Offset_Height",
+    "m_OverrideReferenceName": "_Offset_Height",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -7379,8 +7379,8 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
+        "x": 0.5,
+        "y": 0.5,
         "z": 0.0,
         "w": 0.0
     }
@@ -8788,11 +8788,11 @@
     "m_Guid": {
         "m_GuidSerialized": "c065e3f8-1afb-4b6e-b591-82fe08347714"
     },
-    "m_Name": "Offset (1)",
+    "m_Name": "Offset_Temp",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Offset (1)",
-    "m_DefaultReferenceName": "_Offset_1",
-    "m_OverrideReferenceName": "",
+    "m_RefNameGeneratedByDisplayName": "Offset_Temp",
+    "m_DefaultReferenceName": "_Offset_Temp",
+    "m_OverrideReferenceName": "_Offset_Temp",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
@@ -8802,8 +8802,8 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "x": 0.0,
-        "y": 0.0,
+        "x": 0.5,
+        "y": 0.5,
         "z": 0.0,
         "w": 0.0
     }

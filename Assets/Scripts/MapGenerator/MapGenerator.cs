@@ -71,6 +71,8 @@ namespace MapGenerator
 
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
+            meshMaterial.SetVector("_Offset_Temp", new(0.5f - mapParent.position.x, 0.5f - mapParent.position.z));
+            meshMaterial.SetVector("_Offset_Height", new(0.5f - mapParent.position.x, 0.5f - mapParent.position.z));
 
             float parentY = mapParent.position.y;
             for (int x = 0; x < mapDots.Count; x++)
