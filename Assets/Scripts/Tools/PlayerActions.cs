@@ -7,6 +7,7 @@ public enum PlayerAction
     ChangeHeight,
     ChangeTemperature,
     Flatten,
+    SmoothHeight,
     None
 }
 
