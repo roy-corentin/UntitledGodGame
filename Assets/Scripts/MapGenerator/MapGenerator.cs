@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.AI;
+using Unity.AI.Navigation;
 
 namespace MapGenerator
 {
@@ -20,6 +22,7 @@ namespace MapGenerator
         public float perlinScale = 20f;
         public float emplitude = 10f;
         [HideInInspector] public GameObject meshMap;
+        private NavMeshSurface navMeshSurface;
         [SerializeField] private Material meshMaterial;
         public static Map Instance;
         private Coroutine generateDotsCoroutine;
@@ -89,6 +92,7 @@ namespace MapGenerator
             }
 
             CreateMesh();
+            CreateNavmesh();
         }
 
         public void UpdateHeightMap(SelectedDots dots)
@@ -270,6 +274,36 @@ namespace MapGenerator
                 DestroyImmediate(meshMap);
 #else
                 Destroy(meshMap);
+#endif
+            }
+        }
+
+        public void CreateNavmesh()
+        {
+            ClearNavmesh();
+            navMeshSurface = meshMap.AddComponent<NavMeshSurface>();
+
+            // si besoin de modifier la génération, notamment pour une surface type 1x1m -> scène AR:
+            // -- attention: toutes les valeurs ont des minimums qui ne sont pas si petits que ce l'on peut espérer, si on indique une valeur inférieure au min, Unity ignore
+            // -- voir https://docs.unity3d.com/Packages/com.unity.ai.navigation@1.1/manual/NavMeshSurface.html#parameters section "Advanced Settings"
+            // 
+            //navMeshSurface.overrideVoxelSize = true;
+            //navMeshSurface.voxelSize = ...
+            //navMeshSurface.overrideTileSize = true;
+            //navMeshSurface.tileSize = ... ;
+            //navMeshSurface.minRegionArea = ...;
+
+            navMeshSurface.BuildNavMesh();
+        }
+
+        public void ClearNavmesh()
+        {
+            if(navMeshSurface != null)
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(navMeshSurface);
+#else
+                Destroy(navMeshSurface);
 #endif
             }
         }
