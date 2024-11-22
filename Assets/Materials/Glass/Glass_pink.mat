@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Glass_orange 1
+  m_Name: Glass_pink
   m_Shader: {fileID: -6465566751694194690, guid: 2676a8b2a86e84f778667dc0463c455d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -55,5 +55,5 @@ Material:
     - _QueueOffset: 0
     - _Smoothness: 0.39
     m_Colors:
-    - _MainColor: {r: 1, g: 0.46467134, b: 0, a: 0}
+    - _MainColor: {r: 1, g: 0, b: 0.8238039, a: 0}
   m_BuildTextureStacks: []
