@@ -920,7 +920,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 80649403}
-  - component: {fileID: 80649404}
   m_Layer: 0
   m_Name: TrackingSpace
   m_TagString: Untagged
@@ -951,19 +950,6 @@ Transform:
   - {fileID: 1990470546}
   m_Father: {fileID: 1001405694}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &80649404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 80649402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b1acf57bbfa74c08a7046380fc3df3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerCamera: {fileID: 0}
 --- !u!1 &82269119
 GameObject:
   m_ObjectHideFlags: 0
@@ -8380,6 +8366,11 @@ MonoBehaviour:
   _fadeOut: 0
   _gradientLength: 0.85
   _glowType: 28
+--- !u!1 &744879937 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6189879729530238893, guid: 76700106829834b7986d131e31248cda, type: 3}
+  m_PrefabInstance: {fileID: 622825687}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &747341709
 GameObject:
   m_ObjectHideFlags: 0
@@ -16017,6 +16008,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1548530424}
   - component: {fileID: 1548530423}
+  - component: {fileID: 1548530425}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -16058,6 +16050,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1548530425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548530422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f22d80e37542a9b4c9b688ae94eb9ea3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapGO: {fileID: 744879937}
+  ARMapSize: {x: 1, y: 1, z: 1}
+  VRMapSize: {x: 15, y: 15, z: 15}
+  heightCompensation: {x: 0, y: -10, z: 0}
+  transitionDuration: 1.5
+  passthroughLayer: {fileID: 775757794}
+  mainCamera: {fileID: 474958123}
 --- !u!1 &1562454500
 GameObject:
   m_ObjectHideFlags: 0
@@ -21283,6 +21294,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 474958123}
+  distanceForward: 0.35
+  distanceUp: -0.35
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

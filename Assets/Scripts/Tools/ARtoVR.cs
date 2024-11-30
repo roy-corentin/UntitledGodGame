@@ -1,0 +1,110 @@
+using UnityEngine;
+using DG.Tweening;
+
+public enum GameMode
+{
+    AR,
+    VR
+}
+
+public class ARtoVR : MonoBehaviour
+{
+    private GameMode currentMode = GameMode.AR;
+    public static ARtoVR Instance;
+    public GameObject mapGO;
+    public Vector3 ARMapSize;
+    public Vector3 VRMapSize;
+    public Vector3 heightCompensation;
+    public float transitionDuration;
+    public OVRPassthroughLayer passthroughLayer;
+    public Camera mainCamera;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        GoToAR();
+    }
+
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.B) || OVRInput.GetDown(OVRInput.Button.Start))
+        {
+            ToggleMode();
+        }
+    }
+
+    public void ToggleMode()
+    {
+        SetMode(currentMode == GameMode.AR ? GameMode.VR : GameMode.AR);
+    }
+
+    public GameMode GetCurrentMode()
+    {
+        return currentMode;
+    }
+
+    public void SetMode(GameMode mode)
+    {
+        if (currentMode == mode) return;
+        currentMode = mode;
+
+        if (currentMode == GameMode.AR) GoToAR();
+        else GoToVR();
+    }
+
+    private void GoToAR()
+    {
+        SetPasstrough(true);
+
+        mapGO.transform
+            .DOMove(Vector3.zero, transitionDuration)
+            .SetEase(Ease.InOutCubic);
+
+        mapGO.transform.localScale = VRMapSize;
+        mapGO.transform
+            .DOScale(ARMapSize, transitionDuration)
+            .SetEase(Ease.InOutCubic)
+            .OnComplete(() =>
+            {
+                Debug.Log("AR Mode");
+            });
+    }
+
+    private void GoToVR()
+    {
+        SetPasstrough(false);
+
+        mapGO.transform
+            .DOMove(heightCompensation, transitionDuration)
+            .SetEase(Ease.InOutCubic);
+
+        mapGO.transform.localScale = ARMapSize;
+        mapGO.transform
+            .DOScale(VRMapSize, transitionDuration)
+            .SetEase(Ease.InOutCubic)
+            .OnComplete(() =>
+            {
+                Debug.Log("VR Mode");
+            });
+    }
+
+    private void SetPasstrough(bool active)
+    {
+        passthroughLayer.hidden = !active;
+
+        switch (passthroughLayer.hidden)
+        {
+            case true:
+                mainCamera.clearFlags = CameraClearFlags.Skybox;
+                break;
+            case false:
+                mainCamera.clearFlags = CameraClearFlags.SolidColor;
+                mainCamera.backgroundColor = new Color32(0, 0, 0, 0);
+                break;
+        }
+    }
+}
