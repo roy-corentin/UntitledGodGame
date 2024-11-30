@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 7a55134c0bdd95f45ac36d63fc4e2b89, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -6995,6 +6995,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map
       objectReference: {fileID: 0}
+    - target: {fileID: 6716062878832036169, guid: 76700106829834b7986d131e31248cda, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 116006bf99628834cba29f6ac75add62, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16065,7 +16069,7 @@ MonoBehaviour:
   mapGO: {fileID: 744879937}
   ARMapSize: {x: 1, y: 1, z: 1}
   VRMapSize: {x: 15, y: 15, z: 15}
-  heightCompensation: {x: 0, y: -10, z: 0}
+  heightCompensation: {x: 0, y: -7.5, z: 0}
   transitionDuration: 1.5
   passthroughLayer: {fileID: 775757794}
   mainCamera: {fileID: 474958123}

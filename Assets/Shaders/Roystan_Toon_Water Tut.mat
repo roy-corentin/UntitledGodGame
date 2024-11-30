@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roystan_Toon_Water Tut
+  m_Shader: {fileID: 4800000, guid: 0f67c95567fca19499972e25b5dc70e6, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _SurfaceDistortion:
+        m_Texture: {fileID: 2800000, guid: f0d2dcd68fe742d4a8f19970f72ac8b2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SurfaceNoise:
+        m_Texture: {fileID: 2800000, guid: ec85ee4787e91584eae8833aed5576bc, type: 3}
+        m_Scale: {x: 0.001, y: 0.001}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _DepthMaxDistance: 1
+    - _FoamMaxDistance: 2.53
+    - _FoamMinDistance: 0.46
+    - _SurfaceDistortionAmount: 0.397
+    - _SurfaceNoiseCutoff: 0.954
+    m_Colors:
+    - _DepthGradientDeep: {r: 0, g: 0.74509805, b: 1, a: 0.42745098}
+    - _DepthGradientShallow: {r: 0, g: 0.7454543, b: 1, a: 0.42745098}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 0}
+    - _SurfaceNoiseScroll: {r: 0.03, g: 0.03, b: 0, a: 0}
+  m_BuildTextureStacks: []
