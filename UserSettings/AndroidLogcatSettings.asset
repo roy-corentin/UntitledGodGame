@@ -3,21 +3,45 @@
     "m_SelectedProcess": {
         "deviceId": "2G0YC1ZF7P0FD3",
         "name": "com.DefaultCompany.UntitledTekGame",
-        "processId": 5229,
+        "processId": 17035,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownProcessesForSerialization": [
         {
             "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.oculus.shellenv",
-            "processId": 2602,
+            "name": "com.DefaultCompany.UntitledTekGame",
+            "processId": 5229,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.DefaultCompany.UntitledTekGame",
+            "processId": 13600,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.DefaultCompany.UntitledTekGame",
+            "processId": 14364,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.DefaultCompany.UntitledTekGame",
+            "processId": 15011,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.DefaultCompany.UntitledTekGame",
+            "processId": 16057,
             "exited": false
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 5229,
+            "processId": 17035,
             "exited": false
         }
     ],
@@ -75,7 +99,7 @@
         "AutoCapture": true
     },
     "m_FilterOptions": {
-        "m_Filter": "",
+        "m_Filter": "LOG: On",
         "m_UseRegularExpressions": false,
         "m_MatchCase": false
     },

@@ -27,7 +27,7 @@ public class ARtoVR : MonoBehaviour
 
     private void Start()
     {
-        GoToAR();
+        GoToAR(true);
     }
 
     public void Update()
@@ -57,17 +57,17 @@ public class ARtoVR : MonoBehaviour
         else GoToVR();
     }
 
-    private void GoToAR()
+    private void GoToAR(bool instant = false)
     {
         SetPasstrough(true);
 
         mapGO.transform
-            .DOMove(Vector3.zero, transitionDuration)
+            .DOMove(new(0, 0.5f, 1f), instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic);
 
         mapGO.transform.localScale = VRMapSize;
         mapGO.transform
-            .DOScale(ARMapSize, transitionDuration)
+            .DOScale(ARMapSize, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic)
             .OnComplete(() =>
             {
@@ -76,21 +76,21 @@ public class ARtoVR : MonoBehaviour
 
         toolbox.gameObject.SetActive(true);
         toolbox.transform
-            .DOScale(Vector3.one, transitionDuration)
+            .DOScale(Vector3.one, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic);
     }
 
-    private void GoToVR()
+    private void GoToVR(bool instant = false)
     {
         SetPasstrough(false);
 
         mapGO.transform
-            .DOMove(heightCompensation, transitionDuration)
+            .DOMove(heightCompensation, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic);
 
         mapGO.transform.localScale = ARMapSize;
         mapGO.transform
-            .DOScale(VRMapSize, transitionDuration)
+            .DOScale(VRMapSize, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic)
             .OnComplete(() =>
             {
@@ -98,7 +98,7 @@ public class ARtoVR : MonoBehaviour
             });
 
         toolbox.transform
-            .DOScale(Vector3.one, transitionDuration)
+            .DOScale(Vector3.one, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic)
             .OnComplete(() =>
             {

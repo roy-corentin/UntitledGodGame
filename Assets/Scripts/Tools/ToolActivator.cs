@@ -8,19 +8,19 @@ public class ToolActivator : MonoBehaviour
     private Vector3 originalPosition;
     private Vector3 originalRotation;
 
-    public void Start()
+    public void Awake()
     {
-        lastPosition = transform.position;
+        lastPosition = transform.localPosition;
         isMoving = false;
         playerAction = GetComponent<ToolAction>().actionType;
         originalPosition = transform.localPosition;
         originalRotation = transform.eulerAngles;
     }
 
-    public void FixedUpdate()
+    public void Update()
     {
 #if UNITY_EDITOR
-        Vector3 currentPosition = transform.position;
+        Vector3 currentPosition = transform.localPosition;
 
         if (currentPosition != lastPosition && !isMoving) OnStartMoving();
         else if (currentPosition == lastPosition && isMoving) isMoving = false;
@@ -31,10 +31,14 @@ public class ToolActivator : MonoBehaviour
 #else
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger);
 
-        Vector3 currentPosition = transform.position;
+        Vector3 currentPosition = transform.localPosition;
 
-        if (currentPosition != lastPosition && !isMoving && pressure > 0) OnStartMoving();
+        if (currentPosition != lastPosition && !isMoving) OnStartMoving();
         else if (currentPosition == lastPosition && isMoving && pressure == 0) OnStopMoving();
+        else
+        {
+            Debug.Log($"LOG: {currentPosition} - {lastPosition} - {pressure} - {isMoving}");
+        }
 
         lastPosition = currentPosition;
 #endif
@@ -42,13 +46,15 @@ public class ToolActivator : MonoBehaviour
 
     public void OnStartMoving()
     {
-        lastPosition = transform.position;
+        Debug.Log($"LOG: OnStartMoving() {this.playerAction}");
+        lastPosition = transform.localPosition;
         isMoving = true;
         PlayerActions.Instance.SetAction(playerAction);
     }
 
     public void OnStopMoving()
     {
+        Debug.Log($"LOG: OnStopMoving() {this.playerAction}");
         isMoving = false;
         PlayerActions.Instance.SetAction(PlayerAction.None);
         PlayerActions.Instance.HideAllSelectedDots();

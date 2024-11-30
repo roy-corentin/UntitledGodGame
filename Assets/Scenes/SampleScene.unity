@@ -6957,11 +6957,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2370258106398611905, guid: 76700106829834b7986d131e31248cda, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2370258106398611905, guid: 76700106829834b7986d131e31248cda, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2370258106398611905, guid: 76700106829834b7986d131e31248cda, type: 3}
       propertyPath: m_LocalRotation.w
@@ -21299,8 +21299,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 474958123}
-  distanceForward: 0.35
-  distanceUp: -0.35
+  distanceForward: 0.25
+  distanceUp: -0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
