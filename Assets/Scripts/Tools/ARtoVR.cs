@@ -18,6 +18,7 @@ public class ARtoVR : MonoBehaviour
     public float transitionDuration;
     public OVRPassthroughLayer passthroughLayer;
     public Camera mainCamera;
+    public GameObject toolbox;
 
     private void Awake()
     {
@@ -72,6 +73,11 @@ public class ARtoVR : MonoBehaviour
             {
                 Debug.Log("AR Mode");
             });
+
+        toolbox.gameObject.SetActive(true);
+        toolbox.transform
+            .DOScale(Vector3.one, transitionDuration)
+            .SetEase(Ease.InOutCubic);
     }
 
     private void GoToVR()
@@ -89,6 +95,14 @@ public class ARtoVR : MonoBehaviour
             .OnComplete(() =>
             {
                 Debug.Log("VR Mode");
+            });
+
+        toolbox.transform
+            .DOScale(Vector3.one, transitionDuration)
+            .SetEase(Ease.InOutCubic)
+            .OnComplete(() =>
+            {
+                toolbox.gameObject.SetActive(false);
             });
     }
 
