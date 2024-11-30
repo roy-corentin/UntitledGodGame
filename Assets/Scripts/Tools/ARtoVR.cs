@@ -62,7 +62,7 @@ public class ARtoVR : MonoBehaviour
         SetPasstrough(true);
 
         mapGO.transform
-            .DOMove(new(0, 0.5f, 1f), instant ? 0 : transitionDuration)
+            .DOMove(Vector3.zero, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic);
 
         mapGO.transform.localScale = VRMapSize;
