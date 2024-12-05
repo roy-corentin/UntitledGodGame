@@ -12,7 +12,6 @@ public class Toolbox : MonoBehaviour
             + playerCamera.transform.forward * distanceForward
             + playerCamera.transform.up * distanceUp;
 
-        transform.LookAt(playerCamera.transform);
-        transform.Rotate(0, 180, 0);
+        transform.rotation = playerCamera.transform.rotation;
     }
 }

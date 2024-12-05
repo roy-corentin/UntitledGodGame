@@ -14,7 +14,7 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
+  m_Fog: 1
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
   m_FogDensity: 0.01
@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 7a55134c0bdd95f45ac36d63fc4e2b89, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -97,7 +97,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: fe197628c2ccb6f4b9097929b06119f2, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -920,7 +920,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 80649403}
-  - component: {fileID: 80649404}
   m_Layer: 0
   m_Name: TrackingSpace
   m_TagString: Untagged
@@ -951,19 +950,6 @@ Transform:
   - {fileID: 1990470546}
   m_Father: {fileID: 1001405694}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &80649404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 80649402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b1acf57bbfa74c08a7046380fc3df3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerCamera: {fileID: 0}
 --- !u!1 &82269119
 GameObject:
   m_ObjectHideFlags: 0
@@ -7009,6 +6995,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map
       objectReference: {fileID: 0}
+    - target: {fileID: 6716062878832036169, guid: 76700106829834b7986d131e31248cda, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 116006bf99628834cba29f6ac75add62, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8380,6 +8370,11 @@ MonoBehaviour:
   _fadeOut: 0
   _gradientLength: 0.85
   _glowType: 28
+--- !u!1 &744879937 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6189879729530238893, guid: 76700106829834b7986d131e31248cda, type: 3}
+  m_PrefabInstance: {fileID: 622825687}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &747341709
 GameObject:
   m_ObjectHideFlags: 0
@@ -16017,6 +16012,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1548530424}
   - component: {fileID: 1548530423}
+  - component: {fileID: 1548530425}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -16058,6 +16054,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1548530425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548530422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f22d80e37542a9b4c9b688ae94eb9ea3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapGO: {fileID: 744879937}
+  ARMapSize: {x: 1, y: 1, z: 1}
+  VRMapSize: {x: 30, y: 30, z: 30}
+  heightCompensation: {x: 0, y: -15, z: 0}
+  transitionDuration: 1.5
+  passthroughLayer: {fileID: 775757794}
+  mainCamera: {fileID: 474958123}
+  toolbox: {fileID: 5833123207365553722}
 --- !u!1 &1562454500
 GameObject:
   m_ObjectHideFlags: 0
@@ -21283,6 +21299,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 474958123}
+  distanceForward: 0.25
+  distanceUp: -0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

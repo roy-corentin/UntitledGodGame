@@ -31,6 +31,11 @@ namespace MapGenerator
             Instance = this;
         }
 
+        public void Start()
+        {
+            GenerateAll();
+        }
+
         public void Update()
         {
 #if UNITY_EDITOR

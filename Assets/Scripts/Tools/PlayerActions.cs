@@ -71,17 +71,18 @@ public class PlayerActions : MonoBehaviour
             nextActionTime = Time.time + actionCooldown;
         }
 #else
-        if (OVRInput.GetDown(OVRInput.Button.Two)) direction = -1; // B
-        else if (OVRInput.GetDown(OVRInput.Button.One)) direction = 1; // A
+        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-1); // B
+        else if (OVRInput.GetDown(OVRInput.Button.One)) SetDirection(1); // A
 
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
             && playerHand != null
             && actionMap.ContainsKey(currentAction)
-            && Time.time >= nextActionTime) {
-                actionMap[currentAction].Action(pressure);
-                nextActionTime = Time.time + actionCooldown;
-            }
+            && Time.time >= nextActionTime)
+        {
+            actionMap[currentAction].Action(1f);
+            nextActionTime = Time.time + actionCooldown;
+        }
 #endif
     }
 
