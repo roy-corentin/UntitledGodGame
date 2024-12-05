@@ -6,13 +6,13 @@ using UnityEngine;
 public class ElementsSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject tree;
-    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private GameObject deadTree;
+    [SerializeField] private GameObject fireTree;
+    [SerializeField] private GameObject rock;
     [SerializeField] private Transform elementsParent;
-    [SerializeField] private float raycastDistance = 10f;
-    private List<GameObject> elements = new();
+    private readonly List<GameObject> elements = new();
     public static ElementsSpawner Instance;
     private Coroutine spawnTreeAllAroundMapCoroutine;
-    [SerializeField] private float offset = 0.05f;
 
     private void Awake()
     {
@@ -32,14 +32,13 @@ public class ElementsSpawner : MonoBehaviour
             Dot dot = mapDots[Random.Range(0, mapDots.Count)][Random.Range(0, mapDots[0].Count)];
             if (dot.hasElement) continue;
 
+            Biome biome = BiomeManager.Instance.GetBiome(dot);
+            if (biome == Biome.Water) continue;
+
             dot.hasElement = true;
 
-            GameObject newTree = Instantiate(tree, elementsParent);
+            GameObject newTree = Instantiate(GetPrefab(biome), elementsParent);
             Vector3 position = dot.transform.position;
-
-            // add some random offset
-            position.x += Random.Range(-offset, offset);
-            position.z += Random.Range(-offset, offset);
 
             newTree.transform.localPosition = position;
 
@@ -55,5 +54,17 @@ public class ElementsSpawner : MonoBehaviour
             Destroy(element);
 
         elements.Clear();
+    }
+
+    private GameObject GetPrefab(Biome biome)
+    {
+        return biome switch
+        {
+            Biome.Desert => deadTree,
+            Biome.Forest => tree,
+            Biome.Mountains => rock,
+            Biome.Tundra => fireTree,
+            _ => tree,
+        };
     }
 }

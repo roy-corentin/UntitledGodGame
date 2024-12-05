@@ -7056,6 +7056,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6189879729530238893, guid: 76700106829834b7986d131e31248cda, type: 3}
       insertIndex: -1
       addedObject: {fileID: 744879938}
+    - targetCorrespondingSourceObject: {fileID: 6189879729530238893, guid: 76700106829834b7986d131e31248cda, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 744879940}
     - targetCorrespondingSourceObject: {fileID: 604517193791976743, guid: 76700106829834b7986d131e31248cda, type: 3}
       insertIndex: -1
       addedObject: {fileID: 622825690}
@@ -8476,12 +8479,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tree: {fileID: 5142532879768883847, guid: 5983c8a04c0e73047a6c860b9cd9aaad, type: 3}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
+  deadTree: {fileID: 1026458569961160598, guid: 292c1954f8e2fd748857db06683062fb, type: 3}
+  fireTree: {fileID: 108225653778294438, guid: 3e2accafa3a5f1b40ba86cf39bcb49a7, type: 3}
+  rock: {fileID: 108225653778294438, guid: 885e420ca376f49a0adf7471c7495ed8, type: 3}
   elementsParent: {fileID: 332415607}
-  raycastDistance: 5
-  offset: 0.05
+--- !u!114 &744879940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744879937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 120f797e08df44e1588c5bde9e9b4ea5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mountainsHeight: 0.46
+  waterHeight: 0.28
+  tempDesert: 0.65
+  tempTundra: 0.35
 --- !u!1 &747341709
 GameObject:
   m_ObjectHideFlags: 0
