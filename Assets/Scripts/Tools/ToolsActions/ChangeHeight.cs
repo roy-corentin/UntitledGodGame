@@ -7,12 +7,6 @@ public class ChangeHeight : ToolAction
     public float centerMoveValue = 0.02f;
     public float surroundingMoveValue = 0.01f;
 
-    void Awake()
-    {
-        actionType = PlayerAction.ChangeHeight;
-        toolGO = gameObject;
-    }
-
     public override void Action(float pressure)
     {
         SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();

@@ -7,12 +7,6 @@ public class ChangeTemperature : ToolAction
     public float centerTempValue = 0.02f;
     public float surroundingTempValue = 0.01f;
 
-    void Awake()
-    {
-        actionType = PlayerAction.ChangeTemperature;
-        toolGO = gameObject;
-    }
-
     public override void Action(float pressure)
     {
         SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();
