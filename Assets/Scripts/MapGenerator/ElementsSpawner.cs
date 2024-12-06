@@ -30,17 +30,17 @@ public class ElementsSpawner : MonoBehaviour
         for (int i = 0; i < number; i++)
         {
             Dot dot = mapDots[Random.Range(0, mapDots.Count)][Random.Range(0, mapDots[0].Count)];
-            if (dot.hasElement) continue;
+            if (dot.element) continue;
 
             Biome biome = BiomeManager.Instance.GetBiome(dot);
             if (biome == Biome.Water) continue;
 
-            dot.hasElement = true;
 
             GameObject newTree = Instantiate(GetPrefab(biome), elementsParent);
             Vector3 position = dot.transform.position;
 
             newTree.transform.localPosition = position;
+            dot.element = newTree;
 
             elements.Add(newTree);
 
@@ -66,5 +66,11 @@ public class ElementsSpawner : MonoBehaviour
             Biome.Tundra => fireTree,
             _ => tree,
         };
+    }
+
+    public void DestroyElement(GameObject element)
+    {
+        elements.Remove(element);
+        Destroy(element);
     }
 }

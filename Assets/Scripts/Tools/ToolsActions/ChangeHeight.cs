@@ -20,16 +20,23 @@ public class ChangeHeight : ToolAction
         if (selectedDots.centerDot.dot == null) return;
 
         selectedDots.centerDot.dot.SetYPosition(selectedDots.centerDot.dot.transform.position.y + centerMoveValue * direction * pressure);
+        if (selectedDots.centerDot.dot.element)
+        {
+            selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
+        }
         if (showSelectedDots) selectedDots.centerDot.dot.gameObject.SetActive(true);
         for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
         {
             List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
             float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(circleIndex + 1) / numberOfCircles);
 
-            foreach (SelectedDot dot in currentCircle)
+            foreach (SelectedDot selectedDot in currentCircle)
             {
-                dot.dot.SetYPosition(dot.dot.transform.position.y + moveValue * direction * pressure);
-                if (showSelectedDots) dot.dot.gameObject.SetActive(true);
+                float newY = selectedDot.dot.transform.position.y + moveValue * direction * pressure;
+                selectedDot.dot.SetYPosition(newY);
+                if (showSelectedDots) selectedDot.dot.gameObject.SetActive(true);
+                if (selectedDot.dot.element)
+                    selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
             }
         }
 
