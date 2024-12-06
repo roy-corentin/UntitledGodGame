@@ -12,7 +12,6 @@ public class ToolActivator : MonoBehaviour
     {
         lastPosition = transform.localPosition;
         isMoving = false;
-        playerAction = GetComponent<ToolAction>().actionType;
         originalPosition = transform.localPosition;
         originalRotation = transform.eulerAngles;
     }
@@ -46,7 +45,8 @@ public class ToolActivator : MonoBehaviour
 
     public void OnStartMoving()
     {
-        Debug.Log($"LOG: OnStartMoving() {this.playerAction}");
+        playerAction = GetComponent<ToolAction>().actionType;
+        Debug.Log($"LOG: OnStartMoving() {this.playerAction} {gameObject.name}");
         lastPosition = transform.localPosition;
         isMoving = true;
         PlayerActions.Instance.SetAction(playerAction);
