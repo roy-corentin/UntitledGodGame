@@ -10,24 +10,27 @@ public class SmoothHeight : ToolAction
         SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();
 
         if (selectedDots.centerDot.dot == null) return;
-        float finalY = selectedDots.centerDot.dot.transform.position.y;
 
-        if (showSelectedDots)
-            selectedDots.centerDot.dot.gameObject.SetActive(true);
+        float finalY = selectedDots.centerDot.dot.transform.position.y;
+        if (selectedDots.centerDot.dot.element)
+            selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
+
+        if (showSelectedDots) selectedDots.centerDot.dot.gameObject.SetActive(true);
 
         for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
         {
             List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
             float smoothingFactor = (1.0f - ((float)circleIndex / selectedDots.surroundingCircles.Count)) * smoothingSpeed;
 
-            foreach (SelectedDot dot in currentCircle)
+            foreach (SelectedDot selectedDot in currentCircle)
             {
-                float currentY = dot.dot.transform.position.y;
+                float currentY = selectedDot.dot.transform.position.y;
                 float smoothedY = Mathf.Lerp(currentY, finalY, smoothingFactor * Time.deltaTime);
 
-                dot.dot.SetYPosition(smoothedY);
-                if (showSelectedDots)
-                    dot.dot.gameObject.SetActive(true);
+                selectedDot.dot.SetYPosition(smoothedY);
+                if (showSelectedDots) selectedDot.dot.gameObject.SetActive(true);
+                if (selectedDot.dot.element)
+                    selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
             }
         }
 

@@ -8,21 +8,26 @@ public class Flatten : ToolAction
         SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();
 
         if (selectedDots.centerDot.dot == null) return;
-        float finalY = selectedDots.centerDot.dot.transform.position.y;
 
+        float finalY = selectedDots.centerDot.dot.transform.position.y;
+        if (selectedDots.centerDot.dot.element)
+            selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
         if (showSelectedDots) selectedDots.centerDot.dot.gameObject.SetActive(true);
+
         for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
         {
             List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
 
-            foreach (SelectedDot dot in currentCircle)
+            foreach (SelectedDot selectedDot in currentCircle)
             {
-                float currentY = dot.dot.transform.position.y;
-                int dotIndex = currentCircle.IndexOf(dot);
+                float currentY = selectedDot.dot.transform.position.y;
+                int dotIndex = currentCircle.IndexOf(selectedDot);
                 int nummberOfDots = currentCircle.Count;
                 float moveValue = Mathf.Lerp(currentY, finalY, (float)(dotIndex + 1) / nummberOfDots);
-                dot.dot.SetYPosition(moveValue);
-                if (showSelectedDots) dot.dot.gameObject.SetActive(true);
+                selectedDot.dot.SetYPosition(moveValue);
+                if (showSelectedDots) selectedDot.dot.gameObject.SetActive(true);
+                if (selectedDot.dot.element)
+                    selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
             }
         }
 
