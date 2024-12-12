@@ -10,7 +10,7 @@ public class Slider : MonoBehaviour
 
     public void UpdateText(float value)
     {
-        double roundedValue = Math.Round(value, 2);
+        double roundedValue = Math.Round(value, 3);
         string newValue = roundedValue.ToString();
         text.text = newValue;
 

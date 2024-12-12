@@ -9,14 +9,12 @@ public class MenuManager : MonoBehaviour
     {
         menu.SetActive(false);
         laserPointer.Show(false);
-        Debug.Log("LOG: MenuManager.Start() - menu.SetActive(false);");
     }
 
     void Update()
     {
-        if (OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKeyDown(KeyCode.J))
+        if (OVRInput.GetDown(OVRInput.Button.Start) || Input.GetKeyDown(KeyCode.J))
         {
-            Debug.Log("LOG: MenuManager.Update() - OVRInput.GetDown(OVRInput.Button.Two) || Input.GetKeyDown(KeyCode.J)");
             menu.SetActive(!menu.activeSelf);
             laserPointer.Show(menu.activeSelf);
 
