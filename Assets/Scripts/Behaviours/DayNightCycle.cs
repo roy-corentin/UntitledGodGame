@@ -17,44 +17,70 @@ public class DayNightCycle : MonoBehaviour
     public float timeOFDayOn24 = 0;
     public int daySinceStart = 0;
     public TimeOfDay currentTimeOfDay = TimeOfDay.Day;
+    private TimeOfDay lastTimeOfDay = TimeOfDay.Day;
+
 
     [Header("Skybox")]
     public Material skyboxMaterial;
-    public float lerpSpeed = 1;
     public Color32 dayColor = new(255, 255, 255, 255);
     public Color32 nightColor = new(0, 0, 0, 255);
+    private Color32 startSkyboxColor;
+    private Color32 targetSkyboxColor;
 
     [Header("Light")]
     public Light sun;
-    public float lightLerpSpeed = 1;
     public Color32 lightDayColor = new(255, 244, 214, 255);
     public Color32 lightNightColor = new(0, 0, 0, 255);
+    private Color startLightColor;
+    private Color targetLightColor;
 
-    private TimeOfDay lastTimeOfDay = TimeOfDay.Day;
+    [Header("Transition")]
+    private float transitionTime = 0f;
+    public float transitionDuration = 5f;
+
     public static DayNightCycle Instance;
 
-    public void Awake()
+    private void Awake()
     {
         Instance = this;
+        InitializeVisuals();
     }
 
-    public void OnDestroy()
+    private void OnDestroy()
     {
         skyboxMaterial.SetColor("_Tint", dayColor);
+        sun.color = lightDayColor;
     }
 
-    public void Update()
+    private void Update()
+    {
+        UpdateTime();
+        if (lastTimeOfDay != currentTimeOfDay) HandleTimeOfDayChange();
+        SmoothTransition();
+    }
+
+    private void InitializeVisuals()
+    {
+        currentTimeOfDay = CalculateTimeOfDay();
+        lastTimeOfDay = currentTimeOfDay;
+
+        Color32 initialSkyboxColor = currentTimeOfDay == TimeOfDay.Day ? dayColor : nightColor;
+        Color initialLightColor = currentTimeOfDay == TimeOfDay.Day ? lightDayColor : lightNightColor;
+
+        skyboxMaterial.SetColor("_Tint", initialSkyboxColor);
+        sun.color = initialLightColor;
+
+        startSkyboxColor = initialSkyboxColor;
+        targetSkyboxColor = initialSkyboxColor;
+        startLightColor = initialLightColor;
+        targetLightColor = initialLightColor;
+    }
+
+    private void UpdateTime()
     {
         timeOfDay += Time.deltaTime * timeMultiplier;
         timeOFDayOn24 = timeOfDay / (dayLengthinMinutes * 60);
         currentTimeOfDay = CalculateTimeOfDay();
-        UpdateTimeVisual();
-
-        if (lastTimeOfDay != currentTimeOfDay)
-        {
-            lastTimeOfDay = currentTimeOfDay;
-            Debug.Log("It's " + currentTimeOfDay);
-        }
 
         if (timeOfDay > dayLengthinMinutes * 60)
         {
@@ -63,20 +89,35 @@ public class DayNightCycle : MonoBehaviour
         }
     }
 
-    public TimeOfDay CalculateTimeOfDay()
+    private TimeOfDay CalculateTimeOfDay()
     {
-        if (timeOFDayOn24 >= 0.5f) return TimeOfDay.Night;
-        return TimeOfDay.Day;
+        return timeOFDayOn24 >= 0.5f ? TimeOfDay.Night : TimeOfDay.Day;
     }
 
-    public void UpdateTimeVisual()
+    private void HandleTimeOfDayChange()
     {
-        Color32 targetColor = currentTimeOfDay == TimeOfDay.Day ? dayColor : nightColor;
-        Color32 currentColor = skyboxMaterial.GetColor("_Tint");
-        Color32 newColor = Color32.Lerp(currentColor, targetColor, Time.deltaTime * lerpSpeed * timeMultiplier);
-        skyboxMaterial.SetColor("_Tint", newColor);
+        lastTimeOfDay = currentTimeOfDay;
+        Debug.Log("It's " + currentTimeOfDay);
+        transitionTime = 0f;
 
-        Color32 targetLightColor = currentTimeOfDay == TimeOfDay.Day ? lightDayColor : lightNightColor;
-        sun.color = Color32.Lerp(sun.color, targetLightColor, Time.deltaTime * lightLerpSpeed * timeMultiplier);
+        startSkyboxColor = skyboxMaterial.GetColor("_Tint");
+        targetSkyboxColor = currentTimeOfDay == TimeOfDay.Day ? dayColor : nightColor;
+        startLightColor = sun.color;
+        targetLightColor = currentTimeOfDay == TimeOfDay.Day ? lightDayColor : lightNightColor;
+    }
+
+    private void SmoothTransition()
+    {
+        if (transitionTime < transitionDuration)
+        {
+            transitionTime += Time.deltaTime;
+            float t = Mathf.Clamp01(transitionTime / transitionDuration);
+
+            Color32 newSkyboxColor = Color32.Lerp(startSkyboxColor, targetSkyboxColor, t);
+            skyboxMaterial.SetColor("_Tint", newSkyboxColor);
+
+            Color newLightColor = Color.Lerp(startLightColor, targetLightColor, t);
+            sun.color = newLightColor;
+        }
     }
 }
