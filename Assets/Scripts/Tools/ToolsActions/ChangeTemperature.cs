@@ -31,4 +31,10 @@ public class ChangeTemperature : ToolAction
 
         MapGenerator.Map.Instance.UpdateTemperatureMap(selectedDots);
     }
+
+    public void SetCenterTempValue(float centerTempValue)
+    {
+        this.centerTempValue = centerTempValue;
+        this.surroundingTempValue = centerTempValue / 2;
+    }
 }

@@ -38,4 +38,9 @@ public class SmoothHeight : ToolAction
         MapGenerator.Map.Instance.CreateMesh();
         MapGenerator.Map.Instance.UpdateHeightMap(selectedDots);
     }
+
+    public void SetSmoothingSpeed(float smoothingSpeed)
+    {
+        this.smoothingSpeed = smoothingSpeed;
+    }
 }
