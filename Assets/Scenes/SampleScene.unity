@@ -16196,14 +16196,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dayLengthinMinutes: 10
+  timeMultiplier: 1
   timeOfDay: 0
   timeOFDayOn24: 0
-  timeMultiplier: 1
   daySinceStart: 0
   currentTimeOfDay: 0
   skyboxMaterial: {fileID: 2100000, guid: 7a55134c0bdd95f45ac36d63fc4e2b89, type: 2}
-  sun: {fileID: 705507994}
-  mainCamera: {fileID: 474958123}
   lerpSpeed: 2
   dayColor:
     serializedVersion: 2
@@ -16211,6 +16209,14 @@ MonoBehaviour:
   nightColor:
     serializedVersion: 2
     rgba: 2149124875
+  sun: {fileID: 705507994}
+  lightLerpSpeed: 2
+  lightDayColor:
+    serializedVersion: 2
+    rgba: 4292277503
+  lightNightColor:
+    serializedVersion: 2
+    rgba: 4278190080
 --- !u!1 &1562454500
 GameObject:
   m_ObjectHideFlags: 0
