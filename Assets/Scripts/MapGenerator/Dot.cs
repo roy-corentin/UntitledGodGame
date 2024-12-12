@@ -5,6 +5,7 @@ namespace MapGenerator
     public class Dot : MonoBehaviour
     {
         public float temperature;
+        public GameObject element;
 
         public void SetTemperature(float temperature)
         {

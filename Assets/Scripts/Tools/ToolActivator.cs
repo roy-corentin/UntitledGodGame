@@ -3,18 +3,18 @@ using UnityEngine;
 public class ToolActivator : MonoBehaviour
 {
     private Vector3 lastPosition;
-    private PlayerAction playerAction;
     private bool isMoving;
     private Vector3 originalPosition;
     private Vector3 originalRotation;
+    private ToolAction playerAction;
 
     public void Awake()
     {
         lastPosition = transform.localPosition;
         isMoving = false;
-        playerAction = GetComponent<ToolAction>().actionType;
         originalPosition = transform.localPosition;
         originalRotation = transform.eulerAngles;
+        playerAction = GetComponent<ToolAction>();
     }
 
     public void Update()
@@ -46,17 +46,17 @@ public class ToolActivator : MonoBehaviour
 
     public void OnStartMoving()
     {
-        Debug.Log($"LOG: OnStartMoving() {this.playerAction}");
+        Debug.Log($"LOG: OnStartMoving() {gameObject.name}");
         lastPosition = transform.localPosition;
         isMoving = true;
-        PlayerActions.Instance.SetAction(playerAction);
+        PlayerActions.Instance.currentTool = playerAction;
     }
 
     public void OnStopMoving()
     {
-        Debug.Log($"LOG: OnStopMoving() {this.playerAction}");
+        Debug.Log($"LOG: OnStopMoving() {gameObject.name}");
         isMoving = false;
-        PlayerActions.Instance.SetAction(PlayerAction.None);
+        PlayerActions.Instance.currentTool = null;
         PlayerActions.Instance.HideAllSelectedDots();
         ReturnToToolbox();
     }

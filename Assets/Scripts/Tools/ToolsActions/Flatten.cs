@@ -3,12 +3,6 @@ using UnityEngine;
 
 public class Flatten : ToolAction
 {
-    void Awake()
-    {
-        actionType = PlayerAction.Flatten;
-        toolGO = gameObject;
-    }
-
     public override void Action(float pressure)
     {
         SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();

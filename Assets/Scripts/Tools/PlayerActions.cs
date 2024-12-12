@@ -2,15 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PlayerAction
-{
-    ChangeHeight,
-    ChangeTemperature,
-    Flatten,
-    SmoothHeight,
-    None
-}
-
 public struct SelectedDot
 {
     public MapGenerator.Dot dot;
@@ -26,10 +17,7 @@ public struct SelectedDots
 
 public class PlayerActions : MonoBehaviour
 {
-    public PlayerAction currentAction = PlayerAction.None;
-    public List<ToolAction> toolActions = new();
-    private readonly Dictionary<PlayerAction, ToolAction> actionMap = new();
-    private GameObject playerHand = null;
+    public ToolAction currentTool;
     public static PlayerActions Instance;
     private SelectedDots lastSelectedDots;
     public float actionCooldown = 0.1f;
@@ -40,34 +28,27 @@ public class PlayerActions : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
-    {
-        foreach (ToolAction toolAction in toolActions)
-            actionMap.Add(toolAction.actionType, toolAction);
-    }
-
     private void Update()
     {
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.DownArrow)) SetDirection(-1);
         else if (Input.GetKeyDown(KeyCode.UpArrow)) SetDirection(1);
 
-        if (playerHand != null)
+        if (currentTool != null)
         {
-            if (Input.GetKey(KeyCode.W)) playerHand.transform.position += Vector3.forward * Time.deltaTime;
-            else if (Input.GetKey(KeyCode.A)) playerHand.transform.position += Vector3.left * Time.deltaTime;
-            else if (Input.GetKey(KeyCode.S)) playerHand.transform.position += Vector3.back * Time.deltaTime;
-            else if (Input.GetKey(KeyCode.D)) playerHand.transform.position += Vector3.right * Time.deltaTime;
-            if (Input.GetKey(KeyCode.Q)) playerHand.transform.position += Vector3.up * Time.deltaTime;
-            else if (Input.GetKey(KeyCode.E)) playerHand.transform.position += Vector3.down * Time.deltaTime;
+            if (Input.GetKey(KeyCode.W)) currentTool.transform.position += Vector3.forward * Time.deltaTime;
+            else if (Input.GetKey(KeyCode.A)) currentTool.transform.position += Vector3.left * Time.deltaTime;
+            else if (Input.GetKey(KeyCode.S)) currentTool.transform.position += Vector3.back * Time.deltaTime;
+            else if (Input.GetKey(KeyCode.D)) currentTool.transform.position += Vector3.right * Time.deltaTime;
+            if (Input.GetKey(KeyCode.Q)) currentTool.transform.position += Vector3.up * Time.deltaTime;
+            else if (Input.GetKey(KeyCode.E)) currentTool.transform.position += Vector3.down * Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.Space)
-            && playerHand != null
-            && actionMap.ContainsKey(currentAction)
+            && currentTool != null
             && Time.time >= nextActionTime)
         {
-            actionMap[currentAction].Action(1f);
+            currentTool.Action(1f);
             nextActionTime = Time.time + actionCooldown;
         }
 #else
@@ -76,11 +57,10 @@ public class PlayerActions : MonoBehaviour
 
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
-            && playerHand != null
-            && actionMap.ContainsKey(currentAction)
+            && currentTool != null
             && Time.time >= nextActionTime)
         {
-            actionMap[currentAction].Action(1f);
+            currentTool.Action(1f);
             nextActionTime = Time.time + actionCooldown;
         }
 #endif
@@ -88,29 +68,15 @@ public class PlayerActions : MonoBehaviour
 
     private void SetDirection(int direction)
     {
-        if (actionMap.ContainsKey(currentAction)) actionMap[currentAction].direction = direction;
-    }
-
-    public void SetAction(PlayerAction action)
-    {
-        currentAction = action;
-
-        if (!actionMap.ContainsKey(currentAction))
-        {
-            playerHand = null;
-            return;
-        }
-
-        playerHand = actionMap[currentAction].Select();
+        currentTool.direction = direction;
     }
 
     public SelectedDots GetSelectedDots()
     {
-        if (playerHand == null) return new SelectedDots();
-        if (!actionMap.ContainsKey(currentAction)) return new SelectedDots();
+        if (currentTool == null) return new SelectedDots();
 
         List<List<MapGenerator.Dot>> mapDots = MapGenerator.Map.Instance.mapDots;
-        Vector3 playerHandPosition = playerHand.transform.position;
+        Vector3 playerHandPosition = currentTool.transform.position;
 
         if (mapDots.Count == 0) return new SelectedDots();
 
@@ -140,13 +106,13 @@ public class PlayerActions : MonoBehaviour
         }
 
         // if the nearest dot is too far, return an empty SelectedDots
-        if (nearestDistance > actionMap[currentAction].range) return new SelectedDots();
-        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > actionMap[currentAction].range) return new SelectedDots();
+        if (nearestDistance > currentTool.range) return new SelectedDots();
+        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.range) return new SelectedDots();
 
         SelectedDots selectedDots = new() { centerDot = selectedDot, surroundingCircles = new() };
 
         // add the 8 surrounding dots to the selectedDots
-        for (int circle = 1; circle <= actionMap[currentAction].numberOfCircles; circle++)
+        for (int circle = 1; circle <= currentTool.numberOfCircles; circle++)
         {
             List<SelectedDot> currentCircleDots = new();
 

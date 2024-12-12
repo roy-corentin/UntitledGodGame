@@ -143,8 +143,8 @@ Material:
     - _Ocean_Color: {r: 0, g: 0, b: 0, a: 0}
     - _Offset: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _Offset_1: {r: 0.5, g: 0.5, b: 0, a: 0}
-    - _Offset_Height: {r: 0.5, g: -0.5, b: 0, a: 0}
-    - _Offset_Temp: {r: 0.5, g: -0.5, b: 0, a: 0}
+    - _Offset_Height: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _Offset_Temp: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _PlainsColor: {r: 0.2590911, g: 0.49056602, b: 0.22908506, a: 0}
     - _SeaColor: {r: 1, g: 0.82943773, b: 0.514151, a: 0}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}

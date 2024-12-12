@@ -7,12 +7,6 @@ public class ChangeTemperature : ToolAction
     public float centerTempValue = 0.02f;
     public float surroundingTempValue = 0.01f;
 
-    void Awake()
-    {
-        actionType = PlayerAction.ChangeTemperature;
-        toolGO = gameObject;
-    }
-
     public override void Action(float pressure)
     {
         SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();
@@ -20,16 +14,18 @@ public class ChangeTemperature : ToolAction
         if (selectedDots.centerDot.dot == null) return;
 
         selectedDots.centerDot.dot.SetTemperature(selectedDots.centerDot.dot.temperature + centerTempValue * direction * pressure);
+        ElementsSpawner.Instance.UpdatePrefab(selectedDots.centerDot.dot);
         if (showSelectedDots) selectedDots.centerDot.dot.gameObject.SetActive(true);
         for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
         {
             List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
             float moveValue = Mathf.Lerp(centerTempValue, surroundingTempValue, (float)(circleIndex + 1) / numberOfCircles);
 
-            foreach (SelectedDot dot in currentCircle)
+            foreach (SelectedDot selectedDot in currentCircle)
             {
-                dot.dot.SetTemperature(dot.dot.temperature + moveValue * direction * pressure);
-                if (showSelectedDots) dot.dot.gameObject.SetActive(true);
+                selectedDot.dot.SetTemperature(selectedDot.dot.temperature + moveValue * direction * pressure);
+                if (showSelectedDots) selectedDot.dot.gameObject.SetActive(true);
+                ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
             }
         }
 

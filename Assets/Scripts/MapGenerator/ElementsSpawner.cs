@@ -1,0 +1,94 @@
+using System.Collections;
+using System.Collections.Generic;
+using MapGenerator;
+using UnityEngine;
+
+public class ElementsSpawner : MonoBehaviour
+{
+    [SerializeField] private GameObject tree;
+    [SerializeField] private GameObject deadTree;
+    [SerializeField] private GameObject fireTree;
+    [SerializeField] private GameObject rock;
+    [SerializeField] private Transform elementsParent;
+    private readonly List<GameObject> elements = new();
+    public static ElementsSpawner Instance;
+    private Coroutine spawnTreeAllAroundMapCoroutine;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public void SpawnTreeAllAroundMap(List<List<Dot>> mapDots, int number)
+    {
+        if (spawnTreeAllAroundMapCoroutine != null) StopCoroutine(spawnTreeAllAroundMapCoroutine);
+        spawnTreeAllAroundMapCoroutine = StartCoroutine(SpawnTreeAllAroundMapCoroutine(mapDots, number));
+    }
+
+    public IEnumerator SpawnTreeAllAroundMapCoroutine(List<List<Dot>> mapDots, int number)
+    {
+        for (int i = 0; i < number; i++)
+        {
+            Dot dot = mapDots[Random.Range(0, mapDots.Count)][Random.Range(0, mapDots[0].Count)];
+            if (dot.element) continue;
+
+            Biome biome = BiomeManager.Instance.GetBiome(dot);
+            if (biome == Biome.Water) continue;
+
+
+            GameObject newTree = Instantiate(GetPrefab(biome), elementsParent);
+            Vector3 position = dot.transform.position;
+
+            newTree.transform.localPosition = position;
+            dot.element = newTree;
+
+            elements.Add(newTree);
+
+            if (i % 20 == 0) yield return null;
+        }
+    }
+
+    public void ClearElements()
+    {
+        foreach (GameObject element in elements)
+            Destroy(element);
+
+        elements.Clear();
+    }
+
+    private GameObject GetPrefab(Biome biome)
+    {
+        return biome switch
+        {
+            Biome.Desert => deadTree,
+            Biome.Forest => tree,
+            Biome.Mountains => rock,
+            Biome.Tundra => fireTree,
+            _ => tree,
+        };
+    }
+
+    public void DestroyElement(GameObject element)
+    {
+        elements.Remove(element);
+        Destroy(element);
+    }
+
+    public void UpdatePrefab(Dot dot)
+    {
+        if (dot.element)
+        {
+            DestroyElement(dot.element);
+            Biome biome = BiomeManager.Instance.GetBiome(dot);
+            if (biome == Biome.Water) return;
+
+            GameObject prefab = GetPrefab(biome);
+            GameObject newElement = Instantiate(prefab, elementsParent);
+            newElement.transform.localPosition = dot.transform.position;
+            dot.element = newElement;
+            elements.Add(newElement);
+        }
+
+
+    }
+}
