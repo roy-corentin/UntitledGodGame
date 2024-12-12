@@ -19,7 +19,6 @@ public class DayNightCycle : MonoBehaviour
     public TimeOfDay currentTimeOfDay = TimeOfDay.Day;
     private TimeOfDay lastTimeOfDay = TimeOfDay.Day;
 
-
     [Header("Skybox")]
     public Material skyboxMaterial;
     public Color32 dayColor = new(255, 255, 255, 255);
@@ -29,7 +28,7 @@ public class DayNightCycle : MonoBehaviour
 
     [Header("Light")]
     public Light sun;
-    public Color32 lightDayColor = new(255, 244, 214, 255);
+    public Color32 lightDayColor = new(255, 209, 81, 255);
     public Color32 lightNightColor = new(0, 0, 0, 255);
     private Color startLightColor;
     private Color targetLightColor;
@@ -108,10 +107,12 @@ public class DayNightCycle : MonoBehaviour
 
     private void SmoothTransition()
     {
-        if (transitionTime < transitionDuration)
+        float adjustedTransitionDuration = transitionDuration / timeMultiplier;
+
+        if (transitionTime < adjustedTransitionDuration)
         {
             transitionTime += Time.deltaTime;
-            float t = Mathf.Clamp01(transitionTime / transitionDuration);
+            float t = Mathf.Clamp01(transitionTime / adjustedTransitionDuration);
 
             Color32 newSkyboxColor = Color32.Lerp(startSkyboxColor, targetSkyboxColor, t);
             skyboxMaterial.SetColor("_Tint", newSkyboxColor);

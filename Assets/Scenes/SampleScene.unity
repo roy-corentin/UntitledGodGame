@@ -8486,7 +8486,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mountainsHeight: 0.46
   waterHeight: 0.28
-  tempDesert: 0.65
+  tempDesert: 0.6
   tempTundra: 0.35
 --- !u!1 &747341709
 GameObject:
@@ -16202,7 +16202,6 @@ MonoBehaviour:
   daySinceStart: 0
   currentTimeOfDay: 0
   skyboxMaterial: {fileID: 2100000, guid: 7a55134c0bdd95f45ac36d63fc4e2b89, type: 2}
-  lerpSpeed: 2
   dayColor:
     serializedVersion: 2
     rgba: 2156694668
@@ -16210,13 +16209,13 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 2149124875
   sun: {fileID: 705507994}
-  lightLerpSpeed: 2
   lightDayColor:
     serializedVersion: 2
     rgba: 4292277503
   lightNightColor:
     serializedVersion: 2
     rgba: 4278190080
+  transitionDuration: 5
 --- !u!1 &1562454500
 GameObject:
   m_ObjectHideFlags: 0
