@@ -6637,17 +6637,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1218695045}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &613377712 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 825315358724930822, guid: 411bed4e2c9e04467a3eb2fec1d02593, type: 3}
-  m_PrefabInstance: {fileID: 5833123207365553721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50ecb2da96ab849648031852c111c96b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &619154223
 GameObject:
   m_ObjectHideFlags: 0
@@ -16137,6 +16126,7 @@ GameObject:
   - component: {fileID: 1548530424}
   - component: {fileID: 1548530423}
   - component: {fileID: 1548530425}
+  - component: {fileID: 1548530426}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -16156,12 +16146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4ce057cd86014ad895c7f46aedcb44e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentAction: 2
-  toolActions:
-  - {fileID: 5794784288629634675}
-  - {fileID: 5166760206152229774}
-  - {fileID: 613377712}
-  - {fileID: 2125566018}
+  currentTool: {fileID: 0}
   actionCooldown: 0.05
 --- !u!4 &1548530424
 Transform:
@@ -16198,6 +16183,34 @@ MonoBehaviour:
   passthroughLayer: {fileID: 775757794}
   mainCamera: {fileID: 474958123}
   toolbox: {fileID: 5833123207365553722}
+--- !u!114 &1548530426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548530422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfa8e5aae0be644a98e3be5f8c6e926c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dayLengthinMinutes: 10
+  timeOfDay: 0
+  timeOFDayOn24: 0
+  timeMultiplier: 1
+  daySinceStart: 0
+  currentTimeOfDay: 0
+  skyboxMaterial: {fileID: 2100000, guid: 7a55134c0bdd95f45ac36d63fc4e2b89, type: 2}
+  sun: {fileID: 705507994}
+  mainCamera: {fileID: 474958123}
+  lerpSpeed: 2
+  dayColor:
+    serializedVersion: 2
+    rgba: 2156694668
+  nightColor:
+    serializedVersion: 2
+    rgba: 2149124875
 --- !u!1 &1562454500
 GameObject:
   m_ObjectHideFlags: 0
@@ -21247,39 +21260,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1727116298}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2125566018 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6081626553395246182, guid: 411bed4e2c9e04467a3eb2fec1d02593, type: 3}
-  m_PrefabInstance: {fileID: 5833123207365553721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0f88bc13f4e66847998e386d835df60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5166760206152229774 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5934780862292228570, guid: 411bed4e2c9e04467a3eb2fec1d02593, type: 3}
-  m_PrefabInstance: {fileID: 5833123207365553721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89c1186922af44a06b797384a7c0baca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5794784288629634675 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3862484212946792103, guid: 411bed4e2c9e04467a3eb2fec1d02593, type: 3}
-  m_PrefabInstance: {fileID: 5833123207365553721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 642ee8192a87d48809b3e89281d7469d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &5833123207365553721
 PrefabInstance:
   m_ObjectHideFlags: 0
