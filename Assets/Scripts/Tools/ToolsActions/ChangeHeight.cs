@@ -36,4 +36,9 @@ public class ChangeHeight : ToolAction
         MapGenerator.Map.Instance.CreateMesh();
         MapGenerator.Map.Instance.UpdateHeightMap(selectedDots);
     }
+
+    public void SetCenterMoveValue(float centerMoveValue)
+    {
+        this.centerMoveValue = centerMoveValue;
+    }
 }

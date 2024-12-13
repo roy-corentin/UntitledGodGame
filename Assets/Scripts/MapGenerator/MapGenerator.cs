@@ -48,11 +48,6 @@ namespace MapGenerator
 #endif
 
             if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
-            else if (OVRInput.GetDown(OVRInput.Button.Four)) // Y
-            {
-                ClearDots();
-                ClearMesh();
-            }
         }
 
         public void GenerateAll()

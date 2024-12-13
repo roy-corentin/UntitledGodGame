@@ -32,7 +32,7 @@ public class ARtoVR : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B) || OVRInput.GetDown(OVRInput.Button.Start))
+        if (Input.GetKeyDown(KeyCode.B) || OVRInput.GetDown(OVRInput.Button.Four))
         {
             ToggleMode();
         }
