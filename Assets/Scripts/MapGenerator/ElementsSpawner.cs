@@ -35,11 +35,16 @@ public class ElementsSpawner : MonoBehaviour
             Biome biome = BiomeManager.Instance.GetBiome(dot);
             if (biome == Biome.Water) continue;
 
-
-            GameObject newTree = Instantiate(GetPrefab(biome), elementsParent);
+            GameObject prefab = GetPrefab(biome);
+            GameObject newTree = Instantiate(prefab, elementsParent);
             Vector3 position = dot.transform.position;
+            Vector3 rotation = new(0, Random.Range(0, 360), 0);
+            Vector3 scale = newTree.transform.localScale;
+            scale *= Random.Range(0.8f, 1.2f);
 
             newTree.transform.localPosition = position;
+            newTree.transform.localEulerAngles = rotation;
+            newTree.transform.localScale = scale;
             dot.element = newTree;
 
             elements.Add(newTree);
