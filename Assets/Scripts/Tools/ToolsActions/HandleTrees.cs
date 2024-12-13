@@ -7,6 +7,8 @@ public class HandleTrees : ToolAction
     [Header("HandleTress")]
     public int spawnChanceByTick = 1;
     public int maxSpawnChance = 100;
+    private const int ADD_TREE = 1;
+    private const int REMOVE_TREE = -1;
 
     public override void Action(float pressure)
     {
@@ -28,9 +30,6 @@ public class HandleTrees : ToolAction
                     selectedDot.dot.gameObject.SetActive(true);
             }
         }
-
-        Map.Instance.CreateMesh();
-        Map.Instance.UpdateHeightMap(selectedDots);
     }
 
     private bool CanSpawnElement()
@@ -40,7 +39,7 @@ public class HandleTrees : ToolAction
 
     private void EditDot(Dot dot)
     {
-        if (direction == 1)
+        if (direction == ADD_TREE)
         {
             if (CanSpawnElement()) ElementsSpawner.Instance.SpawnElementOnDot(dot);
         }

@@ -68,7 +68,14 @@ public class ElementsSpawner : MonoBehaviour
         if (biome == Biome.Water) return;
 
         GameObject newElement = Instantiate(GetPrefab(biome), elementsParent);
+        Vector3 rotation = new(0, Random.Range(0, 360), 0);
+        Vector3 scale = newElement.transform.localScale;
+        scale *= Random.Range(0.8f, 1.2f);
+
         newElement.transform.localPosition = dot.transform.position;
+        newElement.transform.localEulerAngles = rotation;
+        newElement.transform.localScale = scale;
+
         dot.element = newElement;
         elements.Add(newElement);
     }
