@@ -28,7 +28,7 @@ public class SmoothHeight : ToolAction
                 float smoothedY = Mathf.Lerp(currentY, finalY, smoothingFactor * Time.deltaTime);
 
                 selectedDot.dot.SetYPosition(smoothedY);
-                if (showSelectedDots) selectedDot.dot.gameObject.SetActive(true);
+                if (showSelectedDots && circleIndex == selectedDots.surroundingCircles.Count - 1) selectedDot.dot.gameObject.SetActive(true);
                 if (selectedDot.dot.element)
                     selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
             }
