@@ -24,8 +24,9 @@ public class Flatten : ToolAction
                 int dotIndex = currentCircle.IndexOf(selectedDot);
                 int nummberOfDots = currentCircle.Count;
                 float moveValue = Mathf.Lerp(currentY, finalY, (float)(dotIndex + 1) / nummberOfDots);
+
                 selectedDot.dot.SetYPosition(moveValue);
-                if (showSelectedDots) selectedDot.dot.gameObject.SetActive(true);
+                if (showSelectedDots && circleIndex == selectedDots.surroundingCircles.Count - 1) selectedDot.dot.gameObject.SetActive(true);
                 if (selectedDot.dot.element)
                     selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
             }

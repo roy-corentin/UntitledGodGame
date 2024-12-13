@@ -24,7 +24,7 @@ public class ChangeTemperature : ToolAction
             foreach (SelectedDot selectedDot in currentCircle)
             {
                 selectedDot.dot.SetTemperature(selectedDot.dot.temperature + moveValue * direction * pressure);
-                if (showSelectedDots) selectedDot.dot.gameObject.SetActive(true);
+                if (showSelectedDots && circleIndex == selectedDots.surroundingCircles.Count - 1) selectedDot.dot.gameObject.SetActive(true);
                 ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
             }
         }
