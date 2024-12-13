@@ -15,10 +15,9 @@ public class ChangeHeight : ToolAction
 
         selectedDots.centerDot.dot.SetYPosition(selectedDots.centerDot.dot.transform.position.y + centerMoveValue * direction * pressure);
         if (selectedDots.centerDot.dot.element)
-        {
             selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
-        }
         if (showSelectedDots) selectedDots.centerDot.dot.gameObject.SetActive(true);
+
         for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
         {
             List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
