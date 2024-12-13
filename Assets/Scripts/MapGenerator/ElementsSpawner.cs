@@ -61,6 +61,25 @@ public class ElementsSpawner : MonoBehaviour
         elements.Clear();
     }
 
+    public void SpawnElementOnDot(Dot dot)
+    {
+        if (dot.element) return;
+        Biome biome = BiomeManager.Instance.GetBiome(dot);
+        if (biome == Biome.Water) return;
+
+        GameObject newElement = Instantiate(GetPrefab(biome), elementsParent);
+        Vector3 rotation = new(0, Random.Range(0, 360), 0);
+        Vector3 scale = newElement.transform.localScale;
+        scale *= Random.Range(0.8f, 1.2f);
+
+        newElement.transform.localPosition = dot.transform.position;
+        newElement.transform.localEulerAngles = rotation;
+        newElement.transform.localScale = scale;
+
+        dot.element = newElement;
+        elements.Add(newElement);
+    }
+
     private GameObject GetPrefab(Biome biome)
     {
         return biome switch
@@ -75,6 +94,7 @@ public class ElementsSpawner : MonoBehaviour
 
     public void DestroyElement(GameObject element)
     {
+        if (element == null) return;
         elements.Remove(element);
         Destroy(element);
     }

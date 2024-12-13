@@ -18,5 +18,11 @@ namespace MapGenerator
             pos.y = y;
             transform.position = pos;
         }
+
+        public void UpdateElementPosition()
+        {
+            if (!element) return;
+            element.transform.position = transform.position;
+        }
     }
 }
