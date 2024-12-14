@@ -9,9 +9,9 @@ public class Flatten : ToolAction
         if (selectedDots.centerDot.dot.element)
             selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
 
-        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayer.Count; layerIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Count; layerIndex++)
         {
-            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayer[layerIndex];
+            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
 
             foreach (SelectedDot selectedDot in currentLayer)
             {

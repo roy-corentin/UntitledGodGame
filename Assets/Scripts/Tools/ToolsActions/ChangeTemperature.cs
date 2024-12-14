@@ -11,9 +11,9 @@ public class ChangeTemperature : ToolAction
     {
         UpdateTemperatureDot(pressure, selectedDots.centerDot, centerTempValue);
 
-        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayer.Count; layerIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Count; layerIndex++)
         {
-            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayer[layerIndex];
+            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
             float moveValue = Mathf.Lerp(centerTempValue, surroundingTempValue, (float)(layerIndex + 1) / actionRange);
 
             foreach (SelectedDot selectedDot in currentLayer)
