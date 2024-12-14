@@ -19,7 +19,7 @@ public class ToolAction : MonoBehaviour
 
         if (showSelectedDots) {
             selectedDots.centerDot.dot.gameObject.SetActive(true);
-            foreach (SelectedDot selectedDot in selectedDots.surroundingCircles[selectedDots.surroundingCircles.Count - 1])
+            foreach (SelectedDot selectedDot in selectedDots.surroundingDotsLayer[selectedDots.surroundingDotsLayer.Count - 1])
             {
                 selectedDot.dot.gameObject.SetActive(true);
             }

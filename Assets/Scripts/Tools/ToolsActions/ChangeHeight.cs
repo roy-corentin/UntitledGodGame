@@ -11,12 +11,12 @@ public class ChangeHeight : ToolAction
     {
         UpdateHeightDot(pressure, selectedDots.centerDot, centerMoveValue);
 
-        for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayer.Count; layerIndex++)
         {
-            List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
-            float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(circleIndex + 1) / actionRange);
+            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayer[layerIndex];
+            float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(layerIndex + 1) / actionRange);
 
-            foreach (SelectedDot selectedDot in currentCircle)
+            foreach (SelectedDot selectedDot in currentLayer)
             {
                 UpdateHeightDot(pressure, selectedDot, moveValue);
             }
