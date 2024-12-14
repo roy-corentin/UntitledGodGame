@@ -30,8 +30,8 @@ public class PlayerActions : MonoBehaviour
     private void Update()
     {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.DownArrow)) SetDirection(-1);
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) SetDirection(1);
+        if (Input.GetKeyDown(KeyCode.DownArrow)) SetActionType(ToolAction.REMOVE);
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) SetActionType(ToolAction.ADD);
 
         if (currentTool != null)
         {
@@ -51,7 +51,7 @@ public class PlayerActions : MonoBehaviour
             nextActionTime = Time.time + actionCooldown;
         }
 #else
-        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-currentTool.direction); // B
+        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-currentTool.actionType); // B
 
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
@@ -64,9 +64,9 @@ public class PlayerActions : MonoBehaviour
 #endif
     }
 
-    private void SetDirection(int direction)
+    private void SetActionType(int actionType)
     {
-        currentTool.direction = direction;
+        currentTool.actionType = actionType;
     }
 
     public SelectedDots GetSelectedDots()
@@ -103,13 +103,13 @@ public class PlayerActions : MonoBehaviour
         }
 
         // if the nearest dot is too far, return an empty SelectedDots
-        if (nearestDistance > currentTool.range) return new SelectedDots();
-        if (Mathf.Abs(centerDot.dot.transform.position.y - playerHandPosition.y) > currentTool.range) return new SelectedDots();
+        if (nearestDistance > currentTool.triggerRange) return new SelectedDots();
+        if (Mathf.Abs(centerDot.dot.transform.position.y - playerHandPosition.y) > currentTool.triggerRange) return new SelectedDots();
 
         SelectedDots selectedDots = new() { centerDot = centerDot, surroundingCircles = new() };
 
         // add the 8 surrounding dots to the selectedDots
-        for (int circle = 1; circle <= currentTool.numberOfCircles; circle++)
+        for (int circle = 1; circle <= currentTool.actionRange; circle++)
         {
             List<SelectedDot> currentCircleDots = new();
 
