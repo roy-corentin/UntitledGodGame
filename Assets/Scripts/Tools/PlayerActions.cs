@@ -11,7 +11,7 @@ public struct SelectedDot
 public struct SelectedDots
 {
     public SelectedDot centerDot;
-    public List<List<SelectedDot>> surroundingCircles;
+    public List<List<SelectedDot>> surroundingDotsLayer;
 }
 
 public class PlayerActions : MonoBehaviour
@@ -106,33 +106,30 @@ public class PlayerActions : MonoBehaviour
         if (nearestDistance > currentTool.triggerRange) return new SelectedDots();
         if (Mathf.Abs(centerDot.dot.transform.position.y - playerHandPosition.y) > currentTool.triggerRange) return new SelectedDots();
 
-        SelectedDots selectedDots = new() { centerDot = centerDot, surroundingCircles = new() };
+        SelectedDots selectedDots = new() { centerDot = centerDot, surroundingDotsLayer = new() };
 
-        // add the 8 surrounding dots to the selectedDots
-        for (int circle = 1; circle <= currentTool.actionRange; circle++)
+        for (int layerIndex = 1; layerIndex <= currentTool.actionRange; layerIndex++)
         {
-            List<SelectedDot> currentCircleDots = new();
+            List<SelectedDot> currentLayerDots = new();
 
-            for (int iOffset = -circle; iOffset <= circle; iOffset++)
+            for (int iOffset = -layerIndex; iOffset <= layerIndex; iOffset++)
             {
-                for (int jOffset = -circle; jOffset <= circle; jOffset++)
+                for (int jOffset = -layerIndex; jOffset <= layerIndex; jOffset++)
                 {
                     int indexI = centerDot.index / mapDots.Count + iOffset;
                     int indexJ = centerDot.index % mapDots.Count + jOffset;
 
-                    // Check if the point is on the edge of the current circle
-                    if ((Mathf.Abs(iOffset) == circle || Mathf.Abs(jOffset) == circle) &&
-                        indexI >= 0 && indexI < mapDots.Count &&
-                        indexJ >= 0 && indexJ < mapDots[indexI].Count)
-                        currentCircleDots.Add(new SelectedDot { dot = mapDots[indexI][indexJ], index = centerDot.index });
+                    // Check if the point is on the edge of the current layer
+                    if (isPointOnEdgeOfLayer(layerIndex, indexI, indexJ, iOffset, jOffset, mapDots))
+                        currentLayerDots.Add(new SelectedDot { dot = mapDots[indexI][indexJ], i = indexI, j = indexJ });
 
                     try { if (mapDots[indexI][indexJ].gameObject.activeSelf) mapDots[indexI][indexJ].gameObject.SetActive(false); }
                     catch (ArgumentOutOfRangeException) { }
                 }
             }
 
-            if (currentCircleDots.Count > 0)
-                selectedDots.surroundingCircles.Add(currentCircleDots);
+            if (currentLayerDots.Count > 0)
+                selectedDots.surroundingDotsLayer.Add(currentLayerDots);
         }
 
         lastSelectedDots = selectedDots;
@@ -145,10 +142,17 @@ public class PlayerActions : MonoBehaviour
         try
         {
             if (lastSelectedDots.centerDot.dot != null) lastSelectedDots.centerDot.dot.gameObject.SetActive(false);
-            foreach (List<SelectedDot> circle in lastSelectedDots.surroundingCircles)
-                foreach (SelectedDot dot in circle)
+            foreach (List<SelectedDot> layer in lastSelectedDots.surroundingDotsLayer)
+                foreach (SelectedDot dot in layer)
                     if (dot.dot != null) dot.dot.gameObject.SetActive(false);
         }
         catch (NullReferenceException) { }
+    }
+
+    private bool isPointOnEdgeOfLayer(int layer, int i, int j, int iOffset, int jOffset, List<List<MapGenerator.Dot>> mapDots)
+    {
+        return (Mathf.Abs(iOffset) == layer || Mathf.Abs(jOffset) == layer) &&
+               i >= 0 && i < mapDots.Count &&
+               j >= 0 && j < mapDots[i].Count;
     }
 }

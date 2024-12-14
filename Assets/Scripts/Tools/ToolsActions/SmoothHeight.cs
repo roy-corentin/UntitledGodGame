@@ -11,12 +11,12 @@ public class SmoothHeight : ToolAction
         if (selectedDots.centerDot.dot.element)
             selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
 
-        for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayer.Count; layerIndex++)
         {
-            List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
-            float smoothingFactor = (1.0f - ((float)circleIndex / selectedDots.surroundingCircles.Count)) * smoothingSpeed;
+            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayer[layerIndex];
+            float smoothingFactor = (1.0f - ((float)layerIndex / selectedDots.surroundingDotsLayer.Count)) * smoothingSpeed;
 
-            foreach (SelectedDot selectedDot in currentCircle)
+            foreach (SelectedDot selectedDot in currentLayer)
             {
                 float currentY = selectedDot.dot.transform.position.y;
                 float smoothedY = Mathf.Lerp(currentY, finalY, smoothingFactor * Time.deltaTime);

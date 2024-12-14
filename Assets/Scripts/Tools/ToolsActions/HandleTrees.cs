@@ -12,11 +12,11 @@ public class HandleTrees : ToolAction
     {
         EditDot(selectedDots.centerDot.dot);
 
-        for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayer.Count; layerIndex++)
         {
-            List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
+            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayer[layerIndex];
 
-            foreach (SelectedDot selectedDot in currentCircle)
+            foreach (SelectedDot selectedDot in currentLayer)
             {
                 EditDot(selectedDot.dot);
             }
