@@ -8,7 +8,7 @@ public class HandleTrees : ToolAction
     public int spawnChanceByTick = 1;
     public int maxSpawnChance = 100;
 
-    public override void EditDots(float pressure, SelectedDots selectedDots)
+    public override void EditDots(float pressure, SelectionDots selectedDots)
     {
         EditDot(selectedDots.centerDot.dot);
 

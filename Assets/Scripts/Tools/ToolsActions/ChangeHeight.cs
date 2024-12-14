@@ -7,7 +7,7 @@ public class ChangeHeight : ToolAction
     public float centerMoveValue = 0.02f;
     public float surroundingMoveValue = 0.01f;
 
-    public override void EditDots(float pressure, SelectedDots selectedDots)
+    public override void EditDots(float pressure, SelectionDots selectedDots)
     {
         UpdateHeightDot(pressure, selectedDots.centerDot, centerMoveValue);
 

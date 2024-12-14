@@ -5,11 +5,11 @@ using UnityEngine;
 public struct SelectedDot
 {
     public MapGenerator.Dot dot;
-    public int i;
     public int j;
+    public int i;
 }
 
-public struct SelectedDots
+public struct SelectionDots
 {
     public SelectedDot centerDot;
     public List<List<SelectedDot>> surroundingDotsLayers;
@@ -19,7 +19,7 @@ public class PlayerActions : MonoBehaviour
 {
     public ToolAction currentTool;
     public static PlayerActions Instance;
-    private SelectedDots lastSelectedDots;
+    private SelectionDots lastSelectedDots;
     public float actionCooldown = 0.1f;
     private float nextActionTime = 0f;
 
@@ -70,16 +70,16 @@ public class PlayerActions : MonoBehaviour
         currentTool.actionType = actionType;
     }
 
-    public SelectedDots GetSelectedDots()
+    public SelectionDots GetSelectedDots()
     {
-        if (currentTool == null) return new SelectedDots();
+        if (currentTool == null) return new SelectionDots();
 
         List<List<MapGenerator.Dot>> mapDots = MapGenerator.Map.Instance.mapDots;
         Vector3 playerHandPosition = currentTool.transform.position;
 
-        if (mapDots.Count == 0) return new SelectedDots();
+        if (mapDots.Count == 0) return new SelectionDots();
 
-        SelectedDot selectedDot = new() { dot = mapDots[0][0], i = 0, j = 0 };
+        SelectedDot selectedDot = new() { dot = mapDots[0][0], j = 0, i = 0 };
         float nearestDistance = Vector3.Distance(selectedDot.dot.transform.position, playerHandPosition);
 
         // get the nearest dot to the playerHand
@@ -96,8 +96,8 @@ public class PlayerActions : MonoBehaviour
                 {
                     nearestDistance = distance;
                     selectedDot.dot = dot;
-                    selectedDot.i = i;
-                    selectedDot.j = j;
+                    selectedDot.j = i;
+                    selectedDot.i = j;
                 }
 
                 if (dot.gameObject.activeSelf) dot.gameObject.SetActive(false);
@@ -105,27 +105,27 @@ public class PlayerActions : MonoBehaviour
         }
 
         // if the nearest dot is too far, return an empty SelectedDots
-        if (nearestDistance > currentTool.triggerRange) return new SelectedDots();
-        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.triggerRange) return new SelectedDots();
+        if (nearestDistance > currentTool.triggerRange) return new SelectionDots();
+        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.triggerRange) return new SelectionDots();
 
-        SelectedDots selectedDots = new() { centerDot = selectedDot, surroundingDotsLayers = new() };
+        SelectionDots selectedDots = new() { centerDot = selectedDot, surroundingDotsLayers = new() };
 
         for (int layerIndex = 1; layerIndex <= currentTool.actionRange; layerIndex++)
         {
             List<SelectedDot> currentLayerDots = new();
 
-            for (int iOffset = -layerIndex; iOffset <= layerIndex; iOffset++)
+            for (int yOffset = -layerIndex; yOffset <= layerIndex; yOffset++)
             {
-                for (int jOffset = -layerIndex; jOffset <= layerIndex; jOffset++)
+                for (int xOffset = -layerIndex; xOffset <= layerIndex; xOffset++)
                 {
-                    int indexI = selectedDot.i + iOffset;
-                    int indexJ = selectedDot.j + jOffset;
+                    int y = selectedDot.j + yOffset;
+                    int x = selectedDot.i + xOffset;
 
                     // Check if the point is on the edge of the current layer
-                    if (isPointOnEdgeOfLayer(layerIndex, indexI, indexJ, iOffset, jOffset, mapDots))
-                        currentLayerDots.Add(new SelectedDot { dot = mapDots[indexI][indexJ], i = indexI, j = indexJ });
+                    if (isPointOnEdgeOfLayer(layerIndex, y, x, yOffset, xOffset, mapDots))
+                        currentLayerDots.Add(new SelectedDot { dot = mapDots[y][x], j = y, i = x });
 
-                    try { if (mapDots[indexI][indexJ].gameObject.activeSelf) mapDots[indexI][indexJ].gameObject.SetActive(false); }
+                    try { if (mapDots[y][x].gameObject.activeSelf) mapDots[y][x].gameObject.SetActive(false); }
                     catch (ArgumentOutOfRangeException) { }
                 }
             }
@@ -151,10 +151,10 @@ public class PlayerActions : MonoBehaviour
         catch (NullReferenceException) { }
     }
 
-    private bool isPointOnEdgeOfLayer(int layer, int i, int j, int iOffset, int jOffset, List<List<MapGenerator.Dot>> mapDots)
+    private bool isPointOnEdgeOfLayer(int layer, int y, int x, int yOffset, int xOffset, List<List<MapGenerator.Dot>> mapDots)
     {
-        return (Mathf.Abs(iOffset) == layer || Mathf.Abs(jOffset) == layer) &&
-               i >= 0 && i < mapDots.Count &&
-               j >= 0 && j < mapDots[i].Count;
+        return (Mathf.Abs(yOffset) == layer || Mathf.Abs(xOffset) == layer) &&
+               y >= 0 && y < mapDots.Count &&
+               x >= 0 && x < mapDots[y].Count;
     }
 }

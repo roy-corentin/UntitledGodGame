@@ -5,7 +5,7 @@ public class SmoothHeight : ToolAction
 {
     [SerializeField] private float smoothingSpeed = 0.5f;
 
-    public override void EditDots(float pressure, SelectedDots selectedDots)
+    public override void EditDots(float pressure, SelectionDots selectedDots)
     {
         float finalY = selectedDots.centerDot.dot.transform.position.y;
         if (selectedDots.centerDot.dot.element)
