@@ -5,8 +5,7 @@ using UnityEngine;
 public struct SelectedDot
 {
     public MapGenerator.Dot dot;
-    public int i;
-    public int j;
+    public int index;
 }
 
 public struct SelectedDots
@@ -79,8 +78,8 @@ public class PlayerActions : MonoBehaviour
 
         if (mapDots.Count == 0) return new SelectedDots();
 
-        SelectedDot selectedDot = new() { dot = mapDots[0][0], i = 0, j = 0 };
-        float nearestDistance = Vector3.Distance(selectedDot.dot.transform.position, playerHandPosition);
+        SelectedDot centerDot = new() { dot = mapDots[0][0], index = 0 };
+        float nearestDistance = Vector3.Distance(centerDot.dot.transform.position, playerHandPosition);
 
         // get the nearest dot to the playerHand
         for (int i = 0; i < mapDots.Count; i++)
@@ -95,9 +94,8 @@ public class PlayerActions : MonoBehaviour
                 if (distance < nearestDistance)
                 {
                     nearestDistance = distance;
-                    selectedDot.dot = dot;
-                    selectedDot.i = i;
-                    selectedDot.j = j;
+                    centerDot.dot = dot;
+                    centerDot.index = i * mapDots[i].Count + j;
                 }
 
                 if (dot.gameObject.activeSelf) dot.gameObject.SetActive(false);
@@ -106,9 +104,9 @@ public class PlayerActions : MonoBehaviour
 
         // if the nearest dot is too far, return an empty SelectedDots
         if (nearestDistance > currentTool.range) return new SelectedDots();
-        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.range) return new SelectedDots();
+        if (Mathf.Abs(centerDot.dot.transform.position.y - playerHandPosition.y) > currentTool.range) return new SelectedDots();
 
-        SelectedDots selectedDots = new() { centerDot = selectedDot, surroundingCircles = new() };
+        SelectedDots selectedDots = new() { centerDot = centerDot, surroundingCircles = new() };
 
         // add the 8 surrounding dots to the selectedDots
         for (int circle = 1; circle <= currentTool.numberOfCircles; circle++)
@@ -119,14 +117,14 @@ public class PlayerActions : MonoBehaviour
             {
                 for (int jOffset = -circle; jOffset <= circle; jOffset++)
                 {
-                    int indexI = selectedDot.i + iOffset;
-                    int indexJ = selectedDot.j + jOffset;
+                    int indexI = centerDot.index / mapDots.Count + iOffset;
+                    int indexJ = centerDot.index % mapDots.Count + jOffset;
 
                     // Check if the point is on the edge of the current circle
                     if ((Mathf.Abs(iOffset) == circle || Mathf.Abs(jOffset) == circle) &&
                         indexI >= 0 && indexI < mapDots.Count &&
                         indexJ >= 0 && indexJ < mapDots[indexI].Count)
-                        currentCircleDots.Add(new SelectedDot { dot = mapDots[indexI][indexJ], i = indexI, j = indexJ });
+                        currentCircleDots.Add(new SelectedDot { dot = mapDots[indexI][indexJ], index = centerDot.index });
 
                     try { if (mapDots[indexI][indexJ].gameObject.activeSelf) mapDots[indexI][indexJ].gameObject.SetActive(false); }
                     catch (ArgumentOutOfRangeException) { }

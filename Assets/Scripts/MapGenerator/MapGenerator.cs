@@ -102,18 +102,16 @@ namespace MapGenerator
         public void UpdateHeightMap(SelectedDots dots)
         {
             float parentY = mapParent.position.y;
-            int centerIndex = GetIndex(dots.centerDot.i, dots.centerDot.j);
 
-            try { heightMapValues[centerIndex] = dots.centerDot.dot.transform.position.y * emplitude + parentY; }
+            try { heightMapValues[dots.centerDot.index] = dots.centerDot.dot.transform.position.y * emplitude + parentY; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
             foreach (List<SelectedDot> circle in dots.surroundingCircles)
             {
                 foreach (SelectedDot dot in circle)
                 {
-                    int index = GetIndex(dot.i, dot.j);
-                    if (index < 0 || index >= heightMapValues.Count) continue;
-                    heightMapValues[index] = dot.dot.transform.position.y * emplitude + parentY;
+                    if (dot.index < 0 || dot.index >= heightMapValues.Count) continue;
+                    heightMapValues[dot.index] = dot.dot.transform.position.y * emplitude + parentY;
                 }
             }
 
@@ -123,28 +121,21 @@ namespace MapGenerator
 
         public void UpdateTemperatureMap(SelectedDots dots)
         {
-            int centerIndex = GetIndex(dots.centerDot.i, dots.centerDot.j);
 
-            try { temperatureMapValues[centerIndex] = dots.centerDot.dot.temperature; }
+            try { temperatureMapValues[dots.centerDot.index] = dots.centerDot.dot.temperature; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
             foreach (List<SelectedDot> circle in dots.surroundingCircles)
             {
                 foreach (SelectedDot dot in circle)
                 {
-                    int index = GetIndex(dot.i, dot.j);
-                    if (index < 0 || index >= temperatureMapValues.Count) continue;
-                    temperatureMapValues[index] = dot.dot.temperature;
+                    if (dot.index < 0 || dot.index >= temperatureMapValues.Count) continue;
+                    temperatureMapValues[dot.index] = dot.dot.temperature;
                 }
             }
 
             temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(size, temperatureMapValues);
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
-        }
-
-        private int GetIndex(int i, int j)
-        {
-            return (i + 1) * size - (j + 1);
         }
 
         public static List<List<float>> ConvertToListList(List<float> list, int size)
