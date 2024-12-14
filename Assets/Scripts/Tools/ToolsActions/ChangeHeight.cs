@@ -7,29 +7,18 @@ public class ChangeHeight : ToolAction
     public float centerMoveValue = 0.02f;
     public float surroundingMoveValue = 0.01f;
 
-    public override void Action(float pressure)
+    public override void EditDots(float pressure, SelectedDots selectedDots)
     {
-        SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();
-
-        if (selectedDots.centerDot.dot == null) return;
-
-        selectedDots.centerDot.dot.SetYPosition(selectedDots.centerDot.dot.transform.position.y + centerMoveValue * direction * pressure);
-        if (selectedDots.centerDot.dot.element)
-            selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
-        if (showSelectedDots) selectedDots.centerDot.dot.gameObject.SetActive(true);
+        UpdateHeightDot(pressure, selectedDots.centerDot, centerMoveValue);
 
         for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
         {
             List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
-            float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(circleIndex + 1) / numberOfCircles);
+            float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(circleIndex + 1) / actionRange);
 
             foreach (SelectedDot selectedDot in currentCircle)
             {
-                float newY = selectedDot.dot.transform.position.y + moveValue * direction * pressure;
-                selectedDot.dot.SetYPosition(newY);
-                if (showSelectedDots && circleIndex == selectedDots.surroundingCircles.Count - 1) selectedDot.dot.gameObject.SetActive(true);
-                if (selectedDot.dot.element)
-                    selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
+                UpdateHeightDot(pressure, selectedDot, moveValue);
             }
         }
 
@@ -37,8 +26,12 @@ public class ChangeHeight : ToolAction
         MapGenerator.Map.Instance.UpdateHeightMap(selectedDots);
     }
 
-    public void SetCenterMoveValue(float centerMoveValue)
-    {
-        this.centerMoveValue = centerMoveValue;
+    private void UpdateHeightDot(float pressure, SelectedDot selectedDot, float moveValue) {
+        float newY = selectedDot.dot.transform.position.y + moveValue * pressure;
+        if (actionType == REMOVE) newY *= -1;
+
+        selectedDot.dot.SetYPosition(newY);
+        if (selectedDot.dot.element)
+            selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
     }
 }
