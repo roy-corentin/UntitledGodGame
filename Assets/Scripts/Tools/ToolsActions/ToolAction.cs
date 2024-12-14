@@ -12,7 +12,7 @@ public class ToolAction : MonoBehaviour
     [SerializeField] protected bool showSelectedDots = false;
 
     public void Action(float pressure) {
-        SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();
+        SelectionDots selectedDots = PlayerActions.Instance.GetSelectedDots();
         if (selectedDots.centerDot.dot == null) return;
 
         EditDots(pressure, selectedDots);
@@ -26,7 +26,7 @@ public class ToolAction : MonoBehaviour
         }
     }
 
-    public virtual void EditDots(float pressure, SelectedDots selectedDots) { }
+    public virtual void EditDots(float pressure, SelectionDots selectedDots) { }
 
     public void SetActionRange(float actionRange)
     {

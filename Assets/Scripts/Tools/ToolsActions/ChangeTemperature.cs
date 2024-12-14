@@ -7,7 +7,7 @@ public class ChangeTemperature : ToolAction
     public float centerTempValue = 0.02f;
     public float surroundingTempValue = 0.01f;
 
-    public override void EditDots(float pressure, SelectedDots selectedDots)
+    public override void EditDots(float pressure, SelectionDots selectedDots)
     {
         UpdateTemperatureDot(pressure, selectedDots.centerDot, centerTempValue);
 

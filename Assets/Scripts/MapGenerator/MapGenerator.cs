@@ -99,14 +99,14 @@ namespace MapGenerator
             ElementsSpawner.Instance.SpawnTreeAllAroundMap(mapDots, elementQuantity);
         }
 
-        public void UpdateHeightMap(SelectedDots dots)
+        public void UpdateHeightMap(SelectionDots selectedDots)
         {
             float parentY = mapParent.position.y;
 
-            try { heightMapValues[dots.centerDot.index] = dots.centerDot.dot.transform.position.y * emplitude + parentY; }
+            try { heightMapValues[selectedDots.centerDot.index] = selectedDots.centerDot.dot.transform.position.y * emplitude + parentY; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in dots.surroundingDotsLayers)
+            foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
             {
                 foreach (SelectedDot dot in circle)
                 {
@@ -119,13 +119,12 @@ namespace MapGenerator
             meshMaterial.SetTexture("_HeightNoise", heightMap);
         }
 
-        public void UpdateTemperatureMap(SelectedDots dots)
+        public void UpdateTemperatureMap(SelectionDots selectedDots)
         {
-
-            try { temperatureMapValues[dots.centerDot.index] = dots.centerDot.dot.temperature; }
+            try { temperatureMapValues[selectedDots.centerDot.index] = selectedDots.centerDot.dot.temperature; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in dots.surroundingDotsLayers)
+            foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
             {
                 foreach (SelectedDot dot in circle)
                 {
