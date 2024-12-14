@@ -12,7 +12,7 @@ public struct SelectedDot
 public struct SelectedDots
 {
     public SelectedDot centerDot;
-    public List<List<SelectedDot>> surroundingDotsLayer;
+    public List<List<SelectedDot>> surroundingDotsLayers;
 }
 
 public class PlayerActions : MonoBehaviour
@@ -108,7 +108,7 @@ public class PlayerActions : MonoBehaviour
         if (nearestDistance > currentTool.triggerRange) return new SelectedDots();
         if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.triggerRange) return new SelectedDots();
 
-        SelectedDots selectedDots = new() { centerDot = selectedDot, surroundingDotsLayer = new() };
+        SelectedDots selectedDots = new() { centerDot = selectedDot, surroundingDotsLayers = new() };
 
         for (int layerIndex = 1; layerIndex <= currentTool.actionRange; layerIndex++)
         {
@@ -131,7 +131,7 @@ public class PlayerActions : MonoBehaviour
             }
 
             if (currentLayerDots.Count > 0)
-                selectedDots.surroundingDotsLayer.Add(currentLayerDots);
+                selectedDots.surroundingDotsLayers.Add(currentLayerDots);
         }
 
         lastSelectedDots = selectedDots;
@@ -144,7 +144,7 @@ public class PlayerActions : MonoBehaviour
         try
         {
             if (lastSelectedDots.centerDot.dot != null) lastSelectedDots.centerDot.dot.gameObject.SetActive(false);
-            foreach (List<SelectedDot> layer in lastSelectedDots.surroundingDotsLayer)
+            foreach (List<SelectedDot> layer in lastSelectedDots.surroundingDotsLayers)
                 foreach (SelectedDot dot in layer)
                     if (dot.dot != null) dot.dot.gameObject.SetActive(false);
         }
