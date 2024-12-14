@@ -9,7 +9,7 @@ public class ChangeTemperature : ToolAction
 
     public override void EditDots(float pressure, SelectedDots selectedDots)
     {
-        UpdateTemperatureDot(pressure, selectedDots.centerDot);
+        UpdateTemperatureDot(pressure, selectedDots.centerDot, centerTempValue);
 
         for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayer.Count; layerIndex++)
         {
@@ -18,15 +18,15 @@ public class ChangeTemperature : ToolAction
 
             foreach (SelectedDot selectedDot in currentLayer)
             {
-                UpdateTemperatureDot(pressure, selectedDot);
+                UpdateTemperatureDot(pressure, selectedDot, moveValue);
             }
         }
 
         MapGenerator.Map.Instance.UpdateTemperatureMap(selectedDots);
     }
 
-    private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot) {
-        float newCenterDotTemp = selectedDot.dot.temperature + centerTempValue  * pressure;
+    private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot, float moveValue) {
+        float newCenterDotTemp = selectedDot.dot.temperature + moveValue  * pressure;
         if (actionType == REMOVE) newCenterDotTemp *= -1;
 
         selectedDot.dot.SetTemperature(newCenterDotTemp);
