@@ -45,9 +45,9 @@ namespace MapGenerator
                 ClearDots();
                 ClearMesh();
             }
-#endif
-
+#else
             if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
+#endif
         }
 
         public void GenerateAll()
