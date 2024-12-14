@@ -106,7 +106,7 @@ namespace MapGenerator
             try { heightMapValues[dots.centerDot.index] = dots.centerDot.dot.transform.position.y * emplitude + parentY; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in dots.surroundingCircles)
+            foreach (List<SelectedDot> circle in dots.surroundingDotsLayer)
             {
                 foreach (SelectedDot dot in circle)
                 {
@@ -125,7 +125,7 @@ namespace MapGenerator
             try { temperatureMapValues[dots.centerDot.index] = dots.centerDot.dot.temperature; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in dots.surroundingCircles)
+            foreach (List<SelectedDot> circle in dots.surroundingDotsLayer)
             {
                 foreach (SelectedDot dot in circle)
                 {
