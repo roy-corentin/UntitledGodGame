@@ -11,7 +11,7 @@ namespace MapGenerator
         [HideInInspector] public readonly List<List<Dot>> mapDots = new();
         public Transform mapParent;
         [SerializeField] private float mapDimension = 1f;
-        public int nbDotsPerLine = 30;
+        public int size = 30;
         private Texture2D heightMap;
         private Texture2D temperatureMap;
         private List<float> heightMapValues;
@@ -68,10 +68,10 @@ namespace MapGenerator
             generateDotsCoroutine = StartCoroutine(GenerateDots());
             yield return new WaitUntil(() => areDotsGenerated);
 
-            heightMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out heightMap, false);
-            temperatureMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out temperatureMap, false);
-            var heights = ConvertToListList(heightMapValues, nbDotsPerLine);
-            var temperatures = ConvertToListList(temperatureMapValues, nbDotsPerLine);
+            heightMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(size, perlinScale, out heightMap, false);
+            temperatureMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(size, perlinScale, out temperatureMap, false);
+            var heights = ConvertToListList(heightMapValues, size);
+            var temperatures = ConvertToListList(temperatureMapValues, size);
 
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
@@ -83,7 +83,7 @@ namespace MapGenerator
             {
                 for (int z = 0; z < mapDots[x].Count; z++)
                 {
-                    int invertedZ = nbDotsPerLine - z - 1;
+                    int invertedZ = size - z - 1;
                     Dot dot = mapDots[x][z];
                     dot.SetYPosition((heights[x][invertedZ] / emplitude) + parentY);
                     dot.SetTemperature(temperatures[x][invertedZ]);
@@ -117,7 +117,7 @@ namespace MapGenerator
                 }
             }
 
-            heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, heightMapValues);
+            heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(size, heightMapValues);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
         }
 
@@ -138,13 +138,13 @@ namespace MapGenerator
                 }
             }
 
-            temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, temperatureMapValues);
+            temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(size, temperatureMapValues);
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
         }
 
         private int GetIndex(int i, int j)
         {
-            return (i + 1) * nbDotsPerLine - (j + 1);
+            return (i + 1) * size - (j + 1);
         }
 
         public static List<List<float>> ConvertToListList(List<float> list, int size)
@@ -164,13 +164,13 @@ namespace MapGenerator
 
             Vector3 center = mapParent.position;
             Vector3 topLeft = center + new Vector3(-mapDimension / 2, 0, mapDimension / 2);
-            float stepX = mapDimension / nbDotsPerLine;
+            float stepX = mapDimension / size;
 
-            for (float x = topLeft.x, indexX = 0; mapDots.Count < nbDotsPerLine; x += stepX, indexX++)
+            for (float x = topLeft.x, indexX = 0; mapDots.Count < size; x += stepX, indexX++)
             {
                 var line = new List<Dot>();
 
-                for (float z = topLeft.z, indexZ = 0; line.Count < nbDotsPerLine; z -= stepX, indexZ++)
+                for (float z = topLeft.z, indexZ = 0; line.Count < size; z -= stepX, indexZ++)
                 {
                     Vector3 position = new(x + (stepX / 2), 0, z - (stepX / 2));
                     Dot dot = Instantiate(mapDotPrefab, position, Quaternion.identity, mapParent).GetComponent<Dot>();
@@ -309,7 +309,7 @@ namespace MapGenerator
 
             if (GUILayout.Button("Generate Heightmap"))
             {
-                PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(map.nbDotsPerLine, map.nbDotsPerLine, map.perlinScale, out Texture2D _, true);
+                PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(map.size, map.perlinScale, out Texture2D _, true);
             }
         }
     }

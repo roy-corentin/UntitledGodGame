@@ -7,10 +7,10 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
     [HideInInspector] public static float randomOffsetRange = 100f;
     private readonly static string folderName = "Heightmaps";
 
-    public static List<float> GenerateHeightMapTexture(int width, int height, float scale, out Texture2D texture, bool saveHasFile = false)
+    public static List<float> GenerateHeightMapTexture(int size, float scale, out Texture2D texture, bool saveHasFile = false)
     {
-        List<float> heightMap = GenerateHeightMap(width, height, scale);
-        texture = GenerateTexture(width, height, heightMap);
+        List<float> heightMap = GenerateHeightMap(size, scale);
+        texture = GenerateTexture(size, heightMap);
 
         if (!saveHasFile) return heightMap;
 
@@ -30,14 +30,14 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
         return heightMap;
     }
 
-    public static Texture2D GenerateTexture(int width, int height, List<float> heightMap)
+    public static Texture2D GenerateTexture(int size, List<float> heightMap)
     {
-        Texture2D texture = new(width, height);
+        Texture2D texture = new(size, size);
         int index = 0;
 
-        for (int y = 0; y < width; y++)
+        for (int y = 0; y < size; y++)
         {
-            for (int x = 0; x < height; x++)
+            for (int x = 0; x < size; x++)
             {
                 float sample = heightMap[index++];
                 Color color = new(sample, sample, sample);
@@ -51,19 +51,19 @@ public class PerlinNoiseHeightMapGenerator : MonoBehaviour
         return texture;
     }
 
-    static List<float> GenerateHeightMap(int width, int height, float scale)
+    static List<float> GenerateHeightMap(int size, float scale)
     {
         List<float> heightMap = new();
 
         float offsetX = Random.Range(0f, randomOffsetRange);
         float offsetY = Random.Range(0f, randomOffsetRange);
 
-        for (int y = 0; y < width; y++)
+        for (int y = 0; y < size; y++)
         {
-            for (int x = 0; x < height; x++)
+            for (int x = 0; x < size; x++)
             {
-                float xCoord = (float)x / width * scale + offsetX;
-                float yCoord = (float)y / height * scale + offsetY;
+                float xCoord = (float)x / size * scale + offsetX;
+                float yCoord = (float)y / size * scale + offsetY;
 
                 float sample = Mathf.PerlinNoise(xCoord, yCoord);
                 heightMap.Add(sample);
