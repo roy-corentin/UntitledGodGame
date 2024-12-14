@@ -108,10 +108,10 @@ namespace MapGenerator
 
             foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
             {
-                foreach (SelectedDot dot in circle)
+                foreach (SelectedDot selectedDot in circle)
                 {
-                    if (dot.index < 0 || dot.index >= heightMapValues.Count) continue;
-                    heightMapValues[dot.index] = dot.dot.transform.position.y * emplitude + parentY;
+                    if (selectedDot.index < 0 || selectedDot.index >= heightMapValues.Count) continue;
+                    heightMapValues[selectedDot.index] = selectedDot.dot.transform.position.y * emplitude + parentY;
                 }
             }
 
@@ -126,10 +126,10 @@ namespace MapGenerator
 
             foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
             {
-                foreach (SelectedDot dot in circle)
+                foreach (SelectedDot selectedDot in circle)
                 {
-                    if (dot.index < 0 || dot.index >= temperatureMapValues.Count) continue;
-                    temperatureMapValues[dot.index] = dot.dot.temperature;
+                    if (selectedDot.index < 0 || selectedDot.index >= temperatureMapValues.Count) continue;
+                    temperatureMapValues[selectedDot.index] = selectedDot.dot.temperature;
                 }
             }
 
