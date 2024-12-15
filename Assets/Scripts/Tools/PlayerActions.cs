@@ -112,18 +112,18 @@ public class PlayerActions : MonoBehaviour
         {
             List<SelectedDot> currentLayerDots = new();
 
-            for (int jOffset = -layerIndex; jOffset <= layerIndex; jOffset++)
+            for (int iOffset = -layerIndex; iOffset <= layerIndex; iOffset++)
             {
-                for (int iOffset = -layerIndex; iOffset <= layerIndex; iOffset++)
+                for (int jOffset = -layerIndex; jOffset <= layerIndex; jOffset++)
                 {
-                    int j = centerDot.index / mapDots.Count + jOffset;
-                    int i = centerDot.index % mapDots.Count + iOffset;
+                    int i = centerDot.index / mapDots.Count + iOffset;
+                    int j = centerDot.index % mapDots.Count + jOffset;
 
                     // Check if the point is on the edge of the current layer
-                    if (isPointOnEdgeOfLayer(layerIndex, j, i, jOffset, iOffset, mapDots))
-                        currentLayerDots.Add(new SelectedDot { dot = mapDots[j][i], index = i * mapDots.Count + j });
+                    if (IsPointOnEdgeOfLayer(layerIndex, i, j, iOffset, jOffset, mapDots))
+                        currentLayerDots.Add(new SelectedDot { dot = mapDots[i][j], index = i * mapDots.Count + j });
 
-                    try { if (mapDots[j][i].gameObject.activeSelf) mapDots[j][i].gameObject.SetActive(false); }
+                    try { if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false); }
                     catch (ArgumentOutOfRangeException) { }
                 }
             }
@@ -149,10 +149,10 @@ public class PlayerActions : MonoBehaviour
         catch (NullReferenceException) { }
     }
 
-    private bool isPointOnEdgeOfLayer(int layer, int j, int i, int yOffset, int xOffset, List<List<MapGenerator.Dot>> mapDots)
+    private bool IsPointOnEdgeOfLayer(int layer, int i, int j, int iOffset, int jOffset, List<List<MapGenerator.Dot>> mapDots)
     {
-        return (Mathf.Abs(yOffset) == layer || Mathf.Abs(xOffset) == layer) &&
-               j >= 0 && j < mapDots.Count &&
-               i >= 0 && i < mapDots[j].Count;
+        return (Mathf.Abs(iOffset) == layer || Mathf.Abs(jOffset) == layer) &&
+               i >= 0 && i < mapDots.Count &&
+               j >= 0 && j < mapDots[i].Count;
     }
 }
