@@ -82,7 +82,7 @@ public class PlayerActions : MonoBehaviour
         SelectedDot centerDot = GetNearestDot(mapDots, playerHandPosition2D);
         if(centerDot.dot == null) return new SelectionDots();
 
-        SelectionDots selectedDots = new() { centerDot = centerDot, surroundingDotsLayers = new SelectedDot[mapDots.Count][] };
+        SelectionDots selectedDots = new() { centerDot = centerDot, surroundingDotsLayers = new SelectedDot[currentTool.actionRange][] };
 
         for (int layerIndex = 1; layerIndex <= currentTool.actionRange; layerIndex++)
         {
