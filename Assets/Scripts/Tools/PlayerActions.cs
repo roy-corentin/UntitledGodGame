@@ -11,7 +11,7 @@ public struct SelectedDot
 public struct SelectionDots
 {
     public SelectedDot centerDot;
-    public List<List<SelectedDot>> surroundingDotsLayers;
+    public SelectedDot[][] surroundingDotsLayers;
 }
 
 public class PlayerActions : MonoBehaviour
@@ -82,11 +82,12 @@ public class PlayerActions : MonoBehaviour
         SelectedDot centerDot = GetNearestDot(mapDots, playerHandPosition2D);
         if(centerDot.dot == null) return new SelectionDots();
 
-        SelectionDots selectedDots = new() { centerDot = centerDot, surroundingDotsLayers = new() };
+        SelectionDots selectedDots = new() { centerDot = centerDot, surroundingDotsLayers = new SelectedDot[mapDots.Count][] };
 
         for (int layerIndex = 1; layerIndex <= currentTool.actionRange; layerIndex++)
         {
-            List<SelectedDot> currentLayerDots = new();
+            int dotLayerIndex = 0;
+            SelectedDot[] currentLayerDots = new SelectedDot[mapDots.Count];
 
             for (int iOffset = -layerIndex; iOffset <= layerIndex; iOffset++)
             {
@@ -96,16 +97,19 @@ public class PlayerActions : MonoBehaviour
                     int j = centerDot.index % mapDots.Count + jOffset;
 
                     // Check if the point is on the edge of the current layer
-                    if (IsPointOnEdgeOfLayer(layerIndex, i, j, iOffset, jOffset, mapDots))
-                        currentLayerDots.Add(new SelectedDot { dot = mapDots[i][j], index = i * mapDots.Count + j });
+                    if (IsPointOnEdgeOfLayer(layerIndex, i, j, iOffset, jOffset, mapDots)) {
+                        currentLayerDots[dotLayerIndex].dot = mapDots[i][j];
+                        currentLayerDots[dotLayerIndex].index = i * mapDots.Count + j;
+                        dotLayerIndex++;
+                    }
 
                     try { if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false); }
                     catch (ArgumentOutOfRangeException) { }
                 }
             }
 
-            if (currentLayerDots.Count > 0)
-                selectedDots.surroundingDotsLayers.Add(currentLayerDots);
+            if (dotLayerIndex > 0)
+                selectedDots.surroundingDotsLayers[layerIndex-1] = currentLayerDots;
         }
 
         lastSelectedDots = selectedDots;
@@ -118,7 +122,7 @@ public class PlayerActions : MonoBehaviour
         try
         {
             if (lastSelectedDots.centerDot.dot != null) lastSelectedDots.centerDot.dot.gameObject.SetActive(false);
-            foreach (List<SelectedDot> layer in lastSelectedDots.surroundingDotsLayers)
+            foreach (SelectedDot[] layer in lastSelectedDots.surroundingDotsLayers)
                 foreach (SelectedDot dot in layer)
                     if (dot.dot != null) dot.dot.gameObject.SetActive(false);
         }
