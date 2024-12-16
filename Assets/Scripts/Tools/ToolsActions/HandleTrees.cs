@@ -12,12 +12,13 @@ public class HandleTrees : ToolAction
     {
         EditDot(selectedDots.centerDot.dot);
 
-        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Count; layerIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Length; layerIndex++)
         {
-            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
+            SelectedDot[] currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
 
             foreach (SelectedDot selectedDot in currentLayer)
             {
+                if (selectedDot.dot == null) break;
                 EditDot(selectedDot.dot);
             }
         }

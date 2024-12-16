@@ -11,13 +11,14 @@ public class ChangeHeight : ToolAction
     {
         UpdateHeightDot(pressure, selectedDots.centerDot, centerMoveValue);
 
-        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Count; layerIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Length; layerIndex++)
         {
-            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
+            SelectedDot[] currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
             float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(layerIndex + 1) / actionRange);
 
             foreach (SelectedDot selectedDot in currentLayer)
             {
+                if (selectedDot.dot == null) break;
                 UpdateHeightDot(pressure, selectedDot, moveValue);
             }
         }
@@ -26,7 +27,8 @@ public class ChangeHeight : ToolAction
         MapGenerator.Map.Instance.UpdateHeightMap(selectedDots);
     }
 
-    private void UpdateHeightDot(float pressure, SelectedDot selectedDot, float moveValue) {
+    private void UpdateHeightDot(float pressure, SelectedDot selectedDot, float moveValue)
+    {
         float newY = selectedDot.dot.transform.position.y + moveValue * pressure;
         if (actionType == REMOVE) newY *= -1;
 

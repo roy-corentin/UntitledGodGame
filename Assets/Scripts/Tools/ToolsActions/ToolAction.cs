@@ -9,11 +9,6 @@ public class ToolAction : MonoBehaviour
     public const int ADD = 1;
     public const int REMOVE = -1;
     public int actionType = ADD;
-    public float triggerRange;
-    public int actionRange = 2;
-    public const int ADD = 1;
-    public const int REMOVE = -1;
-    public int actionType = ADD;
     [SerializeField] protected bool showSelectedDots = false;
 
     public void Action(float pressure)
@@ -26,8 +21,9 @@ public class ToolAction : MonoBehaviour
         if (showSelectedDots)
         {
             selectedDots.centerDot.dot.gameObject.SetActive(true);
-            foreach (SelectedDot selectedDot in selectedDots.surroundingDotsLayers[selectedDots.surroundingDotsLayers.Count - 1])
+            foreach (SelectedDot selectedDot in selectedDots.surroundingDotsLayers[selectedDots.surroundingDotsLayers.Length - 1])
             {
+                if (selectedDot.dot == null) break;
                 selectedDot.dot.gameObject.SetActive(true);
             }
         }
@@ -40,7 +36,6 @@ public class ToolAction : MonoBehaviour
         this.actionRange = (int)actionRange;
     }
 
-    public void SetTriggerRange(float triggerRange)
     public void SetTriggerRange(float triggerRange)
     {
         this.triggerRange = triggerRange;

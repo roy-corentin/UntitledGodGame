@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "UntitledTekGame.sln"
+    "dotnet.defaultSolution": "UntitledGodGame.sln"
 }

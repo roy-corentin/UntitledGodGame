@@ -11,13 +11,14 @@ public class ChangeTemperature : ToolAction
     {
         UpdateTemperatureDot(pressure, selectedDots.centerDot, centerTempValue);
 
-        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Count; layerIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Length; layerIndex++)
         {
-            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
+            SelectedDot[] currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
             float moveValue = Mathf.Lerp(centerTempValue, surroundingTempValue, (float)(layerIndex + 1) / actionRange);
 
             foreach (SelectedDot selectedDot in currentLayer)
             {
+                if (selectedDot.dot == null) break;
                 UpdateTemperatureDot(pressure, selectedDot, moveValue);
             }
         }
@@ -25,8 +26,9 @@ public class ChangeTemperature : ToolAction
         MapGenerator.Map.Instance.UpdateTemperatureMap(selectedDots);
     }
 
-    private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot, float moveValue) {
-        float newCenterDotTemp = selectedDot.dot.temperature + moveValue  * pressure;
+    private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot, float moveValue)
+    {
+        float newCenterDotTemp = selectedDot.dot.temperature + moveValue * pressure;
         if (actionType == REMOVE) newCenterDotTemp *= -1;
 
         selectedDot.dot.SetTemperature(newCenterDotTemp);
