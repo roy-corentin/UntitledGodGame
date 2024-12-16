@@ -118,12 +118,12 @@ public class PlayerActions : MonoBehaviour
             {
                 for (int jOffset = -layerIndex; jOffset <= layerIndex; jOffset++)
                 {
-                    int i = selectedDot.j + iOffset;
-                    int j = selectedDot.i + jOffset;
+                    int i = selectedDot.i + iOffset;
+                    int j = selectedDot.j + jOffset;
 
                     // Check if the point is on the edge of the current layer
                     if (IsPointOnEdgeOfLayer(layerIndex, i, j, iOffset, jOffset, mapDots))
-                        currentLayerDots.Add(new SelectedDot { dot = mapDots[i][j], j = i, i = j });
+                        currentLayerDots.Add(new SelectedDot { dot = mapDots[i][j], j = j, i = i });
 
                     try { if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false); }
                     catch (ArgumentOutOfRangeException) { }

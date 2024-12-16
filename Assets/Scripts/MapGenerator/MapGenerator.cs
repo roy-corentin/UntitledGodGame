@@ -102,7 +102,7 @@ namespace MapGenerator
         public void UpdateHeightMap(SelectionDots selectedDots)
         {
             float parentY = mapParent.position.y;
-            int centerIndex = GetIndex(selectedDots.centerDot.j, selectedDots.centerDot.i);
+            int centerIndex = GetIndex(selectedDots.centerDot.i, selectedDots.centerDot.j);
 
             try { heightMapValues[centerIndex] = selectedDots.centerDot.dot.transform.position.y * emplitude + parentY; }
             catch (System.Exception e) { Debug.Log(e); return; }
@@ -111,7 +111,7 @@ namespace MapGenerator
             {
                 foreach (SelectedDot dot in circle)
                 {
-                    int index = GetIndex(dot.j, dot.i);
+                    int index = GetIndex(dot.i, dot.j);
                     if (index < 0 || index >= heightMapValues.Count) continue;
                     heightMapValues[index] = dot.dot.transform.position.y * emplitude + parentY;
                 }
@@ -123,7 +123,7 @@ namespace MapGenerator
 
         public void UpdateTemperatureMap(SelectionDots selectedDots)
         {
-            int centerIndex = GetIndex(selectedDots.centerDot.j, selectedDots.centerDot.i);
+            int centerIndex = GetIndex(selectedDots.centerDot.i, selectedDots.centerDot.j);
 
             try { temperatureMapValues[centerIndex] = selectedDots.centerDot.dot.temperature; }
             catch (System.Exception e) { Debug.Log(e); return; }
@@ -132,7 +132,7 @@ namespace MapGenerator
             {
                 foreach (SelectedDot dot in circle)
                 {
-                    int index = GetIndex(dot.j, dot.i);
+                    int index = GetIndex(dot.i, dot.j);
                     if (index < 0 || index >= temperatureMapValues.Count) continue;
                     temperatureMapValues[index] = dot.dot.temperature;
                 }

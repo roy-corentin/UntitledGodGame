@@ -11,13 +11,15 @@ public class ToolAction : MonoBehaviour
     public int actionType = ADD;
     [SerializeField] protected bool showSelectedDots = false;
 
-    public void Action(float pressure) {
+    public void Action(float pressure)
+    {
         SelectionDots selectedDots = PlayerActions.Instance.GetSelectedDots();
         if (selectedDots.centerDot.dot == null) return;
 
         EditDots(pressure, selectedDots);
 
-        if (showSelectedDots) {
+        if (showSelectedDots)
+        {
             selectedDots.centerDot.dot.gameObject.SetActive(true);
             foreach (SelectedDot selectedDot in selectedDots.surroundingDotsLayers[selectedDots.surroundingDotsLayers.Count - 1])
             {
