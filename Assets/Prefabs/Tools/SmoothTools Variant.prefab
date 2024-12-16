@@ -93,8 +93,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0f88bc13f4e66847998e386d835df60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  triggerRange: 0.1
+  actionRange: 3
   actionType: 0
-  range: 0.1
-  numberOfCircles: 2
-  direction: 1
   showSelectedDots: 1
+  smoothingSpeed: 0.5
