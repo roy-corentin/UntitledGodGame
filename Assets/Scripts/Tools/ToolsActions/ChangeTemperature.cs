@@ -7,34 +7,29 @@ public class ChangeTemperature : ToolAction
     public float centerTempValue = 0.02f;
     public float surroundingTempValue = 0.01f;
 
-    public override void Action(float pressure)
+    public override void EditDots(float pressure, SelectionDots selectedDots)
     {
-        SelectedDots selectedDots = PlayerActions.Instance.GetSelectedDots();
+        UpdateTemperatureDot(pressure, selectedDots.centerDot, centerTempValue);
 
-        if (selectedDots.centerDot.dot == null) return;
-
-        selectedDots.centerDot.dot.SetTemperature(selectedDots.centerDot.dot.temperature + centerTempValue * direction * pressure);
-        ElementsSpawner.Instance.UpdatePrefab(selectedDots.centerDot.dot);
-        if (showSelectedDots) selectedDots.centerDot.dot.gameObject.SetActive(true);
-        for (int circleIndex = 0; circleIndex < selectedDots.surroundingCircles.Count; circleIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Count; layerIndex++)
         {
-            List<SelectedDot> currentCircle = selectedDots.surroundingCircles[circleIndex];
-            float moveValue = Mathf.Lerp(centerTempValue, surroundingTempValue, (float)(circleIndex + 1) / numberOfCircles);
+            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
+            float moveValue = Mathf.Lerp(centerTempValue, surroundingTempValue, (float)(layerIndex + 1) / actionRange);
 
-            foreach (SelectedDot selectedDot in currentCircle)
+            foreach (SelectedDot selectedDot in currentLayer)
             {
-                selectedDot.dot.SetTemperature(selectedDot.dot.temperature + moveValue * direction * pressure);
-                if (showSelectedDots && circleIndex == selectedDots.surroundingCircles.Count - 1) selectedDot.dot.gameObject.SetActive(true);
-                ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
+                UpdateTemperatureDot(pressure, selectedDot, moveValue);
             }
         }
 
         MapGenerator.Map.Instance.UpdateTemperatureMap(selectedDots);
     }
 
-    public void SetCenterTempValue(float centerTempValue)
-    {
-        this.centerTempValue = centerTempValue;
-        this.surroundingTempValue = centerTempValue / 2;
+    private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot, float moveValue) {
+        float newCenterDotTemp = selectedDot.dot.temperature + moveValue  * pressure;
+        if (actionType == REMOVE) newCenterDotTemp *= -1;
+
+        selectedDot.dot.SetTemperature(newCenterDotTemp);
+        ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
     }
 }

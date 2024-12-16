@@ -4,20 +4,39 @@ using UnityEngine;
 public class ToolAction : MonoBehaviour
 {
     [Header("Tool Action")]
-    public float range;
-    public int numberOfCircles = 2;
-    public int direction = 1;
+    public float triggerRange;
+    public int actionRange = 2;
+    public const int ADD = 1;
+    public const int REMOVE = -1;
+    public int actionType = ADD;
     [SerializeField] protected bool showSelectedDots = false;
 
-    public virtual void Action(float pressure) { }
-
-    public void SetNumberOfCircles(float numberOfCircles)
+    public void Action(float pressure)
     {
-        this.numberOfCircles = (int)numberOfCircles;
+        SelectionDots selectedDots = PlayerActions.Instance.GetSelectedDots();
+        if (selectedDots.centerDot.dot == null) return;
+
+        EditDots(pressure, selectedDots);
+
+        if (showSelectedDots)
+        {
+            selectedDots.centerDot.dot.gameObject.SetActive(true);
+            foreach (SelectedDot selectedDot in selectedDots.surroundingDotsLayers[selectedDots.surroundingDotsLayers.Count - 1])
+            {
+                selectedDot.dot.gameObject.SetActive(true);
+            }
+        }
     }
 
-    public void SetRange(float range)
+    public virtual void EditDots(float pressure, SelectionDots selectedDots) { }
+
+    public void SetActionRange(float actionRange)
     {
-        this.range = range;
+        this.actionRange = (int)actionRange;
+    }
+
+    public void SetTriggerRange(float triggerRange)
+    {
+        this.triggerRange = triggerRange;
     }
 }
