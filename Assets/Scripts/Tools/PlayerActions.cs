@@ -96,8 +96,8 @@ public class PlayerActions : MonoBehaviour
                 {
                     nearestDistance = distance;
                     selectedDot.dot = dot;
-                    selectedDot.j = i;
-                    selectedDot.i = j;
+                    selectedDot.i = i;
+                    selectedDot.j = j;
                 }
 
                 if (dot.gameObject.activeSelf) dot.gameObject.SetActive(false);
