@@ -45,9 +45,9 @@ namespace MapGenerator
                 ClearDots();
                 ClearMesh();
             }
-#endif
-
+#else
             if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
+#endif
         }
 
         public void GenerateAll()
@@ -99,15 +99,15 @@ namespace MapGenerator
             ElementsSpawner.Instance.SpawnTreeAllAroundMap(mapDots, elementQuantity);
         }
 
-        public void UpdateHeightMap(SelectedDots dots)
+        public void UpdateHeightMap(SelectionDots selectedDots)
         {
             float parentY = mapParent.position.y;
-            int centerIndex = GetIndex(dots.centerDot.i, dots.centerDot.j);
+            int centerIndex = GetIndex(selectedDots.centerDot.i, selectedDots.centerDot.j);
 
-            try { heightMapValues[centerIndex] = dots.centerDot.dot.transform.position.y * emplitude + parentY; }
+            try { heightMapValues[centerIndex] = selectedDots.centerDot.dot.transform.position.y * emplitude + parentY; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in dots.surroundingCircles)
+            foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
             {
                 foreach (SelectedDot dot in circle)
                 {
@@ -121,14 +121,14 @@ namespace MapGenerator
             meshMaterial.SetTexture("_HeightNoise", heightMap);
         }
 
-        public void UpdateTemperatureMap(SelectedDots dots)
+        public void UpdateTemperatureMap(SelectionDots selectedDots)
         {
-            int centerIndex = GetIndex(dots.centerDot.i, dots.centerDot.j);
+            int centerIndex = GetIndex(selectedDots.centerDot.i, selectedDots.centerDot.j);
 
-            try { temperatureMapValues[centerIndex] = dots.centerDot.dot.temperature; }
+            try { temperatureMapValues[centerIndex] = selectedDots.centerDot.dot.temperature; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in dots.surroundingCircles)
+            foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
             {
                 foreach (SelectedDot dot in circle)
                 {

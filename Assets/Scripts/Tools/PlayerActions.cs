@@ -5,21 +5,21 @@ using UnityEngine;
 public struct SelectedDot
 {
     public MapGenerator.Dot dot;
-    public int i;
     public int j;
+    public int i;
 }
 
-public struct SelectedDots
+public struct SelectionDots
 {
     public SelectedDot centerDot;
-    public List<List<SelectedDot>> surroundingCircles;
+    public List<List<SelectedDot>> surroundingDotsLayers;
 }
 
 public class PlayerActions : MonoBehaviour
 {
     public ToolAction currentTool;
     public static PlayerActions Instance;
-    private SelectedDots lastSelectedDots;
+    private SelectionDots lastSelectedDots;
     public float actionCooldown = 0.1f;
     private float nextActionTime = 0f;
 
@@ -31,8 +31,8 @@ public class PlayerActions : MonoBehaviour
     private void Update()
     {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.DownArrow)) SetDirection(-1);
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) SetDirection(1);
+        if (Input.GetKeyDown(KeyCode.DownArrow)) SetActionType(ToolAction.REMOVE);
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) SetActionType(ToolAction.ADD);
 
         if (currentTool != null)
         {
@@ -52,7 +52,7 @@ public class PlayerActions : MonoBehaviour
             nextActionTime = Time.time + actionCooldown;
         }
 #else
-        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-currentTool.direction); // B
+        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-currentTool.actionType); // B
 
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
@@ -65,21 +65,21 @@ public class PlayerActions : MonoBehaviour
 #endif
     }
 
-    private void SetDirection(int direction)
+    private void SetActionType(int actionType)
     {
-        currentTool.direction = direction;
+        currentTool.actionType = actionType;
     }
 
-    public SelectedDots GetSelectedDots()
+    public SelectionDots GetSelectedDots()
     {
-        if (currentTool == null) return new SelectedDots();
+        if (currentTool == null) return new SelectionDots();
 
         List<List<MapGenerator.Dot>> mapDots = MapGenerator.Map.Instance.mapDots;
         Vector3 playerHandPosition = currentTool.transform.position;
 
-        if (mapDots.Count == 0) return new SelectedDots();
+        if (mapDots.Count == 0) return new SelectionDots();
 
-        SelectedDot selectedDot = new() { dot = mapDots[0][0], i = 0, j = 0 };
+        SelectedDot selectedDot = new() { dot = mapDots[0][0], j = 0, i = 0 };
         float nearestDistance = Vector3.Distance(selectedDot.dot.transform.position, playerHandPosition);
 
         // get the nearest dot to the playerHand
@@ -105,36 +105,33 @@ public class PlayerActions : MonoBehaviour
         }
 
         // if the nearest dot is too far, return an empty SelectedDots
-        if (nearestDistance > currentTool.range) return new SelectedDots();
-        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.range) return new SelectedDots();
+        if (nearestDistance > currentTool.triggerRange) return new SelectionDots();
+        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.triggerRange) return new SelectionDots();
 
-        SelectedDots selectedDots = new() { centerDot = selectedDot, surroundingCircles = new() };
+        SelectionDots selectedDots = new() { centerDot = selectedDot, surroundingDotsLayers = new() };
 
-        // add the 8 surrounding dots to the selectedDots
-        for (int circle = 1; circle <= currentTool.numberOfCircles; circle++)
+        for (int layerIndex = 1; layerIndex <= currentTool.actionRange; layerIndex++)
         {
-            List<SelectedDot> currentCircleDots = new();
+            List<SelectedDot> currentLayerDots = new();
 
-            for (int iOffset = -circle; iOffset <= circle; iOffset++)
+            for (int iOffset = -layerIndex; iOffset <= layerIndex; iOffset++)
             {
-                for (int jOffset = -circle; jOffset <= circle; jOffset++)
+                for (int jOffset = -layerIndex; jOffset <= layerIndex; jOffset++)
                 {
-                    int indexI = selectedDot.i + iOffset;
-                    int indexJ = selectedDot.j + jOffset;
+                    int i = selectedDot.i + iOffset;
+                    int j = selectedDot.j + jOffset;
 
-                    // Check if the point is on the edge of the current circle
-                    if ((Mathf.Abs(iOffset) == circle || Mathf.Abs(jOffset) == circle) &&
-                        indexI >= 0 && indexI < mapDots.Count &&
-                        indexJ >= 0 && indexJ < mapDots[indexI].Count)
-                        currentCircleDots.Add(new SelectedDot { dot = mapDots[indexI][indexJ], i = indexI, j = indexJ });
+                    // Check if the point is on the edge of the current layer
+                    if (IsPointOnEdgeOfLayer(layerIndex, i, j, iOffset, jOffset, mapDots))
+                        currentLayerDots.Add(new SelectedDot { dot = mapDots[i][j], j = j, i = i });
 
-                    try { if (mapDots[indexI][indexJ].gameObject.activeSelf) mapDots[indexI][indexJ].gameObject.SetActive(false); }
+                    try { if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false); }
                     catch (ArgumentOutOfRangeException) { }
                 }
             }
 
-            if (currentCircleDots.Count > 0)
-                selectedDots.surroundingCircles.Add(currentCircleDots);
+            if (currentLayerDots.Count > 0)
+                selectedDots.surroundingDotsLayers.Add(currentLayerDots);
         }
 
         lastSelectedDots = selectedDots;
@@ -147,10 +144,17 @@ public class PlayerActions : MonoBehaviour
         try
         {
             if (lastSelectedDots.centerDot.dot != null) lastSelectedDots.centerDot.dot.gameObject.SetActive(false);
-            foreach (List<SelectedDot> circle in lastSelectedDots.surroundingCircles)
-                foreach (SelectedDot dot in circle)
+            foreach (List<SelectedDot> layer in lastSelectedDots.surroundingDotsLayers)
+                foreach (SelectedDot dot in layer)
                     if (dot.dot != null) dot.dot.gameObject.SetActive(false);
         }
         catch (NullReferenceException) { }
+    }
+
+    private bool IsPointOnEdgeOfLayer(int layer, int i, int j, int iOffset, int jOffset, List<List<MapGenerator.Dot>> mapDots)
+    {
+        return (Mathf.Abs(iOffset) == layer || Mathf.Abs(jOffset) == layer) &&
+               i >= 0 && i < mapDots.Count &&
+               j >= 0 && j < mapDots[i].Count;
     }
 }
