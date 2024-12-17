@@ -100,15 +100,15 @@ public class PlayerActions : MonoBehaviour
                     int j = centerDot.index % MapGenerator.Map.Instance.size + jOffset;
 
                     // Check if the point is on the edge of the current layer
-                    if (IsOnMapAndCurrentLayer(layerIndex, iOffset, jOffset, i, j, mapDots))
+                    if (IsOnMap(i, j, mapDots))
                     {
+                        if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false);
+
+                        if (IsOnLayer(layerIndex, iOffset, jOffset))
                         currentLayerDots[dotLayerIndex].dot = mapDots[i][j];
                         currentLayerDots[dotLayerIndex].index = i * MapGenerator.Map.Instance.size + j;
                         dotLayerIndex++;
                     }
-
-                    try { if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false); }
-                    catch (ArgumentOutOfRangeException) { }
                 }
 
             if (dotLayerIndex > 0)
@@ -161,14 +161,16 @@ public class PlayerActions : MonoBehaviour
         return result;
     }
 
-    private bool IsOnMapAndCurrentLayer(int circle, int iOffset, int jOffset, int i, int j, List<List<MapGenerator.Dot>> mapDots)
+    private bool IsOnMap(int i, int j, List<List<MapGenerator.Dot>> mapDots)
     {
-        bool temp = (Mathf.Abs(iOffset) == circle || Mathf.Abs(jOffset) == circle)
-                    && i >= 0
-                    && i < mapDots.Count
-                    && j >= 0
-                    && j < mapDots[i].Count;
-        if (!temp) Debug.Log("not is point on edge of layer");
-        return temp;
+        return i >= 0
+               && i < mapDots.Count
+               && j >= 0
+               && j < mapDots[i].Count;
+    }
+
+    private bool IsOnLayer(int layerIndex, int iOffset, int jOffset)
+    {
+        return (Mathf.Abs(iOffset) == layerIndex || Mathf.Abs(jOffset) == layerIndex);
     }
 }
