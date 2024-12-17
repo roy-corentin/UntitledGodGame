@@ -105,9 +105,12 @@ public class PlayerActions : MonoBehaviour
                         if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false);
 
                         if (IsOnLayer(layerIndex, iOffset, jOffset))
-                        currentLayerDots[dotLayerIndex].dot = mapDots[i][j];
-                        currentLayerDots[dotLayerIndex].index = i * MapGenerator.Map.Instance.size + j;
-                        dotLayerIndex++;
+                        {
+                            currentLayerDots[dotLayerIndex].dot = mapDots[i][j];
+                            currentLayerDots[dotLayerIndex].index = i * MapGenerator.Map.Instance.size + j;
+                            // currentLayerDots[dotLayerIndex].index = centerDot.index + (iOffset * MapGenerator.Map.Instance.size) + jOffset;
+                            dotLayerIndex++;
+                        }
                     }
                 }
 
