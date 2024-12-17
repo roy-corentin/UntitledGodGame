@@ -100,7 +100,7 @@ public class PlayerActions : MonoBehaviour
                     int j = centerDot.index % MapGenerator.Map.Instance.size + jOffset;
 
                     // Check if the point is on the edge of the current layer
-                    if (IsInMap(layerIndex, iOffset, jOffset, i, j, mapDots))
+                    if (IsOnMapAndCurrentLayer(layerIndex, iOffset, jOffset, i, j, mapDots))
                     {
                         currentLayerDots[dotLayerIndex].dot = mapDots[i][j];
                         currentLayerDots[dotLayerIndex].index = i * MapGenerator.Map.Instance.size + j;
@@ -161,7 +161,7 @@ public class PlayerActions : MonoBehaviour
         return result;
     }
 
-    private bool IsInMap(int circle, int iOffset, int jOffset, int i, int j, List<List<MapGenerator.Dot>> mapDots)
+    private bool IsOnMapAndCurrentLayer(int circle, int iOffset, int jOffset, int i, int j, List<List<MapGenerator.Dot>> mapDots)
     {
         bool temp = (Mathf.Abs(iOffset) == circle || Mathf.Abs(jOffset) == circle)
                     && i >= 0
