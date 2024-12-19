@@ -11,6 +11,7 @@ public class DayNightCycle : MonoBehaviour
     [Header("Time Settings")]
     public float dayLengthinMinutes = 10;
     public float timeMultiplier = 1;
+    private float timeMultiplierBeforeStop = 1;
 
     [Header("Infos (Read Only)")]
     public float timeOfDay = 0;
@@ -119,5 +120,26 @@ public class DayNightCycle : MonoBehaviour
             Color newLightColor = Color.Lerp(startLightColor, targetLightColor, t);
             sun.color = newLightColor;
         }
+    }
+
+    public void SetTimeMultiplier(float multiplier)
+    {
+        timeMultiplier = multiplier;
+    }
+
+    public void SetDayLength(float minutes)
+    {
+        dayLengthinMinutes = minutes;
+    }
+
+    public void StopTime()
+    {
+        timeMultiplierBeforeStop = timeMultiplier;
+        timeMultiplier = 0;
+    }
+
+    public void ResumeTime()
+    {
+        timeMultiplier = timeMultiplierBeforeStop;
     }
 }

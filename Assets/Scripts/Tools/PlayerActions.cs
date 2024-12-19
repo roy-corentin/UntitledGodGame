@@ -18,6 +18,7 @@ public struct SelectionDots
 public class PlayerActions : MonoBehaviour
 {
     public Camera playerCamera;
+    public GameObject player;
     public ToolAction currentTool;
     public static PlayerActions Instance;
     private SelectionDots lastSelectedDots;
@@ -99,7 +100,7 @@ public class PlayerActions : MonoBehaviour
         MapGenerator.Map.Instance.transform.position -= moveDirection * Time.deltaTime * moveSpeed;
 
         float heightJoystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y; // Right joystick
-        MapGenerator.Map.Instance.transform.position += Vector3.up * heightJoystick * Time.deltaTime * moveSpeed;
+        MapGenerator.Map.Instance.transform.position += Vector3.up * -heightJoystick * Time.deltaTime * moveSpeed;
     }
 
     private void SetActionType(int actionType)
