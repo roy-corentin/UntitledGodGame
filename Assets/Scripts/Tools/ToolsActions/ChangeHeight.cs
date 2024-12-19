@@ -26,7 +26,8 @@ public class ChangeHeight : ToolAction
         MapGenerator.Map.Instance.UpdateHeightMap(selectedDots);
     }
 
-    private void UpdateHeightDot(float pressure, SelectedDot selectedDot, float moveValue) {
+    private void UpdateHeightDot(float pressure, SelectedDot selectedDot, float moveValue)
+    {
         float newY = selectedDot.dot.transform.position.y + moveValue * pressure;
         if (actionType == REMOVE) newY *= -1;
 
