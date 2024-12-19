@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Unity.AI;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
 
 namespace MapGenerator
 {
@@ -20,6 +23,9 @@ namespace MapGenerator
         public float emplitude = 10f;
         [HideInInspector] public GameObject meshMap;
         [SerializeField] private Material meshMaterial;
+        public NavMeshSurface navmeshSurface;
+        public GameObject navmeshUnderseaObstacleGO;
+        public NavMeshObstacle navmeshUnderseaObstacle;
         public static Map Instance;
         private Coroutine generateDotsCoroutine;
         private bool areDotsGenerated = false;
@@ -308,6 +314,9 @@ namespace MapGenerator
                 map.ClearMesh();
 
             GUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Rebake Navmesh"))
+                NavmeshHandler.Rebake();
 
             if (GUILayout.Button("Generate All"))
                 map.GenerateAll();
