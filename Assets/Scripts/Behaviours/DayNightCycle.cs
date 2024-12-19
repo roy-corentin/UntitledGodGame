@@ -96,7 +96,6 @@ public class DayNightCycle : MonoBehaviour
     private void HandleTimeOfDayChange()
     {
         lastTimeOfDay = currentTimeOfDay;
-        Debug.Log("It's " + currentTimeOfDay);
         transitionTime = 0f;
 
         startSkyboxColor = skyboxMaterial.GetColor("_Tint");

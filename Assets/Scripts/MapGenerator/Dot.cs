@@ -6,6 +6,7 @@ namespace MapGenerator
     {
         public float temperature;
         public GameObject element;
+        public Biome biome;
 
         public void SetTemperature(float temperature)
         {

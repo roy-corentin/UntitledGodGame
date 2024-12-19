@@ -35,10 +35,6 @@ public class ToolActivator : MonoBehaviour
 
         if (currentPosition != lastPosition && !isMoving) OnStartMoving();
         else if (currentPosition == lastPosition && isMoving && pressure == 0) OnStopMoving();
-        else
-        {
-            Debug.Log($"LOG: {currentPosition} - {lastPosition} - {pressure} - {isMoving}");
-        }
 
         lastPosition = currentPosition;
 #endif
@@ -46,7 +42,6 @@ public class ToolActivator : MonoBehaviour
 
     public void OnStartMoving()
     {
-        Debug.Log($"LOG: OnStartMoving() {gameObject.name}");
         lastPosition = transform.localPosition;
         isMoving = true;
         PlayerActions.Instance.currentTool = playerAction;
@@ -54,7 +49,6 @@ public class ToolActivator : MonoBehaviour
 
     public void OnStopMoving()
     {
-        Debug.Log($"LOG: OnStopMoving() {gameObject.name}");
         isMoving = false;
         PlayerActions.Instance.currentTool = null;
         PlayerActions.Instance.HideAllSelectedDots();

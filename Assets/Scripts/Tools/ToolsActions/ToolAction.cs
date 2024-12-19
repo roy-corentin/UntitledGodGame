@@ -15,6 +15,7 @@ public class ToolAction : MonoBehaviour
     public void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        actionType = ADD;
     }
 
     public void Action(float pressure)
