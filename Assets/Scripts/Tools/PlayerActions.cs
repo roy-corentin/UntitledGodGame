@@ -44,6 +44,12 @@ public class PlayerActions : MonoBehaviour
             else if (Input.GetKey(KeyCode.E)) currentTool.transform.position += Vector3.down * Time.deltaTime;
         }
 
+        if (Input.GetKeyDown(KeyCode.Space) && currentTool != null)
+            if (!currentTool.audioSource.isPlaying) currentTool.audioSource.Play();
+
+        if (Input.GetKeyUp(KeyCode.Space) && currentTool != null)
+            currentTool.audioSource.Stop();
+
         if (Input.GetKey(KeyCode.Space)
             && currentTool != null
             && Time.time >= nextActionTime)
@@ -59,8 +65,14 @@ public class PlayerActions : MonoBehaviour
             && currentTool != null
             && Time.time >= nextActionTime)
         {
+            if (!currentTool.audioSource.isPlaying) currentTool.audioSource.Play();
             currentTool.Action(1f);
             nextActionTime = Time.time + actionCooldown;
+        }
+
+        if (pressure == 0 && currentTool != null) {
+            currentTool.HideAllSelectedDots();
+            currentTool.audioSource.Stop();
         }
 #endif
     }
