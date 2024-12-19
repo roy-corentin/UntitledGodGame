@@ -25,8 +25,9 @@ public class ChangeTemperature : ToolAction
         MapGenerator.Map.Instance.UpdateTemperatureMap(selectedDots);
     }
 
-    private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot, float moveValue) {
-        float newCenterDotTemp = selectedDot.dot.temperature + moveValue  * pressure;
+    private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot, float moveValue)
+    {
+        float newCenterDotTemp = selectedDot.dot.temperature + moveValue * pressure;
         if (actionType == REMOVE) newCenterDotTemp *= -1;
 
         selectedDot.dot.SetTemperature(newCenterDotTemp);

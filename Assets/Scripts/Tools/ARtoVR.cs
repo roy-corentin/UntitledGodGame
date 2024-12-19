@@ -19,6 +19,8 @@ public class ARtoVR : MonoBehaviour
     public OVRPassthroughLayer passthroughLayer;
     public Camera mainCamera;
     public GameObject toolbox;
+    public AudioSource mapAudioSource;
+    public AudioClip transitionSound;
 
     private void Awake()
     {
@@ -52,6 +54,9 @@ public class ARtoVR : MonoBehaviour
     {
         if (currentMode == mode) return;
         currentMode = mode;
+
+        mapAudioSource.clip = transitionSound;
+        mapAudioSource.Play();
 
         if (currentMode == GameMode.AR) GoToAR();
         else GoToVR();
