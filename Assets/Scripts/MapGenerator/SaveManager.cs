@@ -2,6 +2,7 @@ using UnityEngine;
 using MapGenerator;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct DotData
@@ -20,9 +21,15 @@ public struct Save
 public class SaveManager : MonoBehaviour
 {
     public Map map;
+    public Button loadBtn;
     private string playerPrefKeyCount = "SavedMapCount";
     private string playerPrefsKey = "SavedMap";
     private Coroutine loadCoroutine;
+
+    public void Start()
+    {
+        loadBtn.interactable = PlayerPrefs.HasKey(playerPrefKeyCount);
+    }
 
     public void Update()
     {
