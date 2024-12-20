@@ -83,6 +83,8 @@ public class ARtoVR : MonoBehaviour
         toolbox.transform
             .DOScale(Vector3.one, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic);
+
+        DayNightCycle.Instance.StopTime();
     }
 
     private void GoToVR(bool instant = false)
@@ -109,6 +111,8 @@ public class ARtoVR : MonoBehaviour
             {
                 toolbox.gameObject.SetActive(false);
             });
+
+        DayNightCycle.Instance.ResumeTime();
     }
 
     private void SetPasstrough(bool active)

@@ -17,11 +17,14 @@ public struct SelectionDots
 
 public class PlayerActions : MonoBehaviour
 {
+    public Camera playerCamera;
+    public GameObject player;
     public ToolAction currentTool;
     public static PlayerActions Instance;
     private SelectionDots lastSelectedDots;
     public float actionCooldown = 0.1f;
     private float nextActionTime = 0f;
+    public float moveSpeed = 1f;
 
     private void Awake()
     {
@@ -58,7 +61,14 @@ public class PlayerActions : MonoBehaviour
             nextActionTime = Time.time + actionCooldown;
         }
 #else
-        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-currentTool.actionType); // B
+        if (ARtoVR.Instance.GetCurrentMode() == GameMode.AR) ARInputs();
+        else VRInputs();
+#endif
+    }
+
+    private void ARInputs()
+    {
+        if (OVRInput.GetDown(OVRInput.Button.Two)) SetActionType(-currentTool.actionType); // B
 
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
@@ -70,11 +80,27 @@ public class PlayerActions : MonoBehaviour
             nextActionTime = Time.time + actionCooldown;
         }
 
-        if (pressure == 0 && currentTool != null) {
-            currentTool.HideAllSelectedDots();
+        if (pressure == 0 && currentTool != null)
+        {
+            HideAllSelectedDots();
             currentTool.audioSource.Stop();
         }
-#endif
+    }
+
+    private void VRInputs()
+    {
+        Vector2 joystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick); // Left joystick
+        Vector3 playerForward = playerCamera.transform.forward;
+        playerForward.y = 0;
+        playerForward.Normalize();
+        Vector3 playerRight = playerCamera.transform.right;
+        playerRight.y = 0;
+        playerRight.Normalize();
+        Vector3 moveDirection = playerForward * joystick.y + playerRight * joystick.x;
+        MapGenerator.Map.Instance.transform.position -= moveDirection * Time.deltaTime * moveSpeed;
+
+        float heightJoystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y; // Right joystick
+        MapGenerator.Map.Instance.transform.position += Vector3.up * -heightJoystick * Time.deltaTime * moveSpeed;
     }
 
     private void SetActionType(int actionType)
@@ -166,7 +192,12 @@ public class PlayerActions : MonoBehaviour
     private bool IsPointOnEdgeOfLayer(int layer, int i, int j, int iOffset, int jOffset, List<List<MapGenerator.Dot>> mapDots)
     {
         return (Mathf.Abs(iOffset) == layer || Mathf.Abs(jOffset) == layer) &&
-               i >= 0 && i < mapDots.Count &&
-               j >= 0 && j < mapDots[i].Count;
+                i >= 0 && i < mapDots.Count &&
+                j >= 0 && j < mapDots[i].Count;
+    }
+
+    public void SetMoveSpeed(float speed)
+    {
+        moveSpeed = speed;
     }
 }

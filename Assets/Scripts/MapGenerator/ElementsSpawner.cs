@@ -65,6 +65,7 @@ public class ElementsSpawner : MonoBehaviour
     {
         if (dot.element) return;
         Biome biome = BiomeManager.Instance.GetBiome(dot);
+        dot.biome = biome;
         if (biome == Biome.Water) return;
 
         GameObject newElement = Instantiate(GetPrefab(biome), elementsParent);
@@ -101,19 +102,27 @@ public class ElementsSpawner : MonoBehaviour
 
     public void UpdatePrefab(Dot dot)
     {
-        if (dot.element)
-        {
-            DestroyElement(dot.element);
-            Biome biome = BiomeManager.Instance.GetBiome(dot);
-            if (biome == Biome.Water) return;
+        if (!dot.element) return;
 
-            GameObject prefab = GetPrefab(biome);
-            GameObject newElement = Instantiate(prefab, elementsParent);
-            newElement.transform.localPosition = dot.transform.position;
-            dot.element = newElement;
-            elements.Add(newElement);
-        }
+        Biome biome = BiomeManager.Instance.GetBiome(dot);
+        if (biome == dot.biome) return;
 
+        dot.biome = biome;
 
+        DestroyElement(dot.element);
+        if (biome == Biome.Water) return;
+
+        GameObject prefab = GetPrefab(biome);
+        GameObject newElement = Instantiate(prefab, elementsParent);
+        Vector3 rotation = new(0, Random.Range(0, 360), 0);
+        Vector3 scale = newElement.transform.localScale;
+        scale *= Random.Range(0.8f, 1.2f);
+
+        newElement.transform.localPosition = dot.transform.position;
+        newElement.transform.localEulerAngles = rotation;
+        newElement.transform.localScale = scale;
+
+        dot.element = newElement;
+        elements.Add(newElement);
     }
 }

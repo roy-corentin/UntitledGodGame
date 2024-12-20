@@ -46,7 +46,8 @@ namespace MapGenerator
                 ClearMesh();
             }
 #else
-            if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
+            if (ARtoVR.Instance.GetCurrentMode() == GameMode.AR)
+                if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
 #endif
         }
 
