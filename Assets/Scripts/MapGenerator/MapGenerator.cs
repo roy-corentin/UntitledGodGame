@@ -90,6 +90,7 @@ namespace MapGenerator
                     dot.SetTemperature(temperatures[x][invertedZ]);
                 }
 
+                if (x % 5 == 0) CreateMesh();
                 yield return null;
             }
 
@@ -98,6 +99,13 @@ namespace MapGenerator
             yield return null;
 
             ElementsSpawner.Instance.SpawnTreeAllAroundMap(mapDots, elementQuantity);
+        }
+
+        public void UpdateHeightMap(List<float> heightMapValues)
+        {
+            this.heightMapValues = heightMapValues;
+            heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, heightMapValues);
+            meshMaterial.SetTexture("_HeightNoise", heightMap);
         }
 
         public void UpdateHeightMap(SelectionDots selectedDots)
@@ -118,8 +126,17 @@ namespace MapGenerator
                 }
             }
 
+            Debug.Log(heightMapValues[centerIndex]);
+
             heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, heightMapValues);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
+        }
+
+        public void UpdateTemperatureMap(List<float> temperatureMapValues)
+        {
+            this.temperatureMapValues = temperatureMapValues;
+            temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, temperatureMapValues);
+            meshMaterial.SetTexture("_TempNoise", temperatureMap);
         }
 
         public void UpdateTemperatureMap(SelectionDots selectedDots)
@@ -159,7 +176,11 @@ namespace MapGenerator
 
         public IEnumerator GenerateDots()
         {
-            ClearDots();
+            if (mapDots.Count > 0)
+            {
+                areDotsGenerated = true;
+                yield break;
+            }
 
             yield return null;
 
