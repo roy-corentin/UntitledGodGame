@@ -9,7 +9,7 @@ public enum GameMode
 
 public class ARtoVR : MonoBehaviour
 {
-    private GameMode currentMode = GameMode.AR;
+    public GameMode currentMode = GameMode.AR;
     public static ARtoVR Instance;
     public GameObject mapGO;
     public Vector3 ARMapSize;
@@ -53,18 +53,19 @@ public class ARtoVR : MonoBehaviour
     public void SetMode(GameMode mode)
     {
         if (currentMode == mode) return;
-        currentMode = mode;
 
         mapAudioSource.clip = transitionSound;
         mapAudioSource.Play();
 
-        if (currentMode == GameMode.AR) GoToAR();
+        if (mode == GameMode.AR) GoToAR();
         else GoToVR();
     }
 
     private void GoToAR(bool instant = false)
     {
         SetPasstrough(true);
+
+        NavMeshHandler.Instance.ClearNavmesh();
 
         mapGO.transform
             .DOMove(Vector3.zero, instant ? 0 : transitionDuration)
@@ -78,7 +79,7 @@ public class ARtoVR : MonoBehaviour
             {
                 Debug.Log("AR Mode");
 
-                NavMeshHandler.Instance.ClearNavmesh();
+                currentMode = GameMode.AR;
             });
 
         toolbox.gameObject.SetActive(true);
@@ -106,6 +107,8 @@ public class ARtoVR : MonoBehaviour
                 Debug.Log("VR Mode");
 
                 NavMeshHandler.Instance.Rebake();
+                AnimalSpawner.Instance.AddNavAgentToAll();
+                currentMode = GameMode.VR;
             });
 
         toolbox.transform

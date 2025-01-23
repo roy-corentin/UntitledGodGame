@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 1625792918538955700}
   - component: {fileID: -8264934038213892515}
   - component: {fileID: 7823284333067443054}
-  m_Layer: 0
+  - component: {fileID: 5448032227091052655}
+  m_Layer: 7
   m_Name: Animal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,21 +122,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afc85f49382d2bb488b09fd891599dde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navAgentTarget: {fileID: 0}
-  force: 0
-  energie: 0
-  vitesse: 0
-  sante: 0
-  sasiete: 0
-  hydratation: 0
-  aggressivite: 0
-  cycleReproduction: 0
-  nombreDePetits: 0
-  temperature: 0
-  presencePredateur: 0
-  age: 0
-  estCarnivore: 0
-  estEnMouvement: 0
+  moveSpeed: 1
+  maxMoveTime: 5
+  thirstValue: 100
+  needToDrink: 50
+  decreaseThirstPerSecond: 0.1
+  hungerValue: 100
+  needToEat: 50
+  decreaseHungerPerSecond: 0.1
+  sleepValue: 100
+  needToSleep: 50
+  decreaseSleepPerSecond: 0.1
 --- !u!54 &7823284333067443054
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -163,3 +160,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!208 &5448032227091052655
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386326166243738103}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: -1, z: 0}
+  m_TimeToStationary: 0.5

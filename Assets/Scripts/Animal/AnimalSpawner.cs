@@ -1,12 +1,19 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AnimalSpawner : MonoBehaviour
 {
     public List<GameObject> animalPrefabs;
     public readonly List<GameObject> spawnedAnimals = new();
     public Transform spawnParent;
+    public static AnimalSpawner Instance;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     public void SpawnAnimal(int prefabIndex)
     {
@@ -18,6 +25,16 @@ public class AnimalSpawner : MonoBehaviour
 
         GameObject animal = Instantiate(animalPrefabs[prefabIndex], spawnpoint, Quaternion.identity, spawnParent);
         spawnedAnimals.Add(animal);
+    }
+
+    public void AddNavAgentToAll()
+    {
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            animalScript.SetupNavAgent();
+        }
     }
 }
 
