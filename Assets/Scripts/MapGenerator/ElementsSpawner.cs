@@ -10,7 +10,7 @@ public class ElementsSpawner : MonoBehaviour
     [SerializeField] private GameObject fireTree;
     [SerializeField] private GameObject rock;
     [SerializeField] private Transform elementsParent;
-    private readonly List<GameObject> elements = new();
+    public readonly List<GameObject> elements = new();
     public static ElementsSpawner Instance;
     private Coroutine spawnTreeAllAroundMapCoroutine;
 
