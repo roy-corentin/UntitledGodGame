@@ -18338,6 +18338,7 @@ GameObject:
   - component: {fileID: 1548530425}
   - component: {fileID: 1548530426}
   - component: {fileID: 1548530427}
+  - component: {fileID: 1548530428}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -18445,6 +18446,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   map: {fileID: 622825688}
   loadBtn: {fileID: 634007791}
+--- !u!114 &1548530428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548530422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a8a71fc5ebd7476b87226d4ade14656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animalPrefabs:
+  - {fileID: 4386326166243738103, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+  spawnParent: {fileID: 1109179581}
 --- !u!21 &1555929066
 Material:
   serializedVersion: 8
