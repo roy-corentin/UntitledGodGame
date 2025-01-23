@@ -56,7 +56,11 @@ public class ElementsSpawner : MonoBehaviour
     public void ClearElements()
     {
         foreach (GameObject element in elements)
+#if UNITY_EDITOR
+            DestroyImmediate(element);
+#else
             Destroy(element);
+#endif
 
         elements.Clear();
     }
