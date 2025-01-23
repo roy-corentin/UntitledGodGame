@@ -77,6 +77,8 @@ public class ARtoVR : MonoBehaviour
             .OnComplete(() =>
             {
                 Debug.Log("AR Mode");
+
+                NavMeshHandler.Instance.ClearNavmesh();
             });
 
         toolbox.gameObject.SetActive(true);
@@ -102,6 +104,8 @@ public class ARtoVR : MonoBehaviour
             .OnComplete(() =>
             {
                 Debug.Log("VR Mode");
+
+                NavMeshHandler.Instance.Rebake();
             });
 
         toolbox.transform

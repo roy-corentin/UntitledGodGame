@@ -244,6 +244,7 @@ namespace MapGenerator
         {
             ClearMesh();
             meshMap = new GameObject("Mesh Map");
+            meshMap.layer = LayerMask.NameToLayer("Ground");
             meshMap.transform.SetParent(this.gameObject.transform);
 
             MeshFilter meshFilter = meshMap.AddComponent<MeshFilter>();

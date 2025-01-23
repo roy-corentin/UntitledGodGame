@@ -18,7 +18,6 @@ public struct SelectionDots
 public class PlayerActions : MonoBehaviour
 {
     public Camera playerCamera;
-    public GameObject player;
     public ToolAction currentTool;
     public static PlayerActions Instance;
     private SelectionDots lastSelectedDots;

@@ -49,7 +49,7 @@ public class DayNightCycle : MonoBehaviour
     private void OnDestroy()
     {
         skyboxMaterial.SetColor("_Tint", dayColor);
-        sun.color = lightDayColor;
+        if (sun != null) sun.color = lightDayColor;
     }
 
     private void Update()
