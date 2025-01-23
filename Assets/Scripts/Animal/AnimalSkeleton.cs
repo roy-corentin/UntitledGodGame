@@ -1,9 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Animal : MonoBehaviour
 {
+    private NavMeshAgent navAgent;
+
     [Header("Statistiques de base")]
     public float force;
     public float energie;
@@ -28,12 +31,12 @@ public class Animal : MonoBehaviour
 
     void Start()
     {
-        
+        navAgent = GetComponent<NavMeshAgent>();
     }
 
     void Update()
     {
-        
+
     }
 
     void Courir()
@@ -90,4 +93,52 @@ public class Animal : MonoBehaviour
     {
         return true;
     }
+
+    public void SetTarget(Transform target)
+    {
+        if (navAgent == null)
+            navAgent = gameObject.AddComponent<NavMeshAgent>();
+        navAgent.SetDestination(target.position);
+    }
+
+    public void RemoveTarget()
+    {
+        if (navAgent == null)
+            navAgent = gameObject.AddComponent<NavMeshAgent>();
+        navAgent.ResetPath();
+    }
+
+    public void SetRandomTarget()
+    {
+        List<GameObject> elements = ElementsSpawner.Instance.elements;
+        if (elements.Count == 0) return;
+
+        GameObject element = elements[Random.Range(0, elements.Count)];
+        SetTarget(element.transform);
+    }
 }
+
+#if UNITY_EDITOR
+
+[CustomEditor(typeof(Animal))]
+public class AnimalEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        Animal animal = (Animal)target;
+
+        GUILayout.BeginHorizontal();
+
+        if (GUILayout.Button("Set Target"))
+            animal.SetRandomTarget();
+
+        if (GUILayout.Button("Remove Target"))
+            animal.RemoveTarget();
+
+        GUILayout.EndHorizontal();
+    }
+}
+
+#endif

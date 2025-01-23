@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 125183050734454205}
   - component: {fileID: 1625792918538955700}
   - component: {fileID: -8264934038213892515}
+  - component: {fileID: 7823284333067443054}
   m_Layer: 0
   m_Name: Animal
   m_TagString: Untagged
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.214, y: 0.78, z: 0}
-  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -120,3 +121,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afc85f49382d2bb488b09fd891599dde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  navAgentTarget: {fileID: 0}
+  force: 0
+  energie: 0
+  vitesse: 0
+  sante: 0
+  sasiete: 0
+  hydratation: 0
+  aggressivite: 0
+  cycleReproduction: 0
+  nombreDePetits: 0
+  temperature: 0
+  presencePredateur: 0
+  age: 0
+  estCarnivore: 0
+  estEnMouvement: 0
+--- !u!54 &7823284333067443054
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386326166243738103}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
