@@ -249,6 +249,7 @@ namespace MapGenerator
 
             MeshFilter meshFilter = meshMap.AddComponent<MeshFilter>();
             MeshRenderer meshRenderer = meshMap.AddComponent<MeshRenderer>();
+            MeshCollider meshCollider = meshMap.AddComponent<MeshCollider>();
             meshRenderer.material = meshMaterial;
 
             Mesh mesh = new();
@@ -291,6 +292,7 @@ namespace MapGenerator
             mesh.RecalculateUVDistributionMetrics();
 
             meshFilter.mesh = mesh;
+            meshCollider.sharedMesh = mesh;
         }
 
         public void ClearMesh()
