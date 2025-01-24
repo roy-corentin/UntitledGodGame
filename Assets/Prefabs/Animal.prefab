@@ -13,11 +13,11 @@ GameObject:
   - component: {fileID: 125183050734454205}
   - component: {fileID: 1625792918538955700}
   - component: {fileID: -8264934038213892515}
-  - component: {fileID: 7823284333067443054}
   - component: {fileID: 5448032227091052655}
+  - component: {fileID: 3428934497309360489}
   m_Layer: 7
   m_Name: Animal
-  m_TagString: Untagged
+  m_TagString: Animal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -122,18 +122,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afc85f49382d2bb488b09fd891599dde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabIndex: 0
+  dotIndex:
+    x: 0
+    y: 0
   moveSpeed: 1
   maxMoveTime: 5
   thirstValue: 100
-  needToDrink: 50
   decreaseThirstPerSecond: 0.1
   hungerValue: 100
-  needToEat: 50
   decreaseHungerPerSecond: 0.1
   sleepValue: 100
-  needToSleep: 50
   decreaseSleepPerSecond: 0.1
---- !u!54 &7823284333067443054
+--- !u!208 &5448032227091052655
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4386326166243738103}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: -1, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!54 &3428934497309360489
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -160,19 +177,3 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!208 &5448032227091052655
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4386326166243738103}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.5, y: 1, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: -1, z: 0}
-  m_TimeToStationary: 0.5
