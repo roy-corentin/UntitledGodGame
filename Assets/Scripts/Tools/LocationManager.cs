@@ -1,12 +1,13 @@
 using UnityEngine;
 using MapGenerator;
+using System.Collections.Generic;
 
 public class LocationManager
 {
     public static GameObject GetRandomLocation(int padding = 0)
     {
-        int randomX = Random.Range(padding, Map.Instance.mapDots.Count - padding);
-        int randomY = Random.Range(padding, Map.Instance.mapDots[randomX].Count - padding);
+        int randomX = UnityEngine.Random.Range(padding, Map.Instance.mapDots.Count - padding);
+        int randomY = UnityEngine.Random.Range(padding, Map.Instance.mapDots[randomX].Count - padding);
 
         return Map.Instance.mapDots[randomX][randomY].gameObject;
     }
@@ -25,5 +26,28 @@ public class LocationManager
         } while (attempts < 100);
 
         return null;
+    }
+
+    public static DotCoord GetNearestDot(GameObject target)
+    {
+        List<List<Dot>> dots = Map.Instance.mapDots;
+        float nearestDistance = float.MaxValue;
+        DotCoord nearestDot = new(0, 0);
+
+        for (int x = 0; x < dots.Count; x++)
+        {
+            for (int y = 0; y < dots[x].Count; y++)
+            {
+                float distance = Vector3.Distance(target.transform.position, dots[x][y].transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestDot.x = x;
+                    nearestDot.y = y;
+                }
+            }
+        }
+
+        return nearestDot;
     }
 }

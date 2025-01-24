@@ -3,6 +3,7 @@ using MapGenerator;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 [System.Serializable]
 public struct DotData
@@ -13,9 +14,38 @@ public struct DotData
 }
 
 [System.Serializable]
+public struct DotCoord
+{
+    public int x;
+    public int y;
+
+    public DotCoord(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+[System.Serializable]
+public struct AnimalData
+{
+    public float moveSpeed;
+    public float maxMoveTime;
+    public float thirstValue;
+    public float decreaseThirstPerSecond;
+    public float hungerValue;
+    public float decreaseHungerPerSecond;
+    public float sleepValue;
+    public float decreaseSleepPerSecond;
+    public int prefabIndex;
+    public DotCoord dotIndex;
+}
+
+[System.Serializable]
 public struct Save
 {
     public List<DotData> dots;
+    public List<AnimalData> animals;
 }
 
 public class SaveManager : MonoBehaviour
@@ -56,6 +86,7 @@ public class SaveManager : MonoBehaviour
 
         ElementsSpawner.Instance.ClearElements();
         Map.Instance.ClearMesh();
+        AnimalSpawner.Instance.RemoveAll();
 
         yield return null;
 
@@ -107,12 +138,29 @@ public class SaveManager : MonoBehaviour
         Map.Instance.UpdateHeightMap(yPositions);
         Map.Instance.UpdateTemperatureMap(temperatures);
 
+        yield return null;
+
+        spawnIndex = 0;
+        foreach (AnimalData animalData in save.animals)
+        {
+            AnimalSpawner.Instance.SpawnAnimal(animalData);
+            spawnIndex++;
+            if (spawnIndex % 50 == 0) yield return null;
+        }
+
         Debug.Log("Map loaded");
     }
 
     public void SaveMap()
     {
-        Save save = new() { dots = new List<DotData>() };
+        Debug.Log("Starting to save map");
+
+        Save save = new()
+        {
+            dots = new List<DotData>(),
+            animals = new List<AnimalData>()
+        };
+
         foreach (List<Dot> dot in map.mapDots)
         {
             foreach (Dot d in dot)
@@ -125,6 +173,25 @@ public class SaveManager : MonoBehaviour
                 };
                 save.dots.Add(dotData);
             }
+        }
+
+        foreach (GameObject animal in AnimalSpawner.Instance.spawnedAnimals)
+        {
+            Animal animalScript = animal.GetComponent<Animal>();
+            AnimalData animalData = new()
+            {
+                moveSpeed = animalScript.moveSpeed,
+                maxMoveTime = animalScript.maxMoveTime,
+                thirstValue = animalScript.thirstValue,
+                decreaseThirstPerSecond = animalScript.decreaseThirstPerSecond,
+                hungerValue = animalScript.hungerValue,
+                decreaseHungerPerSecond = animalScript.decreaseHungerPerSecond,
+                sleepValue = animalScript.sleepValue,
+                decreaseSleepPerSecond = animalScript.decreaseSleepPerSecond,
+                prefabIndex = animalScript.prefabIndex,
+                dotIndex = LocationManager.GetNearestDot(animal)
+            };
+            save.animals.Add(animalData);
         }
 
         string mapJson = JsonUtility.ToJson(save);

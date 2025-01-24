@@ -26,6 +26,9 @@ public class Animal : MonoBehaviour
     // [Header("Autres")]
     // public float age;
     // public bool estCarnivore;
+
+    [HideInInspector] public int prefabIndex;
+
     public float moveSpeed;
     private bool isMoving;
     private float startMoveTime;
@@ -33,19 +36,16 @@ public class Animal : MonoBehaviour
     public bool IsOverTime => Time.time - startMoveTime > maxMoveTime;
 
     [Range(0, 100)] public float thirstValue = 100;
-    public float needToDrink = 50;
     public float decreaseThirstPerSecond = 0.1f;
-    public bool NeedToDrink => thirstValue <= needToDrink;
+    public bool NeedToDrink => thirstValue <= 0;
 
     [Range(0, 100)] public float hungerValue = 100;
-    public float needToEat = 50;
     public float decreaseHungerPerSecond = 0.1f;
-    public bool NeedToEat => hungerValue <= needToEat;
+    public bool NeedToEat => hungerValue <= 0;
 
     [Range(0, 100)] public float sleepValue = 100;
-    public float needToSleep = 50;
     public float decreaseSleepPerSecond = 0.1f;
-    public bool NeedToSleep => sleepValue <= needToSleep;
+    public bool NeedToSleep => sleepValue <= 0;
 
     public void SetupNavAgent()
     {
