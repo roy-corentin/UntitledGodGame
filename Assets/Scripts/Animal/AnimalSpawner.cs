@@ -72,6 +72,26 @@ public class AnimalSpawner : MonoBehaviour
             animalScript.SetupNavAgent();
         }
     }
+
+    public void DisableAll()
+    {
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            animalScript.Disable();
+        }
+    }
+
+    public void EnableAll()
+    {
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            animalScript.Enable();
+        }
+    }
 }
 
 #if UNITY_EDITOR

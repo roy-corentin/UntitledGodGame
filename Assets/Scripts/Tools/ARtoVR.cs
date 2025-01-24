@@ -65,6 +65,7 @@ public class ARtoVR : MonoBehaviour
     {
         SetPasstrough(true);
 
+        AnimalSpawner.Instance.DisableAll();
         NavMeshHandler.Instance.ClearNavmesh();
 
         mapGO.transform
@@ -107,7 +108,7 @@ public class ARtoVR : MonoBehaviour
                 Debug.Log("VR Mode");
 
                 NavMeshHandler.Instance.Rebake();
-                AnimalSpawner.Instance.AddNavAgentToAll();
+                AnimalSpawner.Instance.EnableAll();
                 currentMode = GameMode.VR;
             });
 

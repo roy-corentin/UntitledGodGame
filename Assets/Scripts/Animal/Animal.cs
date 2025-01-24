@@ -63,6 +63,8 @@ public class Animal : MonoBehaviour
             return;
         }
 
+        if (navAgent == null) return;
+
         try
         {
             if (navAgent.remainingDistance <= navAgent.stoppingDistance)
@@ -80,6 +82,18 @@ public class Animal : MonoBehaviour
             && !NeedToEat
             && !NeedToSleep)
             RandomMove();
+    }
+
+    public void Disable()
+    {
+        if (navAgent != null) Destroy(navAgent);
+        // if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = true;
+    }
+
+    public void Enable()
+    {
+        SetupNavAgent();
+        // if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = false;
     }
 
     void UpdateValues()
