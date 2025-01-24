@@ -29,20 +29,33 @@ public class Animal : MonoBehaviour
 
     [HideInInspector] public int prefabIndex;
 
+    [Header("---- Animations ----")]
+    public Animator animator;
+
+    [Header("---- Déplacements ----")]
+    public float angularSpeed;
+    public float acceleration;
+    public float stoppingDistance;
     public float moveSpeed;
+
+    [Header("---- RandomMove ----")]
+    public float maxMoveTime = 10;
     private bool isMoving;
     private float startMoveTime;
-    public float maxMoveTime = 10;
+    public float chanceToDoNothing = 10;
     public bool IsOverTime => Time.time - startMoveTime > maxMoveTime;
 
+    [Header("---- Soif ----")]
     [Range(0, 100)] public float thirstValue = 100;
     public float decreaseThirstPerSecond = 0.1f;
     public bool NeedToDrink => thirstValue <= 0;
 
+    [Header("---- Faim ----")]
     [Range(0, 100)] public float hungerValue = 100;
     public float decreaseHungerPerSecond = 0.1f;
     public bool NeedToEat => hungerValue <= 0;
 
+    [Header("---- Sommeil ----")]
     [Range(0, 100)] public float sleepValue = 100;
     public float decreaseSleepPerSecond = 0.1f;
     public bool NeedToSleep => sleepValue <= 0;
@@ -53,27 +66,23 @@ public class Animal : MonoBehaviour
 
         navAgent = gameObject.AddComponent<NavMeshAgent>();
         navAgent.speed = moveSpeed;
+        navAgent.angularSpeed = angularSpeed;
+        navAgent.acceleration = acceleration;
+        navAgent.stoppingDistance = stoppingDistance;
     }
 
     void Update()
     {
-        if (ARtoVR.Instance.currentMode == GameMode.AR)
-        {
-            // TO DO: Save data and destroy gameobject
-            return;
-        }
-
+        if (ARtoVR.Instance.currentMode == GameMode.AR) return;
         if (navAgent == null) return;
 
-        try
+        if (navAgent.remainingDistance <= navAgent.stoppingDistance)
         {
-            if (navAgent.remainingDistance <= navAgent.stoppingDistance)
-            {
-                isMoving = false;
-                RemoveTarget();
-            }
+            isMoving = false;
+            RemoveTarget();
         }
-        catch { }
+
+        if (animator) animator.SetFloat("Speed", navAgent.velocity.magnitude);
 
         UpdateValues();
 
@@ -87,13 +96,15 @@ public class Animal : MonoBehaviour
     public void Disable()
     {
         if (navAgent != null) Destroy(navAgent);
-        // if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = true;
+        if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = false;
+        animator.speed = 0;
     }
 
     public void Enable()
     {
         SetupNavAgent();
-        // if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = false;
+        if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = true;
+        animator.speed = 1;
     }
 
     void UpdateValues()
@@ -175,6 +186,12 @@ public class Animal : MonoBehaviour
         List<GameObject> elements = ElementsSpawner.Instance.elements;
         if (elements.Count == 0) return;
 
+        if (Random.Range(0, 100) < chanceToDoNothing)
+        {
+            RemoveTarget();
+            return;
+        }
+
         GameObject element = elements[Random.Range(0, elements.Count)];
         SetTarget(element.transform);
     }
@@ -193,11 +210,11 @@ public class AnimalEditor : Editor
 
         GUILayout.BeginHorizontal();
 
-        if (GUILayout.Button("Set Target"))
-            animal.SetRandomTarget();
+        // if (GUILayout.Button("Set Target"))
+        //     animal.SetRandomTarget();
 
-        if (GUILayout.Button("Remove Target"))
-            animal.RemoveTarget();
+        // if (GUILayout.Button("Remove Target"))
+        //     animal.RemoveTarget();
 
         GUILayout.EndHorizontal();
     }
