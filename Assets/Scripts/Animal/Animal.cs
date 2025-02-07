@@ -3,9 +3,31 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum DestinationType
+{
+    Random,
+    Drinkable,
+    Eat,
+    Sleep,
+    None
+}
+
+public enum EventType
+{
+    Random,
+    SearchFood,
+    Eat,
+    SearchSleep,
+    Sleep,
+    SearchWater,
+    Drink
+}
+
 public class Animal : MonoBehaviour
 {
     [HideInInspector] public NavMeshAgent navAgent;
+    [HideInInspector] public DestinationType destinationType;
+    public EventType eventType;
 
     // [Header("Statistiques de base")]
     // public float force;
@@ -29,7 +51,6 @@ public class Animal : MonoBehaviour
 
     [HideInInspector] public int prefabIndex;
     public float RemainingDistance = 0;
-    public float RemainingDistance2 = 0;
 
     [Header("---- Animations ----")]
     public Animator animator;
@@ -42,7 +63,7 @@ public class Animal : MonoBehaviour
 
     [Header("---- RandomMove ----")]
     public float maxMoveTime = 10;
-    private bool isMoving;
+    [HideInInspector] public bool isMoving;
     private float startMoveTime;
     public float chanceToDoNothing = 10;
     public bool IsOverTime => Time.time - startMoveTime > maxMoveTime;
@@ -51,7 +72,7 @@ public class Animal : MonoBehaviour
     [Range(0, 100)] public float thirstValue = 100;
     public float decreaseThirstPerSecond = 0.1f;
     public bool NeedToDrink => thirstValue <= 1;
-    private bool isDrinking = false;
+    [HideInInspector] public bool isDrinking = false;
     public float drinkRefillSpeed = 10f;
 
     [Header("---- Faim ----")]
@@ -80,44 +101,21 @@ public class Animal : MonoBehaviour
         if (ARtoVR.Instance.currentMode == GameMode.AR) return;
         if (navAgent == null) return;
 
-        RemainingDistance = navAgent.hasPath ? navAgent.remainingDistance : -1;
-
         DecisionTree.Instance.Callback(this);
 
-        // if (IsAtDestination() && navAgent.hasPath)
-        // {
-        //     Debug.Log("Destination reached");
-        //     if (NeedToDrink && !isDrinking) isDrinking = true;
-        //     RemoveTarget();
-        // }
-
-        if (animator) animator.SetFloat("Speed", navAgent.velocity.magnitude);
+        if (animator)
+            animator.SetFloat("Speed", navAgent.velocity.magnitude);
 
         UpdateValues();
-
-        // if (isDrinking && !isMoving)
-        // {
-        //     Drink();
-        //     return;
-        // }
-        // else if (NeedToDrink) FindDrinkable();
-
-
-        // if ((!isMoving || IsOverTime)
-        //     && !NeedToDrink
-        //     && !isDrinking
-        //     && !NeedToEat
-        //     && !NeedToSleep)
-        //     RandomMove();
     }
 
-    private bool IsAtDestination()
+    public bool IsAtDestination()
     {
-        Vector3 destination = navAgent.destination;
-        Vector3 position = transform.position;
-        float distance = Vector3.Distance(destination, position);
-        RemainingDistance2 = distance;
-        return distance <= stoppingDistance;
+        if (navAgent == null) return false;
+        if (!navAgent.hasPath) return false;
+
+        RemainingDistance = navAgent.remainingDistance;
+        return navAgent.remainingDistance <= stoppingDistance;
     }
 
     public void Disable()
@@ -141,27 +139,29 @@ public class Animal : MonoBehaviour
         if (sleepValue > 0) sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
     }
 
-    void RandomMove()
+    public void RandomMove()
     {
         startMoveTime = Time.time;
         SetRandomTarget();
         isMoving = true;
     }
 
-    void FindDrinkable()
+    public void FindDrinkable()
     {
-        Debug.Log("FindDrinkable");
         DotCoord nearestWater = LocationManager.GetNearestDotOfType(gameObject, Biome.Water);
         MapGenerator.Dot waterDot = MapGenerator.Map.Instance.mapDots[nearestWater.x][nearestWater.y];
         SetTarget(waterDot.transform);
+        destinationType = DestinationType.Drinkable;
     }
 
-    void Drink()
+    public void Drink()
     {
+        isDrinking = true;
         thirstValue += drinkRefillSpeed * Time.deltaTime;
         if (animator && !animator.GetBool("Drink")) animator.SetBool("Drink", true);
         if (thirstValue >= 99)
         {
+            Debug.Log("Animal is not thirsty anymore");
             isDrinking = false;
             thirstValue = 100;
             if (animator) animator.SetBool("Drink", false);
@@ -179,6 +179,7 @@ public class Animal : MonoBehaviour
     {
         isMoving = false;
         navAgent.ResetPath();
+        destinationType = DestinationType.None;
     }
 
     public void SetRandomTarget()
@@ -194,6 +195,7 @@ public class Animal : MonoBehaviour
 
         GameObject element = elements[Random.Range(0, elements.Count)];
         SetTarget(element.transform);
+        destinationType = DestinationType.Random;
     }
 }
 

@@ -1,6 +1,4 @@
 using System;
-using MapGenerator;
-using Oculus.Platform;
 using UnityEngine;
 
 #nullable enable
@@ -68,20 +66,58 @@ public class DecisionTree : MonoBehaviour
 
     public void Start()
     {
-        Node Random = new((Animal animal) => Debug.Log("Random"));
-        Node SearchFood = new((Animal animal) => Debug.Log("SearchFood"));
-        Node Eat = new((Animal animal) => Debug.Log("Eat"));
-        Node SearchSleep = new((Animal animal) => Debug.Log("SearchSleep"));
-        Node Sleep = new((Animal animal) => Debug.Log("Sleep"));
-        Node SearchWater = new((Animal animal) => Debug.Log("SearchWater"));
-        Node Drink = new((Animal animal) => Debug.Log("Drink"));
+        Node Random = new((Animal animal) =>
+        {
+            animal.eventType = EventType.Random;
+            if (animal.IsAtDestination() && animal.navAgent.hasPath) animal.RemoveTarget();
+            if (animal.isMoving && !animal.IsOverTime) return;
+            animal.RandomMove();
+        });
+
+        Node SearchFood = new((Animal animal) =>
+        {
+            animal.eventType = EventType.SearchFood;
+            Debug.Log("SearchFood");
+        });
+
+        Node Eat = new((Animal animal) =>
+        {
+            animal.eventType = EventType.Eat;
+            Debug.Log("Eat");
+        });
+
+        Node SearchSleep = new((Animal animal) =>
+        {
+            animal.eventType = EventType.SearchSleep;
+            Debug.Log("SearchSleep");
+        });
+
+        Node Sleep = new((Animal animal) =>
+        {
+            animal.eventType = EventType.Sleep;
+            Debug.Log("Sleep");
+        });
+
+        Node SearchWater = new((Animal animal) =>
+        {
+            animal.eventType = EventType.SearchWater;
+            animal.FindDrinkable();
+        });
+
+        Node Drink = new((Animal animal) =>
+        {
+            animal.eventType = EventType.Drink;
+            if (!animal.isDrinking)
+            {
+                Debug.Log("Start drinking");
+                animal.RemoveTarget();
+            }
+            animal.Drink();
+        });
 
         Node OnDrinkLocation = new((Animal animal) =>
             {
-                DotCoord nearestDot = LocationManager.GetNearestDot(animal.gameObject);
-                Dot dot = Map.Instance.mapDots[nearestDot.x][nearestDot.y];
-                dot.gameObject.SetActive(true);
-                return dot.biome == Biome.Water;
+                return animal.isDrinking || animal.IsAtDestination();
             },
             Drink,
             SearchWater);
@@ -100,9 +136,26 @@ public class DecisionTree : MonoBehaviour
             Sleep,
             SearchSleep);
 
-        Node NeedToEat = new((Animal animal) => animal.NeedToEat, OnEatLocation, Random);
-        Node NeedToSleep = new((Animal animal) => animal.NeedToSleep, OnSleepLocation, Random);
-        Node NeedToDrink = new((Animal animal) => animal.NeedToDrink, OnDrinkLocation, Random);
+        Node NeedToEat = new((Animal animal) =>
+            {
+                return animal.NeedToEat;
+            },
+            OnEatLocation,
+            Random);
+
+        Node NeedToSleep = new((Animal animal) =>
+            {
+                return animal.NeedToSleep;
+            },
+            OnSleepLocation,
+            Random);
+
+        Node NeedToDrink = new((Animal animal) =>
+            {
+                return animal.NeedToDrink || animal.isDrinking;
+            },
+            OnDrinkLocation,
+            Random);
 
         root = NeedToDrink;
     }
