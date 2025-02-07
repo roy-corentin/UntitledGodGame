@@ -10,28 +10,12 @@ class Node
     public Node? noNode;
     public Action<Animal> action;
 
-    public Node()
-    {
-        decision = null;
-        yesNode = null;
-        noNode = null;
-        action = DefaultAction;
-    }
-
     public Node(Decision? decision, Node? yesNode, Node? noNode)
     {
         this.decision = decision;
         this.yesNode = yesNode;
         this.noNode = noNode;
         this.action = DefaultAction;
-    }
-
-    public Node(Decision? decision, Node? yesNode, Node? noNode, Action<Animal> action)
-    {
-        this.decision = decision;
-        this.yesNode = yesNode;
-        this.noNode = noNode;
-        this.action = action;
     }
 
     public Node(Action<Animal> action)
@@ -66,7 +50,7 @@ public class DecisionTree : MonoBehaviour
 
     public void Start()
     {
-        Node Random = new((Animal animal) =>
+        Node Random = new(animal =>
         {
             animal.eventType = EventType.Random;
             if (animal.IsAtDestination() && animal.navAgent.hasPath) animal.RemoveTarget();
@@ -74,88 +58,83 @@ public class DecisionTree : MonoBehaviour
             animal.RandomMove();
         });
 
-        Node SearchFood = new((Animal animal) =>
+        Node SearchFood = new(animal =>
         {
             animal.eventType = EventType.SearchFood;
-            Debug.Log("SearchFood");
+            animal.FindFood();
         });
 
-        Node Eat = new((Animal animal) =>
+        Node Eat = new(animal =>
         {
             animal.eventType = EventType.Eat;
-            Debug.Log("Eat");
+            animal.Eat();
         });
 
-        Node SearchSleep = new((Animal animal) =>
+        Node SearchSleep = new(animal =>
         {
             animal.eventType = EventType.SearchSleep;
             Debug.Log("SearchSleep");
         });
 
-        Node Sleep = new((Animal animal) =>
+        Node Sleep = new(animal =>
         {
             animal.eventType = EventType.Sleep;
             Debug.Log("Sleep");
         });
 
-        Node SearchWater = new((Animal animal) =>
+        Node SearchWater = new(animal =>
         {
             animal.eventType = EventType.SearchWater;
             animal.FindDrinkable();
         });
 
-        Node Drink = new((Animal animal) =>
+        Node Drink = new(animal =>
         {
             animal.eventType = EventType.Drink;
-            if (!animal.isDrinking)
-            {
-                Debug.Log("Start drinking");
-                animal.RemoveTarget();
-            }
             animal.Drink();
         });
 
-        Node OnDrinkLocation = new((Animal animal) =>
+        Node OnDrinkLocation = new(animal =>
             {
                 return animal.isDrinking || animal.IsAtDestination();
             },
             Drink,
             SearchWater);
 
-        Node OnEatLocation = new((Animal animal) =>
+        Node OnEatLocation = new(animal =>
             {
-                return false;
+                return animal.isEating || animal.IsAtDestination();
             },
             Eat,
             SearchFood);
 
-        Node OnSleepLocation = new((Animal animal) =>
+        Node OnSleepLocation = new(animal =>
             {
                 return false;
             },
             Sleep,
             SearchSleep);
 
-        Node NeedToEat = new((Animal animal) =>
+        Node NeedToEat = new(animal =>
             {
-                return animal.NeedToEat;
+                return animal.NeedToEat || animal.isEating;
             },
             OnEatLocation,
             Random);
 
-        Node NeedToSleep = new((Animal animal) =>
+        Node NeedToSleep = new(animal =>
             {
                 return animal.NeedToSleep;
             },
             OnSleepLocation,
-            Random);
+            NeedToEat);
 
-        Node NeedToDrink = new((Animal animal) =>
+        Node NeedToDrink = new(animal =>
             {
                 return animal.NeedToDrink || animal.isDrinking;
             },
             OnDrinkLocation,
-            Random);
+            NeedToSleep);
 
         root = NeedToDrink;
     }

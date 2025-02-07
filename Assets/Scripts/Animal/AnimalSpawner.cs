@@ -2,6 +2,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+public struct AnimalTarget
+{
+    public GameObject animal;
+    public float distance;
+}
+
 public class AnimalSpawner : MonoBehaviour
 {
     public List<GameObject> animalPrefabs;
@@ -90,6 +96,33 @@ public class AnimalSpawner : MonoBehaviour
             Animal animalScript = animal.GetComponent<Animal>();
             animalScript.Enable();
         }
+    }
+
+    public AnimalTarget GetNearestAnimalOfFoodLevel(GameObject currentAnimal, AnimalFoodLevel foodLevel)
+    {
+        AnimalTarget nearestAnimal = new()
+        {
+            animal = null,
+            distance = float.MaxValue
+        };
+
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            if (animal == currentAnimal) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            if (animalScript.thisFoodLevel == foodLevel)
+            {
+                float distance = Vector3.Distance(currentAnimal.transform.position, animal.transform.position);
+                if (distance < nearestAnimal.distance)
+                {
+                    nearestAnimal.distance = distance;
+                    nearestAnimal.animal = animal;
+                }
+            }
+        }
+
+        return nearestAnimal;
     }
 }
 

@@ -23,31 +23,26 @@ public enum EventType
     Drink
 }
 
+public enum AnimalFoodLevel
+{
+    One,
+    Two,
+    Three,
+    Four,
+    Five
+}
+
+public enum FoodType
+{
+    Herbivore,
+    Carnivore
+}
+
 public class Animal : MonoBehaviour
 {
     [HideInInspector] public NavMeshAgent navAgent;
     [HideInInspector] public DestinationType destinationType;
     public EventType eventType;
-
-    // [Header("Statistiques de base")]
-    // public float force;
-    // public float energie;
-    // public float sante;
-    // public float sasiete;
-    // public float hydratation;
-    // public float aggressivite;
-
-    // [Header("Reproduction")]
-    // public float cycleReproduction;
-    // public int nombreDePetits;
-
-    // [Header("Environnement")]
-    // public float temperature;
-    // public bool presencePredateur;
-
-    // [Header("Autres")]
-    // public float age;
-    // public bool estCarnivore;
 
     [HideInInspector] public int prefabIndex;
     public float RemainingDistance = 0;
@@ -78,7 +73,13 @@ public class Animal : MonoBehaviour
     [Header("---- Faim ----")]
     [Range(0, 100)] public float hungerValue = 100;
     public float decreaseHungerPerSecond = 0.1f;
-    public bool NeedToEat => hungerValue <= 1;
+    [SerializeField] public bool NeedToEat => hungerValue <= 1;
+    public FoodType foodType;
+    [HideInInspector] public GameObject foodTarget;
+    [HideInInspector] public bool isEating = false;
+    public float eatSpeed = 10f;
+    public AnimalFoodLevel thisFoodLevel;
+    public List<AnimalFoodLevel> canEatLevels;
 
     [Header("---- Sommeil ----")]
     [Range(0, 100)] public float sleepValue = 100;
@@ -135,7 +136,7 @@ public class Animal : MonoBehaviour
     void UpdateValues()
     {
         if (thirstValue > 0 && !isDrinking) thirstValue -= decreaseThirstPerSecond * Time.deltaTime;
-        if (hungerValue > 0) hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
+        if (hungerValue > 0 && !isEating) hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
         if (sleepValue > 0) sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
     }
 
@@ -146,16 +147,72 @@ public class Animal : MonoBehaviour
         isMoving = true;
     }
 
+    public void FindFood()
+    {
+        if (foodType == FoodType.Herbivore)
+        {
+            DotCoord nearestGrass = LocationManager.GetNearestDotOfType(gameObject, Biome.Forest);
+            MapGenerator.Dot grassDot = MapGenerator.Map.Instance.mapDots[nearestGrass.x][nearestGrass.y];
+            SetTarget(grassDot.transform);
+            destinationType = DestinationType.Eat;
+            // TODO Gérer quand y'a pas de nourriture
+        }
+        else if (foodType == FoodType.Carnivore)
+        {
+            List<AnimalTarget> targets = new();
+            foreach (AnimalFoodLevel level in canEatLevels)
+            {
+                AnimalTarget animal = AnimalSpawner.Instance.GetNearestAnimalOfFoodLevel(gameObject, level);
+                if (animal.animal == null) continue;
+                targets.Add(animal);
+            }
+
+            if (targets.Count == 0) return;
+
+            targets.Sort((a, b) => a.distance.CompareTo(b.distance));
+
+            SetTarget(targets[0].animal.transform);
+            destinationType = DestinationType.Eat;
+            foodTarget = targets[0].animal;
+        }
+    }
+
+    public void Eat()
+    {
+        if (!isEating)
+        {
+            RemoveTarget();
+            if (foodType == FoodType.Carnivore)
+            {
+                foodTarget.GetComponent<Animal>().Die();
+                foodTarget = null;
+            }
+        }
+
+        isEating = true;
+        hungerValue += eatSpeed * Time.deltaTime;
+        if (animator && !animator.GetBool("Eat")) animator.SetBool("Eat", true);
+        if (hungerValue >= 99)
+        {
+            Debug.Log("Animal is not hungry anymore");
+            isEating = false;
+            hungerValue = 100;
+            RemoveTarget();
+        }
+    }
+
     public void FindDrinkable()
     {
         DotCoord nearestWater = LocationManager.GetNearestDotOfType(gameObject, Biome.Water);
         MapGenerator.Dot waterDot = MapGenerator.Map.Instance.mapDots[nearestWater.x][nearestWater.y];
         SetTarget(waterDot.transform);
         destinationType = DestinationType.Drinkable;
+        // TODO Gérer quand y'a pas de point d'eau
     }
 
     public void Drink()
     {
+        if (!isDrinking) RemoveTarget();
         isDrinking = true;
         thirstValue += drinkRefillSpeed * Time.deltaTime;
         if (animator && !animator.GetBool("Drink")) animator.SetBool("Drink", true);
@@ -167,6 +224,13 @@ public class Animal : MonoBehaviour
             if (animator) animator.SetBool("Drink", false);
             RemoveTarget();
         }
+    }
+
+    public void Die()
+    {
+        Debug.Log("Ho no, I'm dead");
+        if (animator) animator.SetBool("Die", true);
+        Destroy(gameObject, 1);
     }
 
     public void SetTarget(Transform target)
