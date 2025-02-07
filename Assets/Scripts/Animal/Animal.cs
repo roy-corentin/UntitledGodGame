@@ -3,9 +3,31 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
+public enum DestinationType
+{
+    Random,
+    Drinkable,
+    Eat,
+    Sleep,
+    None
+}
+
+public enum EventType
+{
+    Random,
+    SearchFood,
+    Eat,
+    SearchSleep,
+    Sleep,
+    SearchWater,
+    Drink
+}
+
 public class Animal : MonoBehaviour
 {
-    private NavMeshAgent navAgent;
+    [HideInInspector] public NavMeshAgent navAgent;
+    [HideInInspector] public DestinationType destinationType;
+    public EventType eventType;
 
     // [Header("Statistiques de base")]
     // public float force;
@@ -28,6 +50,7 @@ public class Animal : MonoBehaviour
     // public bool estCarnivore;
 
     [HideInInspector] public int prefabIndex;
+    public float RemainingDistance = 0;
 
     [Header("---- Animations ----")]
     public Animator animator;
@@ -40,7 +63,7 @@ public class Animal : MonoBehaviour
 
     [Header("---- RandomMove ----")]
     public float maxMoveTime = 10;
-    private bool isMoving;
+    [HideInInspector] public bool isMoving;
     private float startMoveTime;
     public float chanceToDoNothing = 10;
     public bool IsOverTime => Time.time - startMoveTime > maxMoveTime;
@@ -48,17 +71,19 @@ public class Animal : MonoBehaviour
     [Header("---- Soif ----")]
     [Range(0, 100)] public float thirstValue = 100;
     public float decreaseThirstPerSecond = 0.1f;
-    public bool NeedToDrink => thirstValue <= 0;
+    public bool NeedToDrink => thirstValue <= 1;
+    [HideInInspector] public bool isDrinking = false;
+    public float drinkRefillSpeed = 10f;
 
     [Header("---- Faim ----")]
     [Range(0, 100)] public float hungerValue = 100;
     public float decreaseHungerPerSecond = 0.1f;
-    public bool NeedToEat => hungerValue <= 0;
+    public bool NeedToEat => hungerValue <= 1;
 
     [Header("---- Sommeil ----")]
     [Range(0, 100)] public float sleepValue = 100;
     public float decreaseSleepPerSecond = 0.1f;
-    public bool NeedToSleep => sleepValue <= 0;
+    public bool NeedToSleep => sleepValue <= 1;
 
     public void SetupNavAgent()
     {
@@ -76,21 +101,21 @@ public class Animal : MonoBehaviour
         if (ARtoVR.Instance.currentMode == GameMode.AR) return;
         if (navAgent == null) return;
 
-        if (navAgent.remainingDistance <= navAgent.stoppingDistance)
-        {
-            isMoving = false;
-            RemoveTarget();
-        }
+        DecisionTree.Instance.Callback(this);
 
-        if (animator) animator.SetFloat("Speed", navAgent.velocity.magnitude);
+        if (animator)
+            animator.SetFloat("Speed", navAgent.velocity.magnitude);
 
         UpdateValues();
+    }
 
-        if ((!isMoving || IsOverTime)
-            && !NeedToDrink
-            && !NeedToEat
-            && !NeedToSleep)
-            RandomMove();
+    public bool IsAtDestination()
+    {
+        if (navAgent == null) return false;
+        if (!navAgent.hasPath) return false;
+
+        RemainingDistance = navAgent.remainingDistance;
+        return navAgent.remainingDistance <= stoppingDistance;
     }
 
     public void Disable()
@@ -109,76 +134,52 @@ public class Animal : MonoBehaviour
 
     void UpdateValues()
     {
-        thirstValue -= decreaseThirstPerSecond * Time.deltaTime;
-        hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
-        sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
+        if (thirstValue > 0 && !isDrinking) thirstValue -= decreaseThirstPerSecond * Time.deltaTime;
+        if (hungerValue > 0) hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
+        if (sleepValue > 0) sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
     }
 
-    void RandomMove()
+    public void RandomMove()
     {
         startMoveTime = Time.time;
         SetRandomTarget();
         isMoving = true;
     }
 
-    void Courir()
+    public void FindDrinkable()
     {
-        // Implémentation du comportement de course
+        DotCoord nearestWater = LocationManager.GetNearestDotOfType(gameObject, Biome.Water);
+        MapGenerator.Dot waterDot = MapGenerator.Map.Instance.mapDots[nearestWater.x][nearestWater.y];
+        SetTarget(waterDot.transform);
+        destinationType = DestinationType.Drinkable;
     }
 
-    void Manger()
+    public void Drink()
     {
-        // Implémentation du comportement alimentaire
-    }
-
-    void Fuir()
-    {
-        // Implémentation du comportement de fuite
-    }
-
-    void Dormir()
-    {
-        // Implémentation du comportement de sommeil
-    }
-
-    void SAccoupler()
-    {
-        // Implémentation du comportement d'accouplement
-    }
-
-    void ChercherNourriture()
-    {
-        // Implémentation de la recherche de nourriture
-    }
-
-    void Chasser()
-    {
-        // Implémentation du comportement de chasse (pour les carnivores)
-    }
-
-    void Protéger()
-    {
-        // Implémentation du comportement de protection
-    }
-
-    void Boire()
-    {
-        // Implémentation du comportement pour boire
-    }
-
-    bool EnvironnementFavorable()
-    {
-        return true;
+        isDrinking = true;
+        thirstValue += drinkRefillSpeed * Time.deltaTime;
+        if (animator && !animator.GetBool("Drink")) animator.SetBool("Drink", true);
+        if (thirstValue >= 99)
+        {
+            Debug.Log("Animal is not thirsty anymore");
+            isDrinking = false;
+            thirstValue = 100;
+            if (animator) animator.SetBool("Drink", false);
+            RemoveTarget();
+        }
     }
 
     public void SetTarget(Transform target)
     {
+        isMoving = true;
         navAgent.SetDestination(target.position);
     }
 
     public void RemoveTarget()
     {
+        isMoving = false;
         navAgent.ResetPath();
+        destinationType = DestinationType.None;
     }
 
     public void SetRandomTarget()
@@ -194,6 +195,7 @@ public class Animal : MonoBehaviour
 
         GameObject element = elements[Random.Range(0, elements.Count)];
         SetTarget(element.transform);
+        destinationType = DestinationType.Random;
     }
 }
 
@@ -205,18 +207,17 @@ public class AnimalEditor : Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+    }
 
+    // draw a gizmo in the scene view at target's position
+    void OnSceneGUI()
+    {
         Animal animal = (Animal)target;
 
-        GUILayout.BeginHorizontal();
+        if (animal.navAgent == null) return;
 
-        // if (GUILayout.Button("Set Target"))
-        //     animal.SetRandomTarget();
-
-        // if (GUILayout.Button("Remove Target"))
-        //     animal.RemoveTarget();
-
-        GUILayout.EndHorizontal();
+        Handles.color = Color.red;
+        Handles.DrawWireDisc(animal.navAgent.destination, Vector3.up, 1, 2);
     }
 }
 

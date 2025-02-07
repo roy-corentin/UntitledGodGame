@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum Biome
 {
+    Unset,
     Desert,
     Forest,
     Mountains,
