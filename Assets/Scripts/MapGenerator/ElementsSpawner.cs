@@ -32,7 +32,7 @@ public class ElementsSpawner : MonoBehaviour
             Dot dot = mapDots[Random.Range(0, mapDots.Count)][Random.Range(0, mapDots[0].Count)];
             if (dot.element) continue;
 
-            Biome biome = BiomeManager.Instance.GetBiome(dot);
+            Biome biome = dot.biome;
             if (biome == Biome.Water) continue;
 
             GameObject prefab = GetPrefab(biome);
@@ -68,11 +68,9 @@ public class ElementsSpawner : MonoBehaviour
     public void SpawnElementOnDot(Dot dot)
     {
         if (dot.element) return;
-        Biome biome = BiomeManager.Instance.GetBiome(dot);
-        dot.biome = biome;
-        if (biome == Biome.Water) return;
+        if (dot.biome == Biome.Water) return;
 
-        GameObject newElement = Instantiate(GetPrefab(biome), elementsParent);
+        GameObject newElement = Instantiate(GetPrefab(dot.biome), elementsParent);
         Vector3 rotation = new(0, Random.Range(0, 360), 0);
         Vector3 scale = newElement.transform.localScale;
         scale *= Random.Range(0.8f, 1.2f);
@@ -108,15 +106,13 @@ public class ElementsSpawner : MonoBehaviour
     {
         if (!dot.element) return;
 
-        Biome biome = BiomeManager.Instance.GetBiome(dot);
-        if (biome == dot.biome) return;
-
-        dot.biome = biome;
+        if (dot.lastBiome == dot.biome) return;
+        dot.lastBiome = dot.biome;
 
         DestroyElement(dot.element);
-        if (biome == Biome.Water) return;
+        if (dot.biome == Biome.Water) return;
 
-        GameObject prefab = GetPrefab(biome);
+        GameObject prefab = GetPrefab(dot.biome);
         GameObject newElement = Instantiate(prefab, elementsParent);
         Vector3 rotation = new(0, Random.Range(0, 360), 0);
         Vector3 scale = newElement.transform.localScale;

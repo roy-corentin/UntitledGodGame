@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class Animal : MonoBehaviour
 {
-    private NavMeshAgent navAgent;
+    [HideInInspector] public NavMeshAgent navAgent;
 
     // [Header("Statistiques de base")]
     // public float force;
@@ -28,6 +28,8 @@ public class Animal : MonoBehaviour
     // public bool estCarnivore;
 
     [HideInInspector] public int prefabIndex;
+    public float RemainingDistance = 0;
+    public float RemainingDistance2 = 0;
 
     [Header("---- Animations ----")]
     public Animator animator;
@@ -48,17 +50,19 @@ public class Animal : MonoBehaviour
     [Header("---- Soif ----")]
     [Range(0, 100)] public float thirstValue = 100;
     public float decreaseThirstPerSecond = 0.1f;
-    public bool NeedToDrink => thirstValue <= 0;
+    public bool NeedToDrink => thirstValue <= 1;
+    private bool isDrinking = false;
+    public float drinkRefillSpeed = 10f;
 
     [Header("---- Faim ----")]
     [Range(0, 100)] public float hungerValue = 100;
     public float decreaseHungerPerSecond = 0.1f;
-    public bool NeedToEat => hungerValue <= 0;
+    public bool NeedToEat => hungerValue <= 1;
 
     [Header("---- Sommeil ----")]
     [Range(0, 100)] public float sleepValue = 100;
     public float decreaseSleepPerSecond = 0.1f;
-    public bool NeedToSleep => sleepValue <= 0;
+    public bool NeedToSleep => sleepValue <= 1;
 
     public void SetupNavAgent()
     {
@@ -76,21 +80,44 @@ public class Animal : MonoBehaviour
         if (ARtoVR.Instance.currentMode == GameMode.AR) return;
         if (navAgent == null) return;
 
-        if (navAgent.remainingDistance <= navAgent.stoppingDistance)
-        {
-            isMoving = false;
-            RemoveTarget();
-        }
+        RemainingDistance = navAgent.hasPath ? navAgent.remainingDistance : -1;
+
+        DecisionTree.Instance.Callback(this);
+
+        // if (IsAtDestination() && navAgent.hasPath)
+        // {
+        //     Debug.Log("Destination reached");
+        //     if (NeedToDrink && !isDrinking) isDrinking = true;
+        //     RemoveTarget();
+        // }
 
         if (animator) animator.SetFloat("Speed", navAgent.velocity.magnitude);
 
         UpdateValues();
 
-        if ((!isMoving || IsOverTime)
-            && !NeedToDrink
-            && !NeedToEat
-            && !NeedToSleep)
-            RandomMove();
+        // if (isDrinking && !isMoving)
+        // {
+        //     Drink();
+        //     return;
+        // }
+        // else if (NeedToDrink) FindDrinkable();
+
+
+        // if ((!isMoving || IsOverTime)
+        //     && !NeedToDrink
+        //     && !isDrinking
+        //     && !NeedToEat
+        //     && !NeedToSleep)
+        //     RandomMove();
+    }
+
+    private bool IsAtDestination()
+    {
+        Vector3 destination = navAgent.destination;
+        Vector3 position = transform.position;
+        float distance = Vector3.Distance(destination, position);
+        RemainingDistance2 = distance;
+        return distance <= stoppingDistance;
     }
 
     public void Disable()
@@ -109,9 +136,9 @@ public class Animal : MonoBehaviour
 
     void UpdateValues()
     {
-        thirstValue -= decreaseThirstPerSecond * Time.deltaTime;
-        hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
-        sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
+        if (thirstValue > 0 && !isDrinking) thirstValue -= decreaseThirstPerSecond * Time.deltaTime;
+        if (hungerValue > 0) hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
+        if (sleepValue > 0) sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
     }
 
     void RandomMove()
@@ -121,63 +148,36 @@ public class Animal : MonoBehaviour
         isMoving = true;
     }
 
-    void Courir()
+    void FindDrinkable()
     {
-        // Implémentation du comportement de course
+        Debug.Log("FindDrinkable");
+        DotCoord nearestWater = LocationManager.GetNearestDotOfType(gameObject, Biome.Water);
+        MapGenerator.Dot waterDot = MapGenerator.Map.Instance.mapDots[nearestWater.x][nearestWater.y];
+        SetTarget(waterDot.transform);
     }
 
-    void Manger()
+    void Drink()
     {
-        // Implémentation du comportement alimentaire
-    }
-
-    void Fuir()
-    {
-        // Implémentation du comportement de fuite
-    }
-
-    void Dormir()
-    {
-        // Implémentation du comportement de sommeil
-    }
-
-    void SAccoupler()
-    {
-        // Implémentation du comportement d'accouplement
-    }
-
-    void ChercherNourriture()
-    {
-        // Implémentation de la recherche de nourriture
-    }
-
-    void Chasser()
-    {
-        // Implémentation du comportement de chasse (pour les carnivores)
-    }
-
-    void Protéger()
-    {
-        // Implémentation du comportement de protection
-    }
-
-    void Boire()
-    {
-        // Implémentation du comportement pour boire
-    }
-
-    bool EnvironnementFavorable()
-    {
-        return true;
+        thirstValue += drinkRefillSpeed * Time.deltaTime;
+        if (animator && !animator.GetBool("Drink")) animator.SetBool("Drink", true);
+        if (thirstValue >= 99)
+        {
+            isDrinking = false;
+            thirstValue = 100;
+            if (animator) animator.SetBool("Drink", false);
+            RemoveTarget();
+        }
     }
 
     public void SetTarget(Transform target)
     {
+        isMoving = true;
         navAgent.SetDestination(target.position);
     }
 
     public void RemoveTarget()
     {
+        isMoving = false;
         navAgent.ResetPath();
     }
 
@@ -205,18 +205,17 @@ public class AnimalEditor : Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+    }
 
+    // draw a gizmo in the scene view at target's position
+    void OnSceneGUI()
+    {
         Animal animal = (Animal)target;
 
-        GUILayout.BeginHorizontal();
+        if (animal.navAgent == null) return;
 
-        // if (GUILayout.Button("Set Target"))
-        //     animal.SetRandomTarget();
-
-        // if (GUILayout.Button("Remove Target"))
-        //     animal.RemoveTarget();
-
-        GUILayout.EndHorizontal();
+        Handles.color = Color.red;
+        Handles.DrawWireDisc(animal.navAgent.destination, Vector3.up, 1, 2);
     }
 }
 

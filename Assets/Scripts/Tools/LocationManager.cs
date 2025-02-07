@@ -61,7 +61,7 @@ public class LocationManager
         {
             for (int y = 0; y < dots[x].Count; y++)
             {
-                Biome dotbiome = BiomeManager.Instance.GetBiome(dots[x][y]);
+                Biome dotbiome = dots[x][y].biome;
                 if (dotbiome != type) continue;
 
                 float distance = Vector3.Distance(target.transform.position, dots[x][y].transform.position);
