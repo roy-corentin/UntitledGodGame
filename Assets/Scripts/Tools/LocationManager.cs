@@ -50,4 +50,30 @@ public class LocationManager
 
         return nearestDot;
     }
+
+    public static DotCoord GetNearestDotOfType(GameObject target, Biome type)
+    {
+        List<List<Dot>> dots = Map.Instance.mapDots;
+        float nearestDistance = float.MaxValue;
+        DotCoord nearestDot = new(0, 0);
+
+        for (int x = 0; x < dots.Count; x++)
+        {
+            for (int y = 0; y < dots[x].Count; y++)
+            {
+                Biome dotbiome = BiomeManager.Instance.GetBiome(dots[x][y]);
+                if (dotbiome != type) continue;
+
+                float distance = Vector3.Distance(target.transform.position, dots[x][y].transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestDot.x = x;
+                    nearestDot.y = y;
+                }
+            }
+        }
+
+        return nearestDot;
+    }
 }
