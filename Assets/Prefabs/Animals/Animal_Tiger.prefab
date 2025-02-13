@@ -13,6 +13,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3234389640255874611}
     - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: foodType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: moveSpeed
       value: 1.2
       objectReference: {fileID: 0}
@@ -29,12 +33,32 @@ PrefabInstance:
       value: 600
       objectReference: {fileID: 0}
     - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: thisFoodLevel
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: stoppingDistance
-      value: 4
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: chanceToDoNothing
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: canEatLevels.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: canEatLevels.Array.data[0]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: canEatLevels.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: canEatLevels.Array.data[2]
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 125183050734454205, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: m_Enabled
