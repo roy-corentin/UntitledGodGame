@@ -46,7 +46,8 @@ namespace MapGenerator
                 ClearMesh();
             }
 #else
-            if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
+            if (ARtoVR.Instance.GetCurrentMode() == GameMode.AR)
+                if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
 #endif
         }
 
@@ -89,6 +90,7 @@ namespace MapGenerator
                     dot.SetTemperature(temperatures[x][invertedZ]);
                 }
 
+                if (x % 5 == 0) CreateMesh();
                 yield return null;
             }
 
@@ -97,6 +99,13 @@ namespace MapGenerator
             yield return null;
 
             ElementsSpawner.Instance.SpawnTreeAllAroundMap(mapDots, elementQuantity);
+        }
+
+        public void UpdateHeightMap(List<float> heightMapValues)
+        {
+            this.heightMapValues = heightMapValues;
+            heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, heightMapValues);
+            meshMaterial.SetTexture("_HeightNoise", heightMap);
         }
 
         public void UpdateHeightMap(SelectionDots selectedDots)
@@ -118,6 +127,13 @@ namespace MapGenerator
 
             heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(size, heightMapValues);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
+        }
+
+        public void UpdateTemperatureMap(List<float> temperatureMapValues)
+        {
+            this.temperatureMapValues = temperatureMapValues;
+            temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, temperatureMapValues);
+            meshMaterial.SetTexture("_TempNoise", temperatureMap);
         }
 
         public void UpdateTemperatureMap(SelectionDots selectedDots)
@@ -150,7 +166,11 @@ namespace MapGenerator
 
         public IEnumerator GenerateDots()
         {
-            ClearDots();
+            if (mapDots.Count > 0)
+            {
+                areDotsGenerated = true;
+                yield break;
+            }
 
             yield return null;
 
@@ -214,10 +234,12 @@ namespace MapGenerator
         {
             ClearMesh();
             meshMap = new GameObject("Mesh Map");
+            meshMap.layer = LayerMask.NameToLayer("Ground");
             meshMap.transform.SetParent(this.gameObject.transform);
 
             MeshFilter meshFilter = meshMap.AddComponent<MeshFilter>();
             MeshRenderer meshRenderer = meshMap.AddComponent<MeshRenderer>();
+            MeshCollider meshCollider = meshMap.AddComponent<MeshCollider>();
             meshRenderer.material = meshMaterial;
 
             Mesh mesh = new();
@@ -260,6 +282,7 @@ namespace MapGenerator
             mesh.RecalculateUVDistributionMetrics();
 
             meshFilter.mesh = mesh;
+            meshCollider.sharedMesh = mesh;
         }
 
         public void ClearMesh()

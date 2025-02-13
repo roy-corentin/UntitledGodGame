@@ -29,11 +29,16 @@ public class ChangeHeight : ToolAction
 
     private void UpdateHeightDot(float pressure, SelectedDot selectedDot, float moveValue)
     {
-        float newY = selectedDot.dot.transform.position.y + moveValue * pressure;
-        if (actionType == REMOVE) newY *= -1;
+        float newY = selectedDot.dot.transform.position.y + moveValue * pressure * actionType;
 
         selectedDot.dot.SetYPosition(newY);
         if (selectedDot.dot.element)
             selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
+        ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
+    }
+
+    public void SetCenterMoveValue(float centerMoveValue)
+    {
+        this.centerMoveValue = centerMoveValue;
     }
 }

@@ -11,6 +11,7 @@ public class DayNightCycle : MonoBehaviour
     [Header("Time Settings")]
     public float dayLengthinMinutes = 10;
     public float timeMultiplier = 1;
+    private float timeMultiplierBeforeStop = 1;
 
     [Header("Infos (Read Only)")]
     public float timeOfDay = 0;
@@ -48,7 +49,7 @@ public class DayNightCycle : MonoBehaviour
     private void OnDestroy()
     {
         skyboxMaterial.SetColor("_Tint", dayColor);
-        sun.color = lightDayColor;
+        if (sun != null) sun.color = lightDayColor;
     }
 
     private void Update()
@@ -96,7 +97,6 @@ public class DayNightCycle : MonoBehaviour
     private void HandleTimeOfDayChange()
     {
         lastTimeOfDay = currentTimeOfDay;
-        Debug.Log("It's " + currentTimeOfDay);
         transitionTime = 0f;
 
         startSkyboxColor = skyboxMaterial.GetColor("_Tint");
@@ -120,5 +120,26 @@ public class DayNightCycle : MonoBehaviour
             Color newLightColor = Color.Lerp(startLightColor, targetLightColor, t);
             sun.color = newLightColor;
         }
+    }
+
+    public void SetTimeMultiplier(float multiplier)
+    {
+        timeMultiplier = multiplier;
+    }
+
+    public void SetDayLength(float minutes)
+    {
+        dayLengthinMinutes = minutes;
+    }
+
+    public void StopTime()
+    {
+        timeMultiplierBeforeStop = timeMultiplier;
+        timeMultiplier = 0;
+    }
+
+    public void ResumeTime()
+    {
+        timeMultiplier = timeMultiplierBeforeStop;
     }
 }

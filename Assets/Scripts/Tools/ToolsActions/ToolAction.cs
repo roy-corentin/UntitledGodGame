@@ -10,6 +10,13 @@ public class ToolAction : MonoBehaviour
     public const int REMOVE = -1;
     public int actionType = ADD;
     [SerializeField] protected bool showSelectedDots = false;
+    public AudioSource audioSource;
+
+    public void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+        actionType = ADD;
+    }
 
     public void Action(float pressure)
     {

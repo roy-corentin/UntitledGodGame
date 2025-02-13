@@ -9,7 +9,7 @@ public enum GameMode
 
 public class ARtoVR : MonoBehaviour
 {
-    private GameMode currentMode = GameMode.AR;
+    public GameMode currentMode = GameMode.AR;
     public static ARtoVR Instance;
     public GameObject mapGO;
     public Vector3 ARMapSize;
@@ -19,6 +19,8 @@ public class ARtoVR : MonoBehaviour
     public OVRPassthroughLayer passthroughLayer;
     public Camera mainCamera;
     public GameObject toolbox;
+    public AudioSource mapAudioSource;
+    public AudioClip transitionSound;
 
     private void Awake()
     {
@@ -51,15 +53,20 @@ public class ARtoVR : MonoBehaviour
     public void SetMode(GameMode mode)
     {
         if (currentMode == mode) return;
-        currentMode = mode;
 
-        if (currentMode == GameMode.AR) GoToAR();
+        mapAudioSource.clip = transitionSound;
+        mapAudioSource.Play();
+
+        if (mode == GameMode.AR) GoToAR();
         else GoToVR();
     }
 
     private void GoToAR(bool instant = false)
     {
         SetPasstrough(true);
+
+        AnimalSpawner.Instance.DisableAll();
+        NavMeshHandler.Instance.ClearNavmesh();
 
         mapGO.transform
             .DOMove(Vector3.zero, instant ? 0 : transitionDuration)
@@ -72,12 +79,16 @@ public class ARtoVR : MonoBehaviour
             .OnComplete(() =>
             {
                 Debug.Log("AR Mode");
+
+                currentMode = GameMode.AR;
             });
 
         toolbox.gameObject.SetActive(true);
         toolbox.transform
             .DOScale(Vector3.one, instant ? 0 : transitionDuration)
             .SetEase(Ease.InOutCubic);
+
+        DayNightCycle.Instance.StopTime();
     }
 
     private void GoToVR(bool instant = false)
@@ -95,6 +106,10 @@ public class ARtoVR : MonoBehaviour
             .OnComplete(() =>
             {
                 Debug.Log("VR Mode");
+
+                NavMeshHandler.Instance.Rebake();
+                AnimalSpawner.Instance.EnableAll();
+                currentMode = GameMode.VR;
             });
 
         toolbox.transform
@@ -104,6 +119,8 @@ public class ARtoVR : MonoBehaviour
             {
                 toolbox.gameObject.SetActive(false);
             });
+
+        DayNightCycle.Instance.ResumeTime();
     }
 
     private void SetPasstrough(bool active)

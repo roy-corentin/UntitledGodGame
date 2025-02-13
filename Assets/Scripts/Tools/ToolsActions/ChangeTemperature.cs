@@ -28,10 +28,15 @@ public class ChangeTemperature : ToolAction
 
     private void UpdateTemperatureDot(float pressure, SelectedDot selectedDot, float moveValue)
     {
-        float newCenterDotTemp = selectedDot.dot.temperature + moveValue * pressure;
-        if (actionType == REMOVE) newCenterDotTemp *= -1;
+        float newCenterDotTemp = selectedDot.dot.temperature + moveValue * pressure * actionType;
 
         selectedDot.dot.SetTemperature(newCenterDotTemp);
         ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
+    }
+
+    public void SetCenterTempValue(float centerTempValue)
+    {
+        this.centerTempValue = centerTempValue;
+        this.surroundingTempValue = centerTempValue / 2;
     }
 }

@@ -16,11 +16,13 @@ public struct SelectionDots
 
 public class PlayerActions : MonoBehaviour
 {
+    public Camera playerCamera;
     public ToolAction currentTool;
     public static PlayerActions Instance;
     private SelectionDots lastSelectedDots;
     public float actionCooldown = 0.1f;
     private float nextActionTime = 0f;
+    public float moveSpeed = 1f;
 
     private void Awake()
     {
@@ -45,6 +47,12 @@ public class PlayerActions : MonoBehaviour
             else if (Input.GetKey(KeyCode.E)) currentTool.transform.position += Vector3.down * Time.deltaTime;
         }
 
+        if (Input.GetKeyDown(KeyCode.Space) && currentTool != null)
+            if (!currentTool.audioSource.isPlaying) currentTool.audioSource.Play();
+
+        if (Input.GetKeyUp(KeyCode.Space) && currentTool != null)
+            currentTool.audioSource.Stop();
+
         if (Input.GetKey(KeyCode.Space)
             && currentTool != null
             && Time.time >= nextActionTime)
@@ -53,18 +61,46 @@ public class PlayerActions : MonoBehaviour
             nextActionTime = Time.time + actionCooldown;
         }
 #else
-        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-currentTool.actionType); // B
-        if (OVRInput.GetDown(OVRInput.Button.Two)) SetDirection(-currentTool.actionType); // B
+        if (ARtoVR.Instance.GetCurrentMode() == GameMode.AR) ARInputs();
+        else VRInputs();
+#endif
+    }
+
+    private void ARInputs()
+    {
+        if (OVRInput.GetDown(OVRInput.Button.Two)) SetActionType(-currentTool.actionType); // B
 
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger
         if (pressure != 0
             && currentTool != null
             && Time.time >= nextActionTime)
         {
+            if (!currentTool.audioSource.isPlaying) currentTool.audioSource.Play();
             currentTool.Action(1f);
             nextActionTime = Time.time + actionCooldown;
         }
-#endif
+
+        if (pressure == 0 && currentTool != null)
+        {
+            HideAllSelectedDots();
+            currentTool.audioSource.Stop();
+        }
+    }
+
+    private void VRInputs()
+    {
+        Vector2 joystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick); // Left joystick
+        Vector3 playerForward = playerCamera.transform.forward;
+        playerForward.y = 0;
+        playerForward.Normalize();
+        Vector3 playerRight = playerCamera.transform.right;
+        playerRight.y = 0;
+        playerRight.Normalize();
+        Vector3 moveDirection = playerForward * joystick.y + playerRight * joystick.x;
+        MapGenerator.Map.Instance.transform.position -= moveDirection * Time.deltaTime * moveSpeed;
+
+        float heightJoystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y; // Right joystick
+        MapGenerator.Map.Instance.transform.position += Vector3.up * -heightJoystick * Time.deltaTime * moveSpeed;
     }
 
     private void SetActionType(int actionType)
@@ -174,6 +210,13 @@ public class PlayerActions : MonoBehaviour
 
     private bool IsOnLayer(int layerIndex, int iOffset, int jOffset)
     {
-        return (Mathf.Abs(iOffset) == layerIndex || Mathf.Abs(jOffset) == layerIndex);
+        return (Mathf.Abs(iOffset) == layerIndex || Mathf.Abs(jOffset) == layerIndex) &&
+                i >= 0 && i < mapDots.Count &&
+                j >= 0 && j < mapDots[i].Count;
+    }
+
+    public void SetMoveSpeed(float speed)
+    {
+        moveSpeed = speed;
     }
 }
