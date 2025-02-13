@@ -97,6 +97,16 @@ public class Animal : MonoBehaviour
         navAgent.stoppingDistance = stoppingDistance;
     }
 
+    void Awake()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 100, LayerMask.GetMask("Ground")))
+        {
+            if (!this.gameObject.TryGetComponent(out CapsuleCollider capsuleCollider)) return;
+            float height = capsuleCollider.height * transform.localScale.y;
+            transform.position = new Vector3(hit.point.x, hit.point.y + height / 2, hit.point.z);
+        }
+    }
+
     void Update()
     {
         if (ARtoVR.Instance.currentMode == GameMode.AR) return;
@@ -122,14 +132,12 @@ public class Animal : MonoBehaviour
     public void Disable()
     {
         if (navAgent != null) Destroy(navAgent);
-        if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = false;
         animator.speed = 0;
     }
 
     public void Enable()
     {
         SetupNavAgent();
-        if (this.gameObject.TryGetComponent<Rigidbody>(out var rb)) rb.isKinematic = true;
         animator.speed = 1;
     }
 
