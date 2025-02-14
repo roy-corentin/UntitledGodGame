@@ -5,14 +5,13 @@ using UnityEngine;
 public struct SelectedDot
 {
     public MapGenerator.Dot dot;
-    public int j;
-    public int i;
+    public int index;
 }
 
 public struct SelectionDots
 {
     public SelectedDot centerDot;
-    public List<List<SelectedDot>> surroundingDotsLayers;
+    public SelectedDot[][] surroundingDotsLayers;
 }
 
 public class PlayerActions : MonoBehaviour
@@ -33,6 +32,8 @@ public class PlayerActions : MonoBehaviour
     private void Update()
     {
 #if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.DownArrow)) SetActionType(ToolAction.REMOVE);
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) SetActionType(ToolAction.ADD);
         if (Input.GetKeyDown(KeyCode.DownArrow)) SetActionType(ToolAction.REMOVE);
         else if (Input.GetKeyDown(KeyCode.UpArrow)) SetActionType(ToolAction.ADD);
 
@@ -105,6 +106,7 @@ public class PlayerActions : MonoBehaviour
     private void SetActionType(int actionType)
     {
         currentTool.actionType = actionType;
+        currentTool.actionType = actionType;
     }
 
     public SelectionDots GetSelectedDots()
@@ -116,59 +118,40 @@ public class PlayerActions : MonoBehaviour
 
         if (mapDots.Count == 0) return new SelectionDots();
 
-        SelectedDot selectedDot = new() { dot = mapDots[0][0], j = 0, i = 0 };
-        float nearestDistance = Vector3.Distance(selectedDot.dot.transform.position, playerHandPosition);
+        Vector2 playerHandPosition2D = new(playerHandPosition.x, playerHandPosition.z);
+        SelectedDot centerDot = GetNearestDot(mapDots, playerHandPosition2D);
+        if (centerDot.dot == null) return new SelectionDots();
 
-        // get the nearest dot to the playerHand
-        for (int i = 0; i < mapDots.Count; i++)
-        {
-            for (int j = 0; j < mapDots[i].Count; j++)
-            {
-                MapGenerator.Dot dot = mapDots[i][j];
-                Vector2 playerHandPosition2D = new(playerHandPosition.x, playerHandPosition.z);
-                Vector2 dotPosition2D = new(dot.transform.position.x, dot.transform.position.z);
-                float distance = Vector2.Distance(playerHandPosition2D, dotPosition2D);
-
-                if (distance < nearestDistance)
-                {
-                    nearestDistance = distance;
-                    selectedDot.dot = dot;
-                    selectedDot.i = i;
-                    selectedDot.j = j;
-                }
-
-                if (dot.gameObject.activeSelf) dot.gameObject.SetActive(false);
-            }
-        }
-
-        // if the nearest dot is too far, return an empty SelectedDots
-        if (nearestDistance > currentTool.triggerRange) return new SelectionDots();
-        if (Mathf.Abs(selectedDot.dot.transform.position.y - playerHandPosition.y) > currentTool.triggerRange) return new SelectionDots();
-
-        SelectionDots selectedDots = new() { centerDot = selectedDot, surroundingDotsLayers = new() };
+        SelectionDots selectedDots = new() { centerDot = centerDot, surroundingDotsLayers = new SelectedDot[currentTool.actionRange][] };
 
         for (int layerIndex = 1; layerIndex <= currentTool.actionRange; layerIndex++)
         {
-            List<SelectedDot> currentLayerDots = new();
+            int dotLayerIndex = 0;
+            SelectedDot[] currentLayerDots = new SelectedDot[layerIndex * 8];
 
             for (int iOffset = -layerIndex; iOffset <= layerIndex; iOffset++)
-            {
                 for (int jOffset = -layerIndex; jOffset <= layerIndex; jOffset++)
                 {
-                    int i = selectedDot.i + iOffset;
-                    int j = selectedDot.j + jOffset;
+                    int i = centerDot.index / MapGenerator.Map.Instance.size + iOffset;
+                    int j = centerDot.index % MapGenerator.Map.Instance.size + jOffset;
 
                     // Check if the point is on the edge of the current layer
-                    if (IsPointOnEdgeOfLayer(layerIndex, i, j, iOffset, jOffset, mapDots))
-                        currentLayerDots.Add(new SelectedDot { dot = mapDots[i][j], j = j, i = i });
+                    if (IsOnMap(i, j, mapDots))
+                    {
+                        if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false);
 
-                    try { if (mapDots[i][j].gameObject.activeSelf) mapDots[i][j].gameObject.SetActive(false); }
-                    catch (ArgumentOutOfRangeException) { }
+                        if (IsOnLayer(layerIndex, iOffset, jOffset))
+                        {
+                            currentLayerDots[dotLayerIndex].dot = mapDots[i][j];
+                            currentLayerDots[dotLayerIndex].index = i * MapGenerator.Map.Instance.size + j;
+                            // currentLayerDots[dotLayerIndex].index = centerDot.index + (iOffset * MapGenerator.Map.Instance.size) + jOffset;
+                            dotLayerIndex++;
+                        }
+                    }
                 }
-            }
 
-            if (currentLayerDots.Count > 0)
-                selectedDots.surroundingDotsLayers.Add(currentLayerDots);
+            if (dotLayerIndex > 0)
+                selectedDots.surroundingDotsLayers[layerIndex - 1] = currentLayerDots;
         }
 
         lastSelectedDots = selectedDots;
@@ -181,16 +164,53 @@ public class PlayerActions : MonoBehaviour
         try
         {
             if (lastSelectedDots.centerDot.dot != null) lastSelectedDots.centerDot.dot.gameObject.SetActive(false);
-            foreach (List<SelectedDot> layer in lastSelectedDots.surroundingDotsLayers)
+            foreach (SelectedDot[] layer in lastSelectedDots.surroundingDotsLayers)
                 foreach (SelectedDot dot in layer)
                     if (dot.dot != null) dot.dot.gameObject.SetActive(false);
         }
         catch (NullReferenceException) { }
     }
 
-    private bool IsPointOnEdgeOfLayer(int layer, int i, int j, int iOffset, int jOffset, List<List<MapGenerator.Dot>> mapDots)
+    private SelectedDot GetNearestDot(List<List<MapGenerator.Dot>> mapDots, Vector2 target2D)
     {
-        return (Mathf.Abs(iOffset) == layer || Mathf.Abs(jOffset) == layer) &&
+        SelectedDot result = new() { dot = null, index = -1 };
+        float nearestDistance = currentTool.triggerRange;
+
+        // get the nearest dot to the playerHand
+        for (int i = 0; i < mapDots.Count; i++)
+        {
+            for (int j = 0; j < mapDots.Count; j++)
+            {
+                MapGenerator.Dot dot = mapDots[i][j];
+                Vector2 dotPosition2D = new(dot.transform.position.x, dot.transform.position.z);
+                float distance = Vector2.Distance(target2D, dotPosition2D);
+
+                // TODO maybe use Vector3.Distance ?
+                if (distance < nearestDistance && Mathf.Abs(dot.transform.position.y - target2D.y) > currentTool.triggerRange)
+                {
+                    nearestDistance = distance;
+                    result.dot = dot;
+                    result.index = i * MapGenerator.Map.Instance.size + j;
+                }
+
+                if (dot.gameObject.activeSelf) dot.gameObject.SetActive(false);
+            }
+        }
+
+        return result;
+    }
+
+    private bool IsOnMap(int i, int j, List<List<MapGenerator.Dot>> mapDots)
+    {
+        return i >= 0
+               && i < mapDots.Count
+               && j >= 0
+               && j < mapDots[i].Count;
+    }
+
+    private bool IsOnLayer(int layerIndex, int iOffset, int jOffset)
+    {
+        return (Mathf.Abs(iOffset) == layerIndex || Mathf.Abs(jOffset) == layerIndex) &&
                 i >= 0 && i < mapDots.Count &&
                 j >= 0 && j < mapDots[i].Count;
     }

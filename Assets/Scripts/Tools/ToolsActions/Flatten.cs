@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Flatten : ToolAction
 {
@@ -9,15 +10,17 @@ public class Flatten : ToolAction
         if (selectedDots.centerDot.dot.element)
             selectedDots.centerDot.dot.element.transform.position = selectedDots.centerDot.dot.transform.position;
 
-        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Count; layerIndex++)
+        for (int layerIndex = 0; layerIndex < selectedDots.surroundingDotsLayers.Length; layerIndex++)
         {
-            List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
+            SelectedDot[] currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
 
             foreach (SelectedDot selectedDot in currentLayer)
             {
+                if (selectedDot.dot == null) break;
+
                 float currentY = selectedDot.dot.transform.position.y;
-                int dotIndex = currentLayer.IndexOf(selectedDot);
-                int nummberOfDots = currentLayer.Count;
+                int dotIndex = Array.IndexOf(currentLayer, selectedDot);//  currentLayer.IndexOf(selectedDot);
+                int nummberOfDots = currentLayer.Length;
                 float moveValue = Mathf.Lerp(currentY, finalY, (float)(dotIndex + 1) / nummberOfDots);
 
                 selectedDot.dot.SetYPosition(moveValue);

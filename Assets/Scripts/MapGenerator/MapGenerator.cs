@@ -11,7 +11,7 @@ namespace MapGenerator
         [HideInInspector] public readonly List<List<Dot>> mapDots = new();
         public Transform mapParent;
         [SerializeField] private float mapDimension = 1f;
-        public int nbDotsPerLine = 30;
+        public int size = 30;
         private Texture2D heightMap;
         private Texture2D temperatureMap;
         private List<float> heightMapValues;
@@ -71,10 +71,10 @@ namespace MapGenerator
             generateDotsCoroutine = StartCoroutine(GenerateDots());
             yield return new WaitUntil(() => areDotsGenerated);
 
-            heightMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out heightMap, false);
-            temperatureMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(nbDotsPerLine, nbDotsPerLine, perlinScale, out temperatureMap, false);
-            var heights = ConvertToListList(heightMapValues, nbDotsPerLine);
-            var temperatures = ConvertToListList(temperatureMapValues, nbDotsPerLine);
+            heightMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(size, perlinScale, out heightMap, false);
+            temperatureMapValues = PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(size, perlinScale, out temperatureMap, false);
+            var heights = ConvertToListList(heightMapValues, size);
+            var temperatures = ConvertToListList(temperatureMapValues, size);
 
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
@@ -86,7 +86,7 @@ namespace MapGenerator
             {
                 for (int z = 0; z < mapDots[x].Count; z++)
                 {
-                    int invertedZ = nbDotsPerLine - z - 1;
+                    int invertedZ = size - z - 1;
                     Dot dot = mapDots[x][z];
                     dot.SetYPosition((heights[x][invertedZ] / emplitude) + parentY);
                     dot.SetTemperature(temperatures[x][invertedZ]);
@@ -115,24 +115,21 @@ namespace MapGenerator
         public void UpdateHeightMap(SelectionDots selectedDots)
         {
             float parentY = mapParent.position.y;
-            int centerIndex = GetIndex(selectedDots.centerDot.i, selectedDots.centerDot.j);
 
-            try { heightMapValues[centerIndex] = selectedDots.centerDot.dot.transform.position.y * emplitude + parentY; }
+            try { heightMapValues[selectedDots.centerDot.index] = selectedDots.centerDot.dot.transform.position.y * emplitude + parentY; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
+            foreach (SelectedDot[] circle in selectedDots.surroundingDotsLayers)
             {
-                foreach (SelectedDot dot in circle)
+                foreach (SelectedDot selectedDot in circle)
                 {
-                    int index = GetIndex(dot.i, dot.j);
-                    if (index < 0 || index >= heightMapValues.Count) continue;
-                    heightMapValues[index] = dot.dot.transform.position.y * emplitude + parentY;
+                    if (selectedDot.dot == null) break;
+                    if (selectedDot.index < 0 || selectedDot.index >= heightMapValues.Count) continue;
+                    heightMapValues[selectedDot.index] = selectedDot.dot.transform.position.y * emplitude + parentY;
                 }
             }
 
-            Debug.Log(heightMapValues[centerIndex]);
-
-            heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, heightMapValues);
+            heightMap = PerlinNoiseHeightMapGenerator.GenerateTexture(size, heightMapValues);
             meshMaterial.SetTexture("_HeightNoise", heightMap);
         }
 
@@ -145,28 +142,21 @@ namespace MapGenerator
 
         public void UpdateTemperatureMap(SelectionDots selectedDots)
         {
-            int centerIndex = GetIndex(selectedDots.centerDot.i, selectedDots.centerDot.j);
-
-            try { temperatureMapValues[centerIndex] = selectedDots.centerDot.dot.temperature; }
+            try { temperatureMapValues[selectedDots.centerDot.index] = selectedDots.centerDot.dot.temperature; }
             catch (System.Exception e) { Debug.Log(e); return; }
 
-            foreach (List<SelectedDot> circle in selectedDots.surroundingDotsLayers)
+            foreach (SelectedDot[] circle in selectedDots.surroundingDotsLayers)
             {
-                foreach (SelectedDot dot in circle)
+                foreach (SelectedDot selectedDot in circle)
                 {
-                    int index = GetIndex(dot.i, dot.j);
-                    if (index < 0 || index >= temperatureMapValues.Count) continue;
-                    temperatureMapValues[index] = dot.dot.temperature;
+                    if (selectedDot.dot == null) break;
+                    if (selectedDot.index < 0 || selectedDot.index >= temperatureMapValues.Count) continue;
+                    temperatureMapValues[selectedDot.index] = selectedDot.dot.temperature;
                 }
             }
 
-            temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(nbDotsPerLine, nbDotsPerLine, temperatureMapValues);
+            temperatureMap = PerlinNoiseHeightMapGenerator.GenerateTexture(size, temperatureMapValues);
             meshMaterial.SetTexture("_TempNoise", temperatureMap);
-        }
-
-        private int GetIndex(int i, int j)
-        {
-            return (i + 1) * nbDotsPerLine - (j + 1);
         }
 
         public static List<List<float>> ConvertToListList(List<float> list, int size)
@@ -190,13 +180,13 @@ namespace MapGenerator
 
             Vector3 center = mapParent.position;
             Vector3 topLeft = center + new Vector3(-mapDimension / 2, 0, mapDimension / 2);
-            float stepX = mapDimension / nbDotsPerLine;
+            float stepX = mapDimension / size;
 
-            for (float x = topLeft.x, indexX = 0; mapDots.Count < nbDotsPerLine; x += stepX, indexX++)
+            for (float x = topLeft.x, indexX = 0; mapDots.Count < size; x += stepX, indexX++)
             {
                 var line = new List<Dot>();
 
-                for (float z = topLeft.z, indexZ = 0; line.Count < nbDotsPerLine; z -= stepX, indexZ++)
+                for (float z = topLeft.z, indexZ = 0; line.Count < size; z -= stepX, indexZ++)
                 {
                     Vector3 position = new(x + (stepX / 2), 0, z - (stepX / 2));
                     Dot dot = Instantiate(mapDotPrefab, position, Quaternion.identity, mapParent).GetComponent<Dot>();
@@ -338,7 +328,7 @@ namespace MapGenerator
 
             if (GUILayout.Button("Generate Heightmap"))
             {
-                PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(map.nbDotsPerLine, map.nbDotsPerLine, map.perlinScale, out Texture2D _, true);
+                PerlinNoiseHeightMapGenerator.GenerateHeightMapTexture(map.size, map.perlinScale, out Texture2D _, true);
             }
         }
     }

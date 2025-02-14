@@ -28,8 +28,9 @@ public class ToolAction : MonoBehaviour
         if (showSelectedDots)
         {
             selectedDots.centerDot.dot.gameObject.SetActive(true);
-            foreach (SelectedDot selectedDot in selectedDots.surroundingDotsLayers[selectedDots.surroundingDotsLayers.Count - 1])
+            foreach (SelectedDot selectedDot in selectedDots.surroundingDotsLayers[selectedDots.surroundingDotsLayers.Length - 1])
             {
+                if (selectedDot.dot == null) break;
                 selectedDot.dot.gameObject.SetActive(true);
             }
         }
@@ -45,5 +46,7 @@ public class ToolAction : MonoBehaviour
     public void SetTriggerRange(float triggerRange)
     {
         this.triggerRange = triggerRange;
+        this.triggerRange = triggerRange;
     }
 }
+
