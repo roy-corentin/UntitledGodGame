@@ -46,6 +46,7 @@ public class Animal : MonoBehaviour
 
     [HideInInspector] public int prefabIndex;
     public float RemainingDistance = 0;
+    [HideInInspector] public bool forceDestination = false;
 
     [Header("---- Animations ----")]
     public Animator animator;
@@ -122,6 +123,7 @@ public class Animal : MonoBehaviour
 
     public bool IsAtDestination()
     {
+        if (forceDestination) return true;
         if (navAgent == null) return false;
         if (!navAgent.hasPath) return false;
 
@@ -238,6 +240,7 @@ public class Animal : MonoBehaviour
     {
         Debug.Log("Ho no, I'm dead");
         if (animator) animator.SetBool("Die", true);
+        AnimalSpawner.Instance.spawnedAnimals.Remove(gameObject);
         Destroy(gameObject, 1);
     }
 

@@ -6,8 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class Decision
 {
-    [UnityTest]
-    public IEnumerator DecisionWithEnumeratorPasses()
+    public IEnumerator Setup()
     {
         // Setup Map
         yield return null;
@@ -16,40 +15,149 @@ public class Decision
 
         // Check if DecisionTree, AnimalSpawner and MapGenerator.Map are not null
         DecisionTree tree = DecisionTree.Instance;
-        Assert.AreNotEqual(tree, null);
+        Assert.IsNotNull(tree);
         yield return null;
 
         AnimalSpawner animalSpawner = AnimalSpawner.Instance;
-        Assert.AreNotEqual(animalSpawner, null);
+        Assert.IsNotNull(animalSpawner);
         yield return null;
 
         MapGenerator.Map map = MapGenerator.Map.Instance;
-        Assert.AreNotEqual(map, null);
+        Assert.IsNotNull(map);
         yield return null;
 
         // Wait for generation
         yield return new WaitUntil(() => map.areMeshGenerated);
 
-        // Spawn animal
-        GameObject animalGO = animalSpawner.SpawnAnimal(1);
+        // Spawn Deer
+        GameObject deerGO = animalSpawner.SpawnAnimal(1);
         yield return null;
-        Animal animal = animalGO.GetComponent<Animal>();
-        Assert.AreNotEqual(animal, null);
+        Animal deer = deerGO.GetComponent<Animal>();
+        Assert.IsNotNull(deer);
+
+        // Spawn Tiger
+        GameObject tigerGO = animalSpawner.SpawnAnimal(2);
+        yield return null;
+        Animal tiger = tigerGO.GetComponent<Animal>();
+        Assert.IsNotNull(tiger);
 
         // Toggle VR mode
         ARtoVR.Instance.ToggleMode();
         yield return new WaitForSeconds(ARtoVR.Instance.transitionDuration + 3);
 
         // ----- DecisionTree -----
-        Assert.AreEqual(animal.eventType, EventType.Random);
-        tree.Callback(animal);
-        Assert.AreEqual(animal.eventType, EventType.Random);
+        Assert.AreEqual(deer.eventType, EventType.Random);
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Random);
         yield return null;
 
-        // ----- DecisionTree ----- SearchWater
-        animal.thirstValue = 0f;
-        tree.Callback(animal);
-        Assert.AreEqual(animal.eventType, EventType.SearchWater);
+        // ----- DecisionTree -----
+        Assert.AreEqual(tiger.eventType, EventType.Random);
+        tree.Callback(tiger);
+        Assert.AreEqual(tiger.eventType, EventType.Random);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator RandomMoveBehaviour()
+    {
+        // Setup
+        yield return Setup();
+        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
+        DecisionTree tree = DecisionTree.Instance;
+
+        // ----- DecisionTree -----
+        Assert.AreEqual(deer.eventType, EventType.Random);
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Random);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator DrinkBehaviour()
+    {
+        // Setup
+        yield return Setup();
+        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
+        DecisionTree tree = DecisionTree.Instance;
+
+        // SearchWater / Value 0
+        deer.thirstValue = 0f;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.SearchWater);
+        yield return null;
+
+        // Drink
+        deer.forceDestination = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Drink);
+        deer.forceDestination = false;
+        yield return null;
+
+        // Drink / Value 50
+        deer.thirstValue = 50f;
+        deer.isDrinking = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Drink);
+        yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator EatBehaviour()
+    {
+        // Setup
+        yield return Setup();
+        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
+        Animal tiger = AnimalSpawner.Instance.spawnedAnimals[1].GetComponent<Animal>();
+        DecisionTree tree = DecisionTree.Instance;
+
+        // ----- DEER -----
+
+        // SearchFood / Value 0
+        deer.hungerValue = 0f;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.SearchFood);
+        yield return null;
+
+        // Eat
+        deer.forceDestination = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Eat);
+        deer.forceDestination = false;
+        yield return null;
+
+        // Eat / Value 50
+        deer.hungerValue = 50f;
+        deer.isEating = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Eat);
+        yield return null;
+
+        // ----- TIGER -----
+
+        // SearchFood / Value 0
+        tiger.hungerValue = 0f;
+        tree.Callback(tiger);
+        Assert.AreEqual(tiger.eventType, EventType.SearchFood);
+        yield return null;
+
+        // Eat
+        Assert.AreEqual(AnimalSpawner.Instance.spawnedAnimals.Count, 2);
+        tiger.forceDestination = true;
+        tree.Callback(tiger);
+        Assert.AreEqual(tiger.eventType, EventType.Eat);
+        yield return new WaitForSeconds(3);
+        yield return null;
+        Assert.IsTrue(deer == null);
+        Assert.AreEqual(AnimalSpawner.Instance.spawnedAnimals.Count, 1);
+        tiger.forceDestination = false;
+        yield return null;
+
+        // Eat / Value 50
+        tiger.hungerValue = 50f;
+        tiger.isEating = true;
+        tree.Callback(tiger);
+        Assert.AreEqual(tiger.eventType, EventType.Eat);
         yield return null;
     }
 }
