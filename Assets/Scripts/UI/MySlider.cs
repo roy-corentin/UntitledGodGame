@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using System;
 
-public class Slider : MonoBehaviour
+public class MySlider : MonoBehaviour
 {
     public TextMeshProUGUI text;
     private string lastText = default;

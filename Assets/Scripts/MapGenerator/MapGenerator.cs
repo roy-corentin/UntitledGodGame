@@ -23,6 +23,7 @@ namespace MapGenerator
         public static Map Instance;
         private Coroutine generateDotsCoroutine;
         private bool areDotsGenerated = false;
+        [HideInInspector] public bool isMeshGenerated = false;
         private Coroutine generateAllCoroutine;
         [SerializeField] private int elementQuantity = 50;
 
@@ -66,6 +67,7 @@ namespace MapGenerator
             yield return null;
 
             areDotsGenerated = false;
+            isMeshGenerated = false;
             generateDotsCoroutine = StartCoroutine(GenerateDots());
             yield return new WaitUntil(() => areDotsGenerated);
 
@@ -99,6 +101,8 @@ namespace MapGenerator
             yield return null;
 
             ElementsSpawner.Instance.SpawnTreeAllAroundMap(mapDots, elementQuantity);
+
+            isMeshGenerated = true;
         }
 
         public void UpdateHeightMap(List<float> heightMapValues)
