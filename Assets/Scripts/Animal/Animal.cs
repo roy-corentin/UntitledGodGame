@@ -242,6 +242,7 @@ public class Animal : MonoBehaviour
         if (animator) animator.SetBool("Die", true);
         AnimalSpawner.Instance.spawnedAnimals.Remove(gameObject);
         Destroy(gameObject, 1);
+        StatsManager.Instance.deadCount++;
     }
 
     public void SetTarget(Transform target)

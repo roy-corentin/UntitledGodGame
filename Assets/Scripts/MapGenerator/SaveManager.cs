@@ -46,6 +46,7 @@ public struct Save
 {
     public List<DotData> dots;
     public List<AnimalData> animals;
+    public int deadCount;
 }
 
 public class SaveManager : MonoBehaviour
@@ -83,6 +84,8 @@ public class SaveManager : MonoBehaviour
             mapJson += PlayerPrefs.GetString(playerPrefsKey + i);
 
         Save save = JsonUtility.FromJson<Save>(mapJson);
+
+        StatsManager.Instance.deadCount = save.deadCount;
 
         ElementsSpawner.Instance.ClearElements();
         Map.Instance.ClearMesh();
@@ -158,7 +161,8 @@ public class SaveManager : MonoBehaviour
         Save save = new()
         {
             dots = new List<DotData>(),
-            animals = new List<AnimalData>()
+            animals = new List<AnimalData>(),
+            deadCount = StatsManager.Instance.deadCount
         };
 
         foreach (List<Dot> dot in map.mapDots)

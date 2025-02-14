@@ -4,6 +4,12 @@ public class MenuManager : MonoBehaviour
 {
     public GameObject menu;
     public LaserPointerData laserPointer;
+    public static MenuManager Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -20,6 +26,7 @@ public class MenuManager : MonoBehaviour
 
             if (menu.activeSelf)
             {
+                StatsManager.Instance.UpdateStats();
                 MoveMenuInFrontOfCamera();
                 laserPointer.SetColor(LaserPointerColor.Default);
             }
