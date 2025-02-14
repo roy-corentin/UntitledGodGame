@@ -7,7 +7,7 @@ public class LocationManager
     public static GameObject GetRandomLocation(int padding = 0)
     {
         int randomX = UnityEngine.Random.Range(padding, Map.Instance.mapDots.Count - padding);
-        int randomY = UnityEngine.Random.Range(padding, Map.Instance.mapDots[randomX].Count - padding); // ! HERE
+        int randomY = UnityEngine.Random.Range(padding, Map.Instance.mapDots[randomX].Count - padding);
 
         return Map.Instance.mapDots[randomX][randomY].gameObject;
     }

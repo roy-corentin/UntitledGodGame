@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 #nullable enable
-public class Node
+class Node
 {
     public delegate bool Decision(Animal animal);
     public Decision? decision;
@@ -41,9 +41,9 @@ public class DecisionTree : MonoBehaviour
 {
     public static DecisionTree Instance;
 
-    [HideInInspector] public Node root;
+    Node root;
 
-    public void Awake()
+    private void Awake()
     {
         Instance = this;
     }

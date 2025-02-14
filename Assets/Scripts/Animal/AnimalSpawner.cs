@@ -21,10 +21,10 @@ public class AnimalSpawner : MonoBehaviour
         Instance = this;
     }
 
-    public GameObject SpawnAnimal(int prefabIndex)
+    public void SpawnAnimal(int prefabIndex)
     {
         GameObject spawnDot = LocationManager.GetRandomGroundPosition(5);
-        if (spawnDot == null) return null;
+        if (spawnDot == null) return;
 
         Vector3 spawnpoint = spawnDot.transform.position;
         spawnpoint.y += Y_OFFSET;
@@ -33,8 +33,6 @@ public class AnimalSpawner : MonoBehaviour
         Animal animalScript = animal.GetComponent<Animal>();
         animalScript.prefabIndex = prefabIndex;
         spawnedAnimals.Add(animal);
-
-        return animal;
     }
 
     public void SpawnAnimal(AnimalData animalData)

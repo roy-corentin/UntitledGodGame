@@ -14,7 +14,7 @@ public class ElementsSpawner : MonoBehaviour
     public static ElementsSpawner Instance;
     private Coroutine spawnTreeAllAroundMapCoroutine;
 
-    public void Awake()
+    private void Awake()
     {
         Instance = this;
     }

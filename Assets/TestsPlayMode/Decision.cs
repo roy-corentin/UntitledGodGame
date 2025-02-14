@@ -27,18 +27,18 @@ public class Decision
         yield return null;
 
         // Wait for generation
-        yield return new WaitUntil(() => map.areMeshGenerated);
+        yield return new WaitUntil(() => map.isMeshGenerated);
 
         // Spawn Deer
-        GameObject deerGO = animalSpawner.SpawnAnimal(1);
+        animalSpawner.SpawnAnimal(1);
         yield return null;
-        Animal deer = deerGO.GetComponent<Animal>();
+        Animal deer = animalSpawner.spawnedAnimals[0].GetComponent<Animal>();
         Assert.IsNotNull(deer);
 
         // Spawn Tiger
-        GameObject tigerGO = animalSpawner.SpawnAnimal(2);
+        animalSpawner.SpawnAnimal(2);
         yield return null;
-        Animal tiger = tigerGO.GetComponent<Animal>();
+        Animal tiger = animalSpawner.spawnedAnimals[1].GetComponent<Animal>();
         Assert.IsNotNull(tiger);
 
         // Toggle VR mode
