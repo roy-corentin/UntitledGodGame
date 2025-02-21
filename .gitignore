@@ -58,3 +58,4 @@ Assets/Heightmaps
 .vsconfig
 /.vscode
 .vscode/settings.json
+Assets/AssetBundles/*
