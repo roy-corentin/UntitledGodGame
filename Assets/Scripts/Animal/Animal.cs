@@ -86,6 +86,8 @@ public class Animal : MonoBehaviour
     [Range(0, 100)] public float sleepValue = 100;
     public float decreaseSleepPerSecond = 0.1f;
     public bool NeedToSleep => sleepValue <= 1;
+    [HideInInspector] public bool isSleeping = false;
+    public float sleepSpeed = 10f;
 
     public void SetupNavAgent()
     {
@@ -147,7 +149,7 @@ public class Animal : MonoBehaviour
     {
         if (thirstValue > 0 && !isDrinking) thirstValue -= decreaseThirstPerSecond * Time.deltaTime;
         if (hungerValue > 0 && !isEating) hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
-        if (sleepValue > 0) sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
+        if (sleepValue > 0 && !isSleeping) sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
     }
 
     public void RandomMove()
@@ -187,6 +189,22 @@ public class Animal : MonoBehaviour
         }
     }
 
+    public void Sleep()
+    {
+        if (!isSleeping) RemoveTarget();
+        isSleeping = true;
+        sleepValue += sleepSpeed * Time.deltaTime;
+        if (animator && animator.GetBool("Sleep")) animator.SetBool("Sleep", true);
+        if (sleepValue >= 99)
+        {
+            Debug.Log("Animal is not sleepy anymore");
+            isSleeping = false;
+            sleepValue = 100;
+            if (animator && animator.GetBool("Eat")) animator.SetBool("Sleep", false);
+            RemoveTarget();
+        }
+    }
+
     public void Eat()
     {
         if (!isEating)
@@ -201,12 +219,13 @@ public class Animal : MonoBehaviour
 
         isEating = true;
         hungerValue += eatSpeed * Time.deltaTime;
-        if (animator && !animator.GetBool("Eat")) animator.SetBool("Eat", true);
+        if (animator && animator.GetBool("Eat")) animator.SetBool("Eat", true);
         if (hungerValue >= 99)
         {
             Debug.Log("Animal is not hungry anymore");
             isEating = false;
             hungerValue = 100;
+            if (animator && animator.GetBool("Eat")) animator.SetBool("Eat", false);
             RemoveTarget();
         }
     }
@@ -225,13 +244,13 @@ public class Animal : MonoBehaviour
         if (!isDrinking) RemoveTarget();
         isDrinking = true;
         thirstValue += drinkRefillSpeed * Time.deltaTime;
-        if (animator && !animator.GetBool("Drink")) animator.SetBool("Drink", true);
+        if (animator && animator.GetBool("Drink")) animator.SetBool("Drink", true);
         if (thirstValue >= 99)
         {
             Debug.Log("Animal is not thirsty anymore");
             isDrinking = false;
             thirstValue = 100;
-            if (animator) animator.SetBool("Drink", false);
+            if (animator && animator.GetBool("Drink")) animator.SetBool("Drink", false);
             RemoveTarget();
         }
     }

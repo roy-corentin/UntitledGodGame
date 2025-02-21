@@ -160,4 +160,33 @@ public class Decision
         Assert.AreEqual(tiger.eventType, EventType.Eat);
         yield return null;
     }
+
+    [UnityTest]
+    public IEnumerator SleepBehaviour()
+    {
+        // Setup
+        yield return Setup();
+        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
+        DecisionTree tree = DecisionTree.Instance;
+
+        // SearchWater / Value 0
+        deer.sleepValue = 0f;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Sleep);
+        yield return null;
+
+        // Drink
+        deer.forceDestination = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Sleep);
+        deer.forceDestination = false;
+        yield return null;
+
+        // Drink / Value 50
+        deer.sleepValue = 50f;
+        deer.isSleeping = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Sleep);
+        yield return null;
+    }
 }

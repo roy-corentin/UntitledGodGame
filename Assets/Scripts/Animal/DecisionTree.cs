@@ -79,7 +79,7 @@ public class DecisionTree : MonoBehaviour
         Node Sleep = new(animal =>
         {
             animal.eventType = EventType.Sleep;
-            Debug.Log("Sleep");
+            animal.Sleep();
         });
 
         Node SearchWater = new(animal =>
@@ -110,7 +110,7 @@ public class DecisionTree : MonoBehaviour
 
         Node OnSleepLocation = new(animal =>
             {
-                return false;
+                return true;
             },
             Sleep,
             SearchSleep);
@@ -124,7 +124,7 @@ public class DecisionTree : MonoBehaviour
 
         Node NeedToSleep = new(animal =>
             {
-                return animal.NeedToSleep;
+                return animal.NeedToSleep || animal.isSleeping;
             },
             OnSleepLocation,
             NeedToEat);
