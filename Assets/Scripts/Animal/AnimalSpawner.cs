@@ -124,6 +124,16 @@ public class AnimalSpawner : MonoBehaviour
 
         return nearestAnimal;
     }
+
+    public void LockAnimations(bool status)
+    {
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            animalScript.LockAnimation(status);
+        }
+    }
 }
 
 #if UNITY_EDITOR

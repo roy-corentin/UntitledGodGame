@@ -111,6 +111,8 @@ public class Animal : MonoBehaviour
             float height = capsuleCollider.height * transform.localScale.y;
             transform.position = new Vector3(hit.point.x, hit.point.y + height / 2, hit.point.z);
         }
+
+        LockAnimation(true);
     }
 
     void Update()
@@ -294,6 +296,11 @@ public class Animal : MonoBehaviour
         GameObject element = elements[Random.Range(0, elements.Count)];
         SetTarget(element.transform);
         destinationType = DestinationType.Random;
+    }
+
+    public void LockAnimation(bool status)
+    {
+        if (animator) animator.speed = status ? 0 : 1;
     }
 }
 
