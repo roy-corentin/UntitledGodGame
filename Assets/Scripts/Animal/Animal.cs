@@ -20,7 +20,8 @@ public enum EventType
     SearchSleep,
     Sleep,
     SearchWater,
-    Drink
+    Drink,
+    Die
 }
 
 public enum AnimalFoodLevel
@@ -88,6 +89,8 @@ public class Animal : MonoBehaviour
     public bool NeedToSleep => sleepValue <= 1;
     [HideInInspector] public bool isSleeping = false;
     public float sleepSpeed = 10f;
+
+    [HideInInspector] public bool isDead = false;
 
     public void SetupNavAgent()
     {
@@ -194,13 +197,12 @@ public class Animal : MonoBehaviour
         if (!isSleeping) RemoveTarget();
         isSleeping = true;
         sleepValue += sleepSpeed * Time.deltaTime;
-        if (animator && animator.GetBool("Sleep")) animator.SetBool("Sleep", true);
+        if (animator && !animator.GetBool("Sleep")) animator.SetBool("Sleep", true);
         if (sleepValue >= 99)
         {
-            Debug.Log("Animal is not sleepy anymore");
             isSleeping = false;
             sleepValue = 100;
-            if (animator && animator.GetBool("Eat")) animator.SetBool("Sleep", false);
+            if (animator && animator.GetBool("Sleep")) animator.SetBool("Sleep", false);
             RemoveTarget();
         }
     }
@@ -212,17 +214,16 @@ public class Animal : MonoBehaviour
             RemoveTarget();
             if (foodType == FoodType.Carnivore)
             {
-                foodTarget.GetComponent<Animal>().Die();
+                foodTarget.GetComponent<Animal>().isDead = true;
                 foodTarget = null;
             }
         }
 
         isEating = true;
         hungerValue += eatSpeed * Time.deltaTime;
-        if (animator && animator.GetBool("Eat")) animator.SetBool("Eat", true);
+        if (animator && !animator.GetBool("Eat")) animator.SetBool("Eat", true);
         if (hungerValue >= 99)
         {
-            Debug.Log("Animal is not hungry anymore");
             isEating = false;
             hungerValue = 100;
             if (animator && animator.GetBool("Eat")) animator.SetBool("Eat", false);
@@ -244,7 +245,7 @@ public class Animal : MonoBehaviour
         if (!isDrinking) RemoveTarget();
         isDrinking = true;
         thirstValue += drinkRefillSpeed * Time.deltaTime;
-        if (animator && animator.GetBool("Drink")) animator.SetBool("Drink", true);
+        if (animator && !animator.GetBool("Drink")) animator.SetBool("Drink", true);
         if (thirstValue >= 99)
         {
             Debug.Log("Animal is not thirsty anymore");
@@ -257,10 +258,12 @@ public class Animal : MonoBehaviour
 
     public void Die()
     {
-        Debug.Log("Ho no, I'm dead");
-        if (animator) animator.SetBool("Die", true);
+        if (animator.GetBool("Die")) return;
+
+        if (animator && !animator.GetBool("Die")) animator.SetBool("Die", true);
         AnimalSpawner.Instance.spawnedAnimals.Remove(gameObject);
-        Destroy(gameObject, 1);
+        RemoveTarget();
+        Destroy(gameObject, 5);
         StatsManager.Instance.deadCount++;
     }
 
@@ -302,6 +305,30 @@ public class AnimalEditor : Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+
+        // print all variables of animator + current animation
+        Animal animal = (Animal)target;
+        Animator animator = animal.animator;
+
+        if (animator == null) return;
+
+        // add space
+        GUILayout.Space(10);
+
+        EditorGUILayout.LabelField("Animator", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Current Animation", animator.GetCurrentAnimatorClipInfo(0)[0].clip.name);
+
+        EditorGUILayout.LabelField("Variables", EditorStyles.boldLabel);
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
+        {
+            // horizontal layout
+            EditorGUILayout.BeginHorizontal();
+            if (parameter.type == AnimatorControllerParameterType.Float)
+                EditorGUILayout.LabelField(parameter.name, animator.GetFloat(parameter.name).ToString());
+            if (parameter.type == AnimatorControllerParameterType.Bool)
+                EditorGUILayout.LabelField(parameter.name, animator.GetBool(parameter.name).ToString());
+            EditorGUILayout.EndHorizontal();
+        }
     }
 
     // draw a gizmo in the scene view at target's position

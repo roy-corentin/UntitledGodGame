@@ -136,7 +136,20 @@ public class DecisionTree : MonoBehaviour
             OnDrinkLocation,
             NeedToSleep);
 
-        root = NeedToDrink;
+        Node Die = new(animal =>
+        {
+            animal.eventType = EventType.Die;
+            animal.Die();
+        });
+
+        Node IsDead = new(animal =>
+            {
+                return animal.isDead;
+            },
+            Die,
+            NeedToDrink);
+
+        root = IsDead;
     }
 
     public void Callback(Animal animal)
