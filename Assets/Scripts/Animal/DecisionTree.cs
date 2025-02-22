@@ -53,8 +53,6 @@ public class DecisionTree : MonoBehaviour
         Node Random = new(animal =>
         {
             animal.eventType = EventType.Random;
-            if (animal.IsAtDestination() && animal.navAgent.hasPath) animal.RemoveTarget();
-            if (animal.isMoving && !animal.IsOverTime) return;
             animal.RandomMove();
         });
 
@@ -117,7 +115,7 @@ public class DecisionTree : MonoBehaviour
 
         Node NeedToEat = new(animal =>
             {
-                return animal.NeedToEat || animal.isEating;
+                return (animal.NeedToEat && animal.foodSourceReachable) || animal.isEating;
             },
             OnEatLocation,
             Random);
@@ -131,7 +129,7 @@ public class DecisionTree : MonoBehaviour
 
         Node NeedToDrink = new(animal =>
             {
-                return animal.NeedToDrink || animal.isDrinking;
+                return (animal.NeedToDrink && animal.waterSourceReachable) || animal.isDrinking;
             },
             OnDrinkLocation,
             NeedToSleep);

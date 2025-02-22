@@ -80,6 +80,7 @@ public class ARtoVR : MonoBehaviour
             {
                 Debug.Log("AR Mode");
                 AnimalSpawner.Instance.LockAnimations(true);
+                AnimalSpawner.Instance.ResetReachablesInfos();
                 currentMode = GameMode.AR;
             });
 
@@ -107,6 +108,8 @@ public class ARtoVR : MonoBehaviour
             {
                 Debug.Log("VR Mode");
                 AnimalSpawner.Instance.LockAnimations(false);
+                AnimalSpawner.Instance.ResetReachablesInfos();
+                LocationManager.Instance.UpdateGroundDots();
                 NavMeshHandler.Instance.Rebake();
                 AnimalSpawner.Instance.EnableAll();
                 currentMode = GameMode.VR;
