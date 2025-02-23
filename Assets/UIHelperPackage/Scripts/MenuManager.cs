@@ -17,21 +17,21 @@ public class MenuManager : MonoBehaviour
         laserPointer.Show(false);
     }
 
+    public void ToggleMenu()
+    {
+        menu.SetActive(!menu.activeSelf);
+        laserPointer.Show(menu.activeSelf);
+
+        if (menu.activeSelf)
+        {
+            StatsManager.Instance.UpdateStats();
+            MoveMenuInFrontOfCamera();
+            laserPointer.SetColor(LaserPointerColor.Default);
+        }
+    }
+
     void Update()
     {
-        if (OVRInput.GetDown(OVRInput.Button.Start) || Input.GetKeyDown(KeyCode.J))
-        {
-            menu.SetActive(!menu.activeSelf);
-            laserPointer.Show(menu.activeSelf);
-
-            if (menu.activeSelf)
-            {
-                StatsManager.Instance.UpdateStats();
-                MoveMenuInFrontOfCamera();
-                laserPointer.SetColor(LaserPointerColor.Default);
-            }
-        }
-
         if (menu.activeSelf && !IsInView())
         {
             menu.SetActive(false);
