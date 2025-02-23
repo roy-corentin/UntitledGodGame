@@ -73,6 +73,7 @@ public class StatsManager : MonoBehaviour
             {
                 switch (d.biome)
                 {
+                    case Biome.DeepWater:
                     case Biome.Water: waterCount++; break;
                     case Biome.Forest: forestCount++; break;
                     case Biome.Tundra: frostCount++; break;

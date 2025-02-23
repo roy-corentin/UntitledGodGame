@@ -64,6 +64,7 @@ public class Animal : MonoBehaviour
     private float startMoveTime;
     public float chanceToDoNothing = 10;
     public bool IsOverTime => Time.time - startMoveTime > maxMoveTime;
+    [HideInInspector] public bool randomMoveReachable = true;
 
     [Header("---- Soif ----")]
     [Range(0, 100)] public float thirstValue = 100;
@@ -71,6 +72,7 @@ public class Animal : MonoBehaviour
     public bool NeedToDrink => thirstValue <= 1;
     [HideInInspector] public bool isDrinking = false;
     public float drinkRefillSpeed = 10f;
+    [HideInInspector] public bool waterSourceReachable = true;
 
     [Header("---- Faim ----")]
     [Range(0, 100)] public float hungerValue = 100;
@@ -82,6 +84,7 @@ public class Animal : MonoBehaviour
     public float eatSpeed = 10f;
     public AnimalFoodLevel thisFoodLevel;
     public List<AnimalFoodLevel> canEatLevels;
+    [HideInInspector] public bool foodSourceReachable = true;
 
     [Header("---- Sommeil ----")]
     [Range(0, 100)] public float sleepValue = 100;
@@ -91,6 +94,7 @@ public class Animal : MonoBehaviour
     public float sleepSpeed = 10f;
 
     [HideInInspector] public bool isDead = false;
+    [HideInInspector] public readonly List<GameObject> notReachableElements = new();
 
     public void SetupNavAgent()
     {
@@ -159,36 +163,47 @@ public class Animal : MonoBehaviour
 
     public void RandomMove()
     {
+        if (!randomMoveReachable) return;
+        if (IsAtDestination() && navAgent.hasPath) RemoveTarget();
+        if (isMoving && !IsOverTime) return;
+
         startMoveTime = Time.time;
         SetRandomTarget();
-        isMoving = true;
     }
 
     public void FindFood()
     {
         if (foodType == FoodType.Herbivore)
         {
-            DotCoord nearestGrass = LocationManager.GetNearestDotOfType(gameObject, Biome.Forest);
-            MapGenerator.Dot grassDot = MapGenerator.Map.Instance.mapDots[nearestGrass.x][nearestGrass.y];
-            SetTarget(grassDot.transform);
+            MapGenerator.Dot nearestGrass = LocationManager.Instance.GetNearestDotOfType(gameObject, Biome.Forest, notReachableElements);
+            if (nearestGrass == null)
+            {
+                foodSourceReachable = false;
+                return;
+            }
+
+            if (!SetTarget(nearestGrass.transform)) return;
             destinationType = DestinationType.Eat;
-            // TODO Gérer quand y'a pas de nourriture
         }
         else if (foodType == FoodType.Carnivore)
         {
             List<AnimalTarget> targets = new();
             foreach (AnimalFoodLevel level in canEatLevels)
             {
-                AnimalTarget animal = AnimalSpawner.Instance.GetNearestAnimalOfFoodLevel(gameObject, level);
+                AnimalTarget animal = AnimalSpawner.Instance.GetNearestAnimalOfFoodLevel(gameObject, level, notReachableElements);
                 if (animal.animal == null) continue;
                 targets.Add(animal);
             }
 
-            if (targets.Count == 0) return;
+            if (targets.Count == 0)
+            {
+                foodSourceReachable = false;
+                return;
+            }
 
             targets.Sort((a, b) => a.distance.CompareTo(b.distance));
 
-            SetTarget(targets[0].animal.transform);
+            if (!SetTarget(targets[0].animal.transform)) return;
             destinationType = DestinationType.Eat;
             foodTarget = targets[0].animal;
         }
@@ -235,11 +250,15 @@ public class Animal : MonoBehaviour
 
     public void FindDrinkable()
     {
-        DotCoord nearestWater = LocationManager.GetNearestDotOfType(gameObject, Biome.Water);
-        MapGenerator.Dot waterDot = MapGenerator.Map.Instance.mapDots[nearestWater.x][nearestWater.y];
-        SetTarget(waterDot.transform);
+        MapGenerator.Dot nearestWater = LocationManager.Instance.GetNearestDotOfType(gameObject, Biome.Water, notReachableElements);
+        if (nearestWater == null)
+        {
+            waterSourceReachable = false;
+            return;
+        }
+
+        if (!SetTarget(nearestWater.transform)) return;
         destinationType = DestinationType.Drinkable;
-        // TODO Gérer quand y'a pas de point d'eau
     }
 
     public void Drink()
@@ -269,10 +288,25 @@ public class Animal : MonoBehaviour
         StatsManager.Instance.deadCount++;
     }
 
-    public void SetTarget(Transform target)
+    public bool SetTarget(Transform target)
     {
-        isMoving = true;
         navAgent.SetDestination(target.position);
+
+        NavMeshPath path = new();
+        navAgent.CalculatePath(target.position, path);
+        bool isReachable = !(path.status == NavMeshPathStatus.PathPartial)
+                        && !(path.status == NavMeshPathStatus.PathInvalid);
+
+        if (!isReachable)
+        {
+            Debug.LogWarning("Target is not reachable");
+            notReachableElements.Add(target.gameObject);
+            RemoveTarget();
+            return false;
+        }
+
+        isMoving = true;
+        return true;
     }
 
     public void RemoveTarget()
@@ -284,23 +318,35 @@ public class Animal : MonoBehaviour
 
     public void SetRandomTarget()
     {
-        List<GameObject> elements = ElementsSpawner.Instance.elements;
-        if (elements.Count == 0) return;
-
         if (Random.Range(0, 100) < chanceToDoNothing)
         {
             RemoveTarget();
             return;
         }
 
-        GameObject element = elements[Random.Range(0, elements.Count)];
-        SetTarget(element.transform);
+        GameObject destination = LocationManager.Instance.GetRandomGroundPosition(notReachableElements);
+        if (destination == null)
+        {
+            randomMoveReachable = false;
+            isMoving = false;
+            return;
+        }
+
+        if (!SetTarget(destination.transform)) return;
         destinationType = DestinationType.Random;
     }
 
     public void LockAnimation(bool status)
     {
         if (animator) animator.speed = status ? 0 : 1;
+    }
+
+    public void ResetReachableInfos()
+    {
+        notReachableElements.Clear();
+        foodSourceReachable = true;
+        waterSourceReachable = true;
+        randomMoveReachable = true;
     }
 }
 

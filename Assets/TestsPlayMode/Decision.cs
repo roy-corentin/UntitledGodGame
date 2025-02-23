@@ -146,7 +146,7 @@ public class Decision
         tiger.forceDestination = true;
         tree.Callback(tiger);
         Assert.AreEqual(tiger.eventType, EventType.Eat);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(10);
         yield return null;
         Assert.IsTrue(deer == null);
         Assert.AreEqual(AnimalSpawner.Instance.spawnedAnimals.Count, 1);

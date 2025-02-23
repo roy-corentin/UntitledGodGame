@@ -23,7 +23,7 @@ public class AnimalSpawner : MonoBehaviour
 
     public void SpawnAnimal(int prefabIndex)
     {
-        GameObject spawnDot = LocationManager.GetRandomGroundPosition(5);
+        GameObject spawnDot = LocationManager.Instance.GetRandomGroundPosition();
         if (spawnDot == null) return;
 
         Vector3 spawnpoint = spawnDot.transform.position;
@@ -98,7 +98,7 @@ public class AnimalSpawner : MonoBehaviour
         }
     }
 
-    public AnimalTarget GetNearestAnimalOfFoodLevel(GameObject currentAnimal, AnimalFoodLevel foodLevel)
+    public AnimalTarget GetNearestAnimalOfFoodLevel(GameObject currentAnimal, AnimalFoodLevel foodLevel, List<GameObject> notReachable = null)
     {
         AnimalTarget nearestAnimal = new()
         {
@@ -110,6 +110,7 @@ public class AnimalSpawner : MonoBehaviour
         {
             if (animal == null) continue;
             if (animal == currentAnimal) continue;
+            if (notReachable != null && notReachable.Contains(animal)) continue;
             Animal animalScript = animal.GetComponent<Animal>();
             if (animalScript.thisFoodLevel == foodLevel)
             {
@@ -132,6 +133,16 @@ public class AnimalSpawner : MonoBehaviour
             if (animal == null) continue;
             Animal animalScript = animal.GetComponent<Animal>();
             animalScript.LockAnimation(status);
+        }
+    }
+
+    public void ResetReachablesInfos()
+    {
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            animalScript.ResetReachableInfos();
         }
     }
 }

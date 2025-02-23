@@ -193,7 +193,7 @@ public class SaveManager : MonoBehaviour
                 sleepValue = animalScript.sleepValue,
                 decreaseSleepPerSecond = animalScript.decreaseSleepPerSecond,
                 prefabIndex = animalScript.prefabIndex,
-                dotIndex = LocationManager.GetNearestDot(animal)
+                dotIndex = LocationManager.Instance.GetNearestDot(animal)
             };
             save.animals.Add(animalData);
         }

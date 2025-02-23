@@ -8,13 +8,15 @@ public enum Biome
     Forest,
     Mountains,
     Tundra,
-    Water
+    Water,
+    DeepWater
 }
 
 public class BiomeManager : MonoBehaviour
 {
     public float mountainsHeight = 0.5f;
     public float waterHeight = 0.1f;
+    public float deepWaterHeight = 0.05f;
     public float tempDesert = 0.5f;
     public float tempTundra = 0.2f;
 
@@ -27,6 +29,7 @@ public class BiomeManager : MonoBehaviour
 
     public Biome GetBiome(Dot dot)
     {
+        if (dot.transform.position.y < deepWaterHeight) return Biome.DeepWater;
         if (dot.transform.position.y < waterHeight) return Biome.Water;
         if (dot.transform.position.y > mountainsHeight) return Biome.Mountains;
 

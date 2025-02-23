@@ -2,33 +2,40 @@ using UnityEngine;
 using MapGenerator;
 using System.Collections.Generic;
 
-public class LocationManager
+public class LocationManager : MonoBehaviour
 {
-    public static GameObject GetRandomLocation(int padding = 0)
-    {
-        int randomX = UnityEngine.Random.Range(padding, Map.Instance.mapDots.Count - padding);
-        int randomY = UnityEngine.Random.Range(padding, Map.Instance.mapDots[randomX].Count - padding);
+    public static LocationManager Instance;
+    readonly List<Dot> NotWaterDots = new();
+    readonly List<Dot> DesertDots = new();
+    readonly List<Dot> ForestDots = new();
+    readonly List<Dot> MountainsDots = new();
+    readonly List<Dot> TundraDots = new();
+    readonly List<Dot> WaterDots = new();
+    bool isInitialized = false;
 
-        return Map.Instance.mapDots[randomX][randomY].gameObject;
+    public void Awake()
+    {
+        Instance = this;
     }
 
-    public static GameObject GetRandomGroundPosition(int padding = 0)
+    public void UpdateGroundDots()
     {
-        int attempts = 0;
-        do
-        {
-            GameObject randomPoint = GetRandomLocation(padding);
+        NotWaterDots.Clear();
+        foreach (List<Dot> dots in Map.Instance.mapDots)
+            foreach (Dot dot in dots)
+            {
+                if (dot.biome == Biome.Desert) DesertDots.Add(dot);
+                if (dot.biome == Biome.Forest) ForestDots.Add(dot);
+                if (dot.biome == Biome.Mountains) MountainsDots.Add(dot);
+                if (dot.biome == Biome.Tundra) TundraDots.Add(dot);
+                if (dot.biome != Biome.Water && dot.biome != Biome.DeepWater) NotWaterDots.Add(dot);
+                if (dot.biome == Biome.Water) WaterDots.Add(dot);
+            }
 
-            if (randomPoint.transform.position.y > BiomeManager.Instance.waterHeight)
-                return randomPoint;
-
-            attempts++;
-        } while (attempts < 100);
-
-        return null;
+        isInitialized = true;
     }
 
-    public static DotCoord GetNearestDot(GameObject target)
+    public DotCoord GetNearestDot(GameObject target)
     {
         List<List<Dot>> dots = Map.Instance.mapDots;
         float nearestDistance = float.MaxValue;
@@ -51,29 +58,54 @@ public class LocationManager
         return nearestDot;
     }
 
-    public static DotCoord GetNearestDotOfType(GameObject target, Biome type)
+    public Dot GetNearestDotOfType(GameObject target, Biome type, List<GameObject> exclude = null)
     {
-        List<List<Dot>> dots = Map.Instance.mapDots;
+        if (!isInitialized)
+            UpdateGroundDots();
+
+        List<Dot> dots = type switch
+        {
+            Biome.Desert => DesertDots,
+            Biome.Forest => ForestDots,
+            Biome.Mountains => MountainsDots,
+            Biome.Tundra => TundraDots,
+            Biome.Water => WaterDots,
+            _ => NotWaterDots
+        };
         float nearestDistance = float.MaxValue;
-        DotCoord nearestDot = new(0, 0);
+        Dot nearestDot = null;
 
         for (int x = 0; x < dots.Count; x++)
         {
-            for (int y = 0; y < dots[x].Count; y++)
-            {
-                Biome dotbiome = dots[x][y].biome;
-                if (dotbiome != type) continue;
+            if (exclude != null && exclude.Contains(dots[x].gameObject)) continue;
+            Biome dotbiome = dots[x].biome;
+            if (dotbiome != type) continue;
 
-                float distance = Vector3.Distance(target.transform.position, dots[x][y].transform.position);
-                if (distance < nearestDistance)
-                {
-                    nearestDistance = distance;
-                    nearestDot.x = x;
-                    nearestDot.y = y;
-                }
+            float distance = Vector3.Distance(target.transform.position, dots[x].transform.position);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestDot = dots[x];
             }
         }
 
         return nearestDot;
+    }
+
+    public GameObject GetRandomGroundPosition(List<GameObject> exclude = null)
+    {
+        if (!isInitialized)
+            UpdateGroundDots();
+
+        List<Dot> notWaterDotsCopy = new(NotWaterDots);
+
+        if (exclude != null)
+            foreach (GameObject ex in exclude)
+                notWaterDotsCopy.Remove(ex.GetComponent<Dot>());
+
+        if (notWaterDotsCopy.Count == 0) return null;
+
+        int randomIndex = UnityEngine.Random.Range(0, notWaterDotsCopy.Count);
+        return notWaterDotsCopy[randomIndex].gameObject;
     }
 }

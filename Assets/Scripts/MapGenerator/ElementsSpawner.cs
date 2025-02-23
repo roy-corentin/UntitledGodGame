@@ -33,7 +33,7 @@ public class ElementsSpawner : MonoBehaviour
             if (dot.element) continue;
 
             Biome biome = dot.biome;
-            if (biome == Biome.Water) continue;
+            if (biome == Biome.Water || biome == Biome.DeepWater) continue;
 
             GameObject prefab = GetPrefab(biome);
             GameObject newTree = Instantiate(prefab, elementsParent);
@@ -68,7 +68,7 @@ public class ElementsSpawner : MonoBehaviour
     public void SpawnElementOnDot(Dot dot)
     {
         if (dot.element) return;
-        if (dot.biome == Biome.Water) return;
+        if (dot.biome == Biome.Water || dot.biome == Biome.DeepWater) return;
 
         GameObject newElement = Instantiate(GetPrefab(dot.biome), elementsParent);
         Vector3 rotation = new(0, Random.Range(0, 360), 0);
@@ -110,7 +110,7 @@ public class ElementsSpawner : MonoBehaviour
         dot.lastBiome = dot.biome;
 
         DestroyElement(dot.element);
-        if (dot.biome == Biome.Water) return;
+        if (dot.biome == Biome.Water || dot.biome == Biome.DeepWater) return;
 
         GameObject prefab = GetPrefab(dot.biome);
         GameObject newElement = Instantiate(prefab, elementsParent);
