@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Discord notification for pull request
         env:
-          DISCORD_WEBHOOK: https://discord.com/api/webhooks/1342510999009497098/OsSi4P8T7qRjU0u3wlBzlhKWiSxxn9hOlOxEOcpT8jgrQz_pWeJyY7Sqw7ezoGopw4T6
+          DISCORD_WEBHOOK: https://discord.com/api/webhooks/${{ secrets.DISCORD_WEBHOOK_KEY }}
           DISCORD_USERNAME: CocoMexico
           DISCORD_AVATAR: https://media.discordapp.net/attachments/487002983557627936/1173697654564327525/1659194713576.jpg
         uses: Ilshidur/action-discord@master
