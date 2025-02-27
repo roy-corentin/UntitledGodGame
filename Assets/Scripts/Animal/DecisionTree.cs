@@ -122,7 +122,9 @@ public class DecisionTree : MonoBehaviour
 
         Node NeedToSleep = new(animal =>
             {
-                return animal.NeedToSleep || animal.isSleeping;
+                bool isInSleepTime = (animal.sleepType == SleepType.Day && DayNightCycle.Instance.currentTimeOfDay == TimeOfDay.Day) ||
+                                    (animal.sleepType == SleepType.Night && DayNightCycle.Instance.currentTimeOfDay == TimeOfDay.Night);
+                return (isInSleepTime && animal.sleepValue < 50) || animal.NeedToSleep || animal.isSleeping;
             },
             OnSleepLocation,
             NeedToEat);

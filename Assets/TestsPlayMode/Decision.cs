@@ -45,6 +45,8 @@ public class Decision
         ARtoVR.Instance.ToggleMode();
         yield return new WaitForSeconds(ARtoVR.Instance.transitionDuration + 3);
 
+        DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
+
         // ----- DecisionTree -----
         Assert.AreEqual(deer.eventType, EventType.Random);
         tree.Callback(deer);
@@ -187,6 +189,30 @@ public class Decision
         deer.isSleeping = true;
         tree.Callback(deer);
         Assert.AreEqual(deer.eventType, EventType.Sleep);
+        yield return null;
+
+        DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Night;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Sleep);
+        yield return null;
+
+        DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Sleep);
+        yield return null;
+
+        DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
+        deer.sleepValue = 40f;
+        deer.isSleeping = false;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Random);
+        yield return null;
+
+        DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
+        deer.sleepValue = 100f;
+        deer.isSleeping = false;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Random);
         yield return null;
     }
 }
