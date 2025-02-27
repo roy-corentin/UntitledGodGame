@@ -367,6 +367,8 @@ public class AnimalEditor : Editor
     {
         base.OnInspectorGUI();
 
+        if (!Application.isPlaying) return;
+
         // print all variables of animator + current animation
         Animal animal = (Animal)target;
         Animator animator = animal.animator;
