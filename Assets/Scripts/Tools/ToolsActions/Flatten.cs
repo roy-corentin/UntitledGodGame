@@ -22,7 +22,10 @@ public class Flatten : ToolAction
 
                 selectedDot.dot.SetYPosition(moveValue);
                 if (selectedDot.dot.element)
+                {
                     selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
+                    ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
+                }
             }
         }
 

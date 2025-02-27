@@ -32,8 +32,10 @@ public class ChangeHeight : ToolAction
 
         selectedDot.dot.SetYPosition(newY);
         if (selectedDot.dot.element)
+        {
             selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
-        ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
+            ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
+        }
     }
 
     public void SetCenterMoveValue(float centerMoveValue)

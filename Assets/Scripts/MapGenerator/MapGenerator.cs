@@ -22,34 +22,69 @@ namespace MapGenerator
         [SerializeField] private Material meshMaterial;
         public static Map Instance;
         private Coroutine generateDotsCoroutine;
-        private bool areDotsGenerated = false;
+        [HideInInspector] public bool areDotsGenerated = false;
         [HideInInspector] public bool isMeshGenerated = false;
         private Coroutine generateAllCoroutine;
         [SerializeField] private int elementQuantity = 50;
+        private float startPressTime;
+        public float timeToLongPress = 1.5f;
 
         private void Awake()
         {
             Instance = this;
         }
 
-        public void Start()
-        {
-            GenerateAll();
-        }
-
         public void Update()
         {
 #if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.G)) GenerateAll();
-            else if (Input.GetKeyDown(KeyCode.C))
+            if (Input.GetKeyDown(KeyCode.C))
             {
                 ClearDots();
                 ClearMesh();
             }
-#else
-            if (ARtoVR.Instance.GetCurrentMode() == GameMode.AR)
-                if (OVRInput.GetDown(OVRInput.Button.Three)) GenerateAll(); // X
+            if (Input.GetKeyDown(KeyCode.F)) FlatAll();
 #endif
+            if (ARtoVR.Instance.GetCurrentMode() == GameMode.AR && areDotsGenerated)
+            {
+                if (OVRInput.GetDown(OVRInput.Button.Three)) startPressTime = Time.time;
+                if (OVRInput.GetUp(OVRInput.Button.Three))
+                {
+                    if (Time.time - startPressTime > timeToLongPress) FlatAll();
+                    else GenerateAll();
+                }
+            }
+        }
+
+        public void FlatAll()
+        {
+            if (areDotsGenerated == false)
+            {
+                if (generateAllCoroutine != null) StopCoroutine(generateAllCoroutine);
+                if (generateDotsCoroutine != null) StopCoroutine(generateDotsCoroutine);
+
+                generateAllCoroutine = StartCoroutine(GenerateAllCacoutine(true));
+                return;
+            }
+
+            List<float> heightMapValues = new();
+
+            foreach (var line in mapDots)
+            {
+                foreach (var dot in line)
+                {
+                    dot.SetYPosition(BiomeManager.Instance.waterHeight - 0.01f);
+                    if (dot.element)
+                    {
+                        dot.element.transform.position = dot.transform.position;
+                        ElementsSpawner.Instance.UpdatePrefab(dot);
+                    }
+                    heightMapValues.Add(dot.transform.position.y);
+                }
+            }
+
+            Instance.CreateMesh();
+            Instance.UpdateHeightMap(heightMapValues);
         }
 
         public void GenerateAll()
@@ -60,7 +95,7 @@ namespace MapGenerator
             generateAllCoroutine = StartCoroutine(GenerateAllCacoutine());
         }
 
-        public IEnumerator GenerateAllCacoutine()
+        public IEnumerator GenerateAllCacoutine(bool flat = false)
         {
             ElementsSpawner.Instance.ClearElements();
 
@@ -101,6 +136,10 @@ namespace MapGenerator
             yield return null;
 
             ElementsSpawner.Instance.SpawnTreeAllAroundMap(mapDots, elementQuantity);
+
+            yield return null;
+
+            if (flat) FlatAll();
 
             isMeshGenerated = true;
         }

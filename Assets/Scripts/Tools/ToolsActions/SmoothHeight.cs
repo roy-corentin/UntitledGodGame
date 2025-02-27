@@ -23,7 +23,10 @@ public class SmoothHeight : ToolAction
 
                 selectedDot.dot.SetYPosition(smoothedY);
                 if (selectedDot.dot.element)
+                {
                     selectedDot.dot.element.transform.position = selectedDot.dot.transform.position;
+                    ElementsSpawner.Instance.UpdatePrefab(selectedDot.dot);
+                }
             }
         }
 
