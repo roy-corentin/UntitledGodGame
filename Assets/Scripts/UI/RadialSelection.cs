@@ -34,7 +34,7 @@ public class RadialSelection : MonoBehaviour
 
     public void Update()
     {
-        if (MapGenerator.Map.Instance.areDotsGenerated) return;
+        if (!MapGenerator.Map.Instance.areDotsGenerated) return;
 
 #if UNITY_EDITOR
         GetSelectedRadialPart();
@@ -49,7 +49,7 @@ public class RadialSelection : MonoBehaviour
     public void Show()
     {
         canvas.gameObject.SetActive(true);
-        canvas.SetPositionAndRotation(handTransform.position, handTransform.rotation);
+        canvas.SetPositionAndRotation(handTransform.position, Quaternion.LookRotation(Camera.main.transform.forward));
     }
 
     public void HideAndTriggerSelected()

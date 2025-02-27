@@ -24,6 +24,7 @@ public class PlayerActions : MonoBehaviour
     public float actionCooldown = 0.1f;
     private float nextActionTime = 0f;
     public float moveSpeed = 1f;
+    public Transform playerRig;
 
     private void Awake()
     {
@@ -59,15 +60,14 @@ public class PlayerActions : MonoBehaviour
             currentTool.Action(1f);
             nextActionTime = Time.time + actionCooldown;
         }
-#else
+#endif
         if (ARtoVR.Instance.GetCurrentMode() == GameMode.AR) ARInputs();
         else VRInputs();
-#endif
     }
 
     private void ARInputs()
     {
-        if (MapGenerator.Map.Instance.areDotsGenerated) return;
+        if (!MapGenerator.Map.Instance.areDotsGenerated) return;
 
         if (OVRInput.GetDown(OVRInput.Button.Two)) SetActionType(-currentTool.actionType); // B
 
@@ -98,10 +98,12 @@ public class PlayerActions : MonoBehaviour
         playerRight.y = 0;
         playerRight.Normalize();
         Vector3 moveDirection = playerForward * joystick.y + playerRight * joystick.x;
-        MapGenerator.Map.Instance.transform.position -= moveDirection * Time.deltaTime * moveSpeed;
+        // MapGenerator.Map.Instance.transform.position -= moveDirection * Time.deltaTime * moveSpeed;
+        playerRig.position += moveSpeed * Time.deltaTime * moveDirection;
 
         float heightJoystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y; // Right joystick
-        MapGenerator.Map.Instance.transform.position += Vector3.up * -heightJoystick * Time.deltaTime * moveSpeed;
+        // MapGenerator.Map.Instance.transform.position += Vector3.up * -heightJoystick * Time.deltaTime * moveSpeed;
+        playerRig.position += -heightJoystick * moveSpeed * Time.deltaTime * Vector3.up;
     }
 
     private void SetActionType(int actionType)
