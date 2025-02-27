@@ -39,6 +39,13 @@ public enum FoodType
     Carnivore
 }
 
+public enum SleepType
+{
+    Day,
+    Night,
+    None
+}
+
 public class Animal : MonoBehaviour
 {
     [HideInInspector] public NavMeshAgent navAgent;
@@ -92,6 +99,7 @@ public class Animal : MonoBehaviour
     public bool NeedToSleep => sleepValue <= 1;
     [HideInInspector] public bool isSleeping = false;
     public float sleepSpeed = 10f;
+    public SleepType sleepType;
 
     [HideInInspector] public bool isDead = false;
     [HideInInspector] public readonly List<GameObject> notReachableElements = new();
