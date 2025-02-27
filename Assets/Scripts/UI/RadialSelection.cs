@@ -34,6 +34,8 @@ public class RadialSelection : MonoBehaviour
 
     public void Update()
     {
+        if (MapGenerator.Map.Instance.areDotsGenerated) return;
+
 #if UNITY_EDITOR
         GetSelectedRadialPart();
         if (Input.GetKeyDown(KeyCode.H)) Show();

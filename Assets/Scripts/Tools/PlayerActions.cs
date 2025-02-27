@@ -67,6 +67,8 @@ public class PlayerActions : MonoBehaviour
 
     private void ARInputs()
     {
+        if (MapGenerator.Map.Instance.areDotsGenerated) return;
+
         if (OVRInput.GetDown(OVRInput.Button.Two)) SetActionType(-currentTool.actionType); // B
 
         float pressure = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger); // Right trigger

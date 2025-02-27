@@ -34,6 +34,8 @@ public class ARtoVR : MonoBehaviour
 
     public void Update()
     {
+        if (MapGenerator.Map.Instance.areDotsGenerated) return;
+
         if (Input.GetKeyDown(KeyCode.B) || OVRInput.GetDown(OVRInput.Button.Four))
         {
             ToggleMode();
