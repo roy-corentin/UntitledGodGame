@@ -98,12 +98,15 @@ public class PlayerActions : MonoBehaviour
         playerRight.y = 0;
         playerRight.Normalize();
         Vector3 moveDirection = playerForward * joystick.y + playerRight * joystick.x;
-        // MapGenerator.Map.Instance.transform.position -= moveDirection * Time.deltaTime * moveSpeed;
         playerRig.position += moveSpeed * Time.deltaTime * moveDirection;
 
         float heightJoystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).y; // Right joystick
-        // MapGenerator.Map.Instance.transform.position += Vector3.up * -heightJoystick * Time.deltaTime * moveSpeed;
-        playerRig.position += -heightJoystick * moveSpeed * Time.deltaTime * Vector3.up;
+        if (Mathf.Abs(heightJoystick) > 0.2f)
+            playerRig.position += heightJoystick * moveSpeed * Time.deltaTime * Vector3.up;
+
+        float rotation = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick).x; // Right joystick
+        if (Mathf.Abs(rotation) > 0.2f)
+            playerRig.Rotate(Vector3.up, rotation * moveSpeed * 20 * Time.deltaTime);
     }
 
     private void SetActionType(int actionType)

@@ -42,6 +42,7 @@ public class DownloadBundles : MonoBehaviour
         if (downloadedFiles.Contains(url))
         {
             Debug.Log("AssetBundle déjà téléchargé.");
+            AnimalUI.Instance.infoText.text = "AssetBundle déjà téléchargé.";
             yield break;
         }
 
@@ -52,6 +53,7 @@ public class DownloadBundles : MonoBehaviour
         while (!request.isDone)
         {
             Debug.Log("Progression du téléchargement : " + (request.downloadProgress * 100).ToString("F2") + "%");
+            AnimalUI.Instance.infoText.text = "Téléchargement : " + (request.downloadProgress * 100).ToString("F2") + "%";
             yield return null;
         }
 
@@ -60,6 +62,7 @@ public class DownloadBundles : MonoBehaviour
         if (request.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError("Erreur de téléchargement : " + request.error);
+            AnimalUI.Instance.infoText.text = "Erreur lors du téléchargement.";
         }
         else
         {
@@ -74,11 +77,13 @@ public class DownloadBundles : MonoBehaviour
             if (CheckAllChecksum(downloadedChecksum))
             {
                 Debug.Log("Le fichier téléchargé existe déjà avec le même checksum.");
+                AnimalUI.Instance.infoText.text = "Le fichier téléchargé existe déjà.";
                 yield break;
             }
 
             File.WriteAllBytes(bundlePath, request.downloadHandler.data);
             Debug.Log("AssetBundle téléchargé et enregistré localement à : " + bundlePath);
+            AnimalUI.Instance.infoText.text = "Fichier téléchargé et enregistré localement.";
 
             StartCoroutine(LoadAssetBundle(bundlePath));
         }
@@ -180,6 +185,7 @@ public class DownloadBundles : MonoBehaviour
         // Supprimer tous les boutons
         for (int i = 2; i < AnimalUI.Instance.animalButtons.Count; i++)
             Destroy(AnimalUI.Instance.animalButtons[i]);
+        AnimalUI.Instance.animalButtons.RemoveRange(2, AnimalUI.Instance.animalButtons.Count - 2);
     }
 }
 

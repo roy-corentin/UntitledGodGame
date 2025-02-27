@@ -12,6 +12,7 @@ public class AnimalUI : MonoBehaviour
     public TMP_InputField animalNameInput;
     public Transform handTransform;
     public GameObject animalUI;
+    public TextMeshProUGUI infoText;
 
     private void Awake()
     {
@@ -25,7 +26,6 @@ public class AnimalUI : MonoBehaviour
 
     public void Update()
     {
-        Debug.Log("AnimalUI Update");
         if (Input.GetKeyDown(KeyCode.O)) Toggle();
 
         if (!animalUI.activeSelf) return;
@@ -53,6 +53,8 @@ public class AnimalUI : MonoBehaviour
 
         TextMeshProUGUI buttonText = firstChildText.GetComponent<TextMeshProUGUI>();
         buttonText.text = animalName;
+
+        animalButtons.Add(button);
     }
 
     public void Show()
@@ -77,5 +79,10 @@ public class AnimalUI : MonoBehaviour
     public void OpenKeyboard()
     {
         TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default);
+    }
+
+    public void CloseKeyboard()
+    {
+        TouchScreenKeyboard.hideInput = true;
     }
 }

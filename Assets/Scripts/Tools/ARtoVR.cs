@@ -21,6 +21,7 @@ public class ARtoVR : MonoBehaviour
     public GameObject toolbox;
     public AudioSource mapAudioSource;
     public AudioClip transitionSound;
+    public Vector3 playerPosAR = default;
 
     private void Awake()
     {
@@ -86,6 +87,11 @@ public class ARtoVR : MonoBehaviour
                 currentMode = GameMode.AR;
             });
 
+        if (playerPosAR == default)
+            PlayerActions.Instance.playerRig.transform
+                .DOMove(playerPosAR, instant ? 0 : transitionDuration)
+                .SetEase(Ease.InOutCubic);
+
         toolbox.gameObject.SetActive(true);
         toolbox.transform
             .DOScale(Vector3.one, instant ? 0 : transitionDuration)
@@ -97,6 +103,8 @@ public class ARtoVR : MonoBehaviour
     private void GoToVR(bool instant = false)
     {
         SetPasstrough(false);
+
+        playerPosAR = PlayerActions.Instance.playerRig.position;
 
         mapGO.transform
             .DOMove(heightCompensation, instant ? 0 : transitionDuration)
