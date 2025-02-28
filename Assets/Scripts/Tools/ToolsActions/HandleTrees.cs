@@ -17,10 +17,10 @@ public class HandleTrees : ToolAction
             List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
 
             foreach (SelectedDot selectedDot in currentLayer)
-            {
                 EditDot(selectedDot.dot);
-            }
         }
+
+        NavMeshHandler.Instance.needRebake = true;
     }
 
     private bool CanSpawnElement()

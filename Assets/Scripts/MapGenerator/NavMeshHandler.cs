@@ -6,6 +6,7 @@ public class NavMeshHandler : MonoBehaviour
 {
     public NavMeshSurface navmeshSurface;
     public static NavMeshHandler Instance;
+    [HideInInspector] public bool needRebake = true;
 
     private void Awake()
     {
@@ -36,8 +37,21 @@ public class NavMeshHandler : MonoBehaviour
 
     public void Rebake()
     {
-        ClearNavmesh();
-        GenerateNavmesh();
+        if (needRebake && AnimalSpawner.Instance.spawnedAnimals.Count > 0)
+        {
+            navmeshSurface.enabled = true;
+            ClearNavmesh();
+            GenerateNavmesh();
+            needRebake = false;
+            return;
+        }
+
+        navmeshSurface.enabled = true;
+    }
+
+    public void DisableNavmesh()
+    {
+        navmeshSurface.enabled = false;
     }
 }
 
