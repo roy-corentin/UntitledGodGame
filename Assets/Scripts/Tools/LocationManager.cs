@@ -92,6 +92,34 @@ public class LocationManager : MonoBehaviour
         return nearestDot;
     }
 
+    public Dot GetNearestGroundPosition(GameObject target, List<GameObject> exclude = null)
+    {
+        if (!isInitialized) UpdateGroundDots();
+
+        List<Dot> notWaterDotsCopy = new(NotWaterDots);
+
+        if (exclude != null)
+            foreach (GameObject ex in exclude)
+                notWaterDotsCopy.Remove(ex.GetComponent<Dot>());
+
+        if (notWaterDotsCopy.Count == 0) return null;
+
+        float nearestDistance = float.MaxValue;
+        Dot nearestDot = null;
+
+        for (int x = 0; x < notWaterDotsCopy.Count; x++)
+        {
+            float distance = Vector3.Distance(target.transform.position, notWaterDotsCopy[x].transform.position);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestDot = notWaterDotsCopy[x];
+            }
+        }
+
+        return nearestDot;
+    }
+
     public GameObject GetRandomGroundPosition(List<GameObject> exclude = null)
     {
         if (!isInitialized)

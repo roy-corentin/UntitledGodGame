@@ -49,8 +49,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: decreaseSleepPerSecond
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: canEatLevels.Array.size
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: decreaseHungerPerSecond
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
+      propertyPath: decreaseThirstPerSecond
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: canEatLevels.Array.data[0]

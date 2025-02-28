@@ -9,7 +9,7 @@ public enum TimeOfDay
 public class DayNightCycle : MonoBehaviour
 {
     [Header("Time Settings")]
-    public float dayLengthinMinutes = 10;
+    public float dayLengthinMinutes = 2;
     public float timeMultiplier = 1;
     private float timeMultiplierBeforeStop = 1;
 

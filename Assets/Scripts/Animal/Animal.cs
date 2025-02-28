@@ -70,7 +70,7 @@ public class Animal : MonoBehaviour
     [HideInInspector] public bool isMoving;
     private float startMoveTime;
     public float chanceToDoNothing = 10;
-    public bool IsOverTime => Time.time - startMoveTime > maxMoveTime;
+    public bool IsOverTime => Time.time - startMoveTime > (maxMoveTime / DayNightCycle.Instance.timeMultiplier);
     [HideInInspector] public bool randomMoveReachable = true;
 
     [Header("---- Soif ----")]
@@ -100,6 +100,7 @@ public class Animal : MonoBehaviour
     [HideInInspector] public bool isSleeping = false;
     public float sleepSpeed = 10f;
     public SleepType sleepType;
+    [HideInInspector] public bool sleepSourceReachable = true;
 
     [HideInInspector] public bool isDead = false;
     [HideInInspector] public readonly List<GameObject> notReachableElements = new();
@@ -164,9 +165,9 @@ public class Animal : MonoBehaviour
 
     void UpdateValues()
     {
-        if (thirstValue > 0 && !isDrinking) thirstValue -= decreaseThirstPerSecond * Time.deltaTime;
-        if (hungerValue > 0 && !isEating) hungerValue -= decreaseHungerPerSecond * Time.deltaTime;
-        if (sleepValue > 0 && !isSleeping) sleepValue -= decreaseSleepPerSecond * Time.deltaTime;
+        if (thirstValue > 0 && !isDrinking) thirstValue -= decreaseThirstPerSecond * Time.deltaTime * DayNightCycle.Instance.timeMultiplier;
+        if (hungerValue > 0 && !isEating) hungerValue -= decreaseHungerPerSecond * Time.deltaTime * DayNightCycle.Instance.timeMultiplier;
+        if (sleepValue > 0 && !isSleeping) sleepValue -= decreaseSleepPerSecond * Time.deltaTime * DayNightCycle.Instance.timeMultiplier;
     }
 
     public void RandomMove()
@@ -221,7 +222,7 @@ public class Animal : MonoBehaviour
     {
         if (!isSleeping) RemoveTarget();
         isSleeping = true;
-        sleepValue += sleepSpeed * Time.deltaTime;
+        sleepValue += sleepSpeed * Time.deltaTime * DayNightCycle.Instance.timeMultiplier;
         if (animator && !animator.GetBool("Sleep")) animator.SetBool("Sleep", true);
         if (sleepValue >= 99)
         {
@@ -230,6 +231,20 @@ public class Animal : MonoBehaviour
             if (animator && animator.GetBool("Sleep")) animator.SetBool("Sleep", false);
             RemoveTarget();
         }
+    }
+
+    public void FindSleep()
+    {
+
+        MapGenerator.Dot nearestSleep = LocationManager.Instance.GetNearestGroundPosition(gameObject, notReachableElements);
+        if (nearestSleep == null)
+        {
+            sleepSourceReachable = false;
+            return;
+        }
+
+        if (!SetTarget(nearestSleep.transform)) return;
+        destinationType = DestinationType.Sleep;
     }
 
     public void Eat()
@@ -245,7 +260,7 @@ public class Animal : MonoBehaviour
         }
 
         isEating = true;
-        hungerValue += eatSpeed * Time.deltaTime;
+        hungerValue += eatSpeed * Time.deltaTime * DayNightCycle.Instance.timeMultiplier;
         if (animator && !animator.GetBool("Eat")) animator.SetBool("Eat", true);
         if (hungerValue >= 99)
         {
@@ -273,7 +288,7 @@ public class Animal : MonoBehaviour
     {
         if (!isDrinking) RemoveTarget();
         isDrinking = true;
-        thirstValue += drinkRefillSpeed * Time.deltaTime;
+        thirstValue += drinkRefillSpeed * Time.deltaTime * DayNightCycle.Instance.timeMultiplier;
         if (animator && !animator.GetBool("Drink")) animator.SetBool("Drink", true);
         if (thirstValue >= 99)
         {
@@ -292,7 +307,7 @@ public class Animal : MonoBehaviour
         if (animator && !animator.GetBool("Die")) animator.SetBool("Die", true);
         AnimalSpawner.Instance.spawnedAnimals.Remove(gameObject);
         RemoveTarget();
-        Destroy(gameObject, 5);
+        Destroy(gameObject, 5 / DayNightCycle.Instance.timeMultiplier);
         StatsManager.Instance.deadCount++;
     }
 
@@ -355,6 +370,13 @@ public class Animal : MonoBehaviour
         foodSourceReachable = true;
         waterSourceReachable = true;
         randomMoveReachable = true;
+        sleepSourceReachable = true;
+    }
+
+    public void UpdateSpeed()
+    {
+        navAgent.speed = moveSpeed * DayNightCycle.Instance.timeMultiplier;
+        animator.speed = DayNightCycle.Instance.timeMultiplier;
     }
 }
 
