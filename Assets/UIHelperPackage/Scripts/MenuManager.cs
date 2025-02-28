@@ -5,6 +5,7 @@ public class MenuManager : MonoBehaviour
     public GameObject menu;
     public LaserPointerData laserPointer;
     public static MenuManager Instance;
+    public Transform handTransform;
 
     private void Awake()
     {
@@ -14,19 +15,17 @@ public class MenuManager : MonoBehaviour
     void Start()
     {
         menu.SetActive(false);
-        laserPointer.Show(false);
+        laserPointer.Show(true);
     }
 
     public void ToggleMenu()
     {
         menu.SetActive(!menu.activeSelf);
-        laserPointer.Show(menu.activeSelf);
 
         if (menu.activeSelf)
         {
             StatsManager.Instance.UpdateStats();
             MoveMenuInFrontOfCamera();
-            laserPointer.SetColor(LaserPointerColor.Default);
         }
     }
 
@@ -35,14 +34,13 @@ public class MenuManager : MonoBehaviour
         if (menu.activeSelf && !IsInView())
         {
             menu.SetActive(false);
-            laserPointer.Show(false);
         }
     }
 
     private void MoveMenuInFrontOfCamera()
     {
         menu.transform.SetPositionAndRotation(
-            Camera.main.transform.position + Camera.main.transform.forward * 0.9f,
+            handTransform.position + handTransform.forward * 0.3f,
             Quaternion.LookRotation(Camera.main.transform.forward));
     }
 
@@ -55,6 +53,5 @@ public class MenuManager : MonoBehaviour
     public void Hide()
     {
         menu.SetActive(false);
-        laserPointer.Show(false);
     }
 }

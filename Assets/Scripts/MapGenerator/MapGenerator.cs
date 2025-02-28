@@ -85,6 +85,7 @@ namespace MapGenerator
 
             Instance.CreateMesh();
             Instance.UpdateHeightMap(heightMapValues);
+            AnimalSpawner.Instance.RemoveAll();
         }
 
         public void GenerateAll()
@@ -98,6 +99,7 @@ namespace MapGenerator
         public IEnumerator GenerateAllCacoutine(bool flat = false)
         {
             ElementsSpawner.Instance.ClearElements();
+            AnimalSpawner.Instance.RemoveAll();
 
             yield return null;
 

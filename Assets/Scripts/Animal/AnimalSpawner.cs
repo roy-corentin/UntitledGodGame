@@ -23,6 +23,8 @@ public class AnimalSpawner : MonoBehaviour
 
     public void SpawnAnimal(int prefabIndex)
     {
+        if (ARtoVR.Instance.currentMode == GameMode.VR) return;
+
         GameObject spawnDot = LocationManager.Instance.GetRandomGroundPosition();
         if (spawnDot == null) return;
 
@@ -145,6 +147,25 @@ public class AnimalSpawner : MonoBehaviour
             animalScript.ResetReachableInfos();
         }
     }
+
+    public void RemoveAllAnimalsFromTheSamePrefab(int prefabIndex)
+    {
+        List<GameObject> animalsToRemove = new();
+
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            if (animalScript.prefabIndex == prefabIndex)
+                animalsToRemove.Add(animal);
+        }
+
+        foreach (GameObject animal in animalsToRemove)
+        {
+            spawnedAnimals.Remove(animal);
+            Destroy(animal);
+        }
+    }
 }
 
 #if UNITY_EDITOR
@@ -154,6 +175,8 @@ public class AnimalSpawnerEditor : Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+
+        if (!Application.isPlaying) return;
 
         AnimalSpawner animal = (AnimalSpawner)target;
 

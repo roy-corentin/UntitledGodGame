@@ -3,7 +3,7 @@
     "m_SelectedProcess": {
         "deviceId": "2G0YC1ZF7P0FD3",
         "name": "com.DefaultCompany.UntitledTekGame",
-        "processId": 9356,
+        "processId": 9213,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -11,97 +11,37 @@
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 5229,
+            "processId": 26797,
             "exited": true
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 13600,
+            "processId": 28594,
             "exited": true
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 14364,
+            "processId": 30449,
             "exited": true
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 15011,
+            "processId": 32079,
             "exited": true
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 16057,
+            "processId": 3422,
             "exited": false
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 17035,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 6224,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 7108,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 32069,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 4534,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 7553,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 30894,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 4458,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 7153,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 7947,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 9356,
+            "processId": 9213,
             "exited": false
         }
     ],
@@ -159,7 +99,7 @@
         "AutoCapture": true
     },
     "m_FilterOptions": {
-        "m_Filter": "LOG: On",
+        "m_Filter": "",
         "m_UseRegularExpressions": false,
         "m_MatchCase": false
     },
