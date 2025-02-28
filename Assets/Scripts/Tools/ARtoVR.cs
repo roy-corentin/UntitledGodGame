@@ -69,7 +69,7 @@ public class ARtoVR : MonoBehaviour
         SetPasstrough(true);
 
         AnimalSpawner.Instance.DisableAll();
-        NavMeshHandler.Instance.ClearNavmesh();
+        NavMeshHandler.Instance.DisableNavmesh();
 
         mapGO.transform
             .DOMove(Vector3.zero, instant ? 0 : transitionDuration)

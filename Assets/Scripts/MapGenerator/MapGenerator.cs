@@ -338,6 +338,8 @@ namespace MapGenerator
 
             meshFilter.mesh = mesh;
             meshCollider.sharedMesh = mesh;
+
+            NavMeshHandler.Instance.needRebake = true;
         }
 
         public void ClearMesh()
