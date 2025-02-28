@@ -71,7 +71,7 @@ public class DecisionTree : MonoBehaviour
         Node SearchSleep = new(animal =>
         {
             animal.eventType = EventType.SearchSleep;
-            Debug.Log("SearchSleep");
+            animal.FindSleep();
         });
 
         Node Sleep = new(animal =>
@@ -108,7 +108,7 @@ public class DecisionTree : MonoBehaviour
 
         Node OnSleepLocation = new(animal =>
             {
-                return true;
+                return animal.isSleeping || animal.IsAtDestination();
             },
             Sleep,
             SearchSleep);
@@ -124,7 +124,8 @@ public class DecisionTree : MonoBehaviour
             {
                 bool isInSleepTime = (animal.sleepType == SleepType.Day && DayNightCycle.Instance.currentTimeOfDay == TimeOfDay.Day) ||
                                     (animal.sleepType == SleepType.Night && DayNightCycle.Instance.currentTimeOfDay == TimeOfDay.Night);
-                return (isInSleepTime && animal.sleepValue < 50) || animal.NeedToSleep || animal.isSleeping;
+                bool sleepCondition = (isInSleepTime && animal.sleepValue < 50) || animal.NeedToSleep;
+                return (sleepCondition && animal.sleepSourceReachable) || animal.isSleeping;
             },
             OnSleepLocation,
             NeedToEat);

@@ -26,17 +26,20 @@ public class Decision
         Assert.IsNotNull(map);
         yield return null;
 
+        map.GenerateAll();
+        yield return null;
+
         // Wait for generation
         yield return new WaitUntil(() => map.isMeshGenerated);
 
         // Spawn Deer
-        animalSpawner.SpawnAnimal(1);
+        animalSpawner.SpawnAnimal(0);
         yield return null;
         Animal deer = animalSpawner.spawnedAnimals[0].GetComponent<Animal>();
         Assert.IsNotNull(deer);
 
         // Spawn Tiger
-        animalSpawner.SpawnAnimal(2);
+        animalSpawner.SpawnAnimal(1);
         yield return null;
         Animal tiger = animalSpawner.spawnedAnimals[1].GetComponent<Animal>();
         Assert.IsNotNull(tiger);
@@ -173,8 +176,10 @@ public class Decision
 
         // SearchWater / Value 0
         deer.sleepValue = 0f;
+        deer.forceDestination = true;
         tree.Callback(deer);
         Assert.AreEqual(deer.eventType, EventType.Sleep);
+        deer.forceDestination = false;
         yield return null;
 
         // Drink
@@ -187,30 +192,59 @@ public class Decision
         // Drink / Value 50
         deer.sleepValue = 50f;
         deer.isSleeping = true;
+        deer.forceDestination = true;
         tree.Callback(deer);
         Assert.AreEqual(deer.eventType, EventType.Sleep);
+        deer.forceDestination = false;
         yield return null;
 
         DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Night;
+        deer.forceDestination = true;
         tree.Callback(deer);
         Assert.AreEqual(deer.eventType, EventType.Sleep);
+        deer.forceDestination = false;
         yield return null;
 
         DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
+        deer.forceDestination = true;
         tree.Callback(deer);
         Assert.AreEqual(deer.eventType, EventType.Sleep);
+        deer.forceDestination = false;
         yield return null;
 
         DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
         deer.sleepValue = 40f;
         deer.isSleeping = false;
+        deer.forceDestination = true;
         tree.Callback(deer);
         Assert.AreEqual(deer.eventType, EventType.Random);
+        deer.forceDestination = false;
         yield return null;
 
         DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
         deer.sleepValue = 100f;
         deer.isSleeping = false;
+        deer.forceDestination = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Random);
+        deer.forceDestination = false;
+        yield return null;
+
+        DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
+        deer.sleepValue = 0;
+        deer.isSleeping = false;
+        deer.sleepSourceReachable = true;
+        deer.forceDestination = true;
+        tree.Callback(deer);
+        Assert.AreEqual(deer.eventType, EventType.Sleep);
+        deer.forceDestination = false;
+        yield return null;
+
+        DayNightCycle.Instance.currentTimeOfDay = TimeOfDay.Day;
+        deer.sleepValue = 0;
+        deer.isSleeping = false;
+        deer.sleepSourceReachable = false;
+        deer.forceDestination = false;
         tree.Callback(deer);
         Assert.AreEqual(deer.eventType, EventType.Random);
         yield return null;

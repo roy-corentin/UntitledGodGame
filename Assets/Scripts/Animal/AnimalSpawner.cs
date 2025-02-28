@@ -166,6 +166,16 @@ public class AnimalSpawner : MonoBehaviour
             Destroy(animal);
         }
     }
+
+    public void UpdateAllSpeeds()
+    {
+        foreach (GameObject animal in spawnedAnimals)
+        {
+            if (animal == null) continue;
+            Animal animalScript = animal.GetComponent<Animal>();
+            animalScript.UpdateSpeed();
+        }
+    }
 }
 
 #if UNITY_EDITOR
@@ -189,6 +199,11 @@ public class AnimalSpawnerEditor : Editor
             if (GUILayout.Button("New " + animalPrefab.name))
                 animal.SpawnAnimal(animal.animalPrefabs.IndexOf(animalPrefab));
         }
+
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Update Speeds"))
+            animal.UpdateAllSpeeds();
     }
 }
 #endif
