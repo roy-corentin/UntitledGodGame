@@ -2,8 +2,8 @@
     "m_SelectedDeviceId": "2G0YC1ZF7P0FD3",
     "m_SelectedProcess": {
         "deviceId": "2G0YC1ZF7P0FD3",
-        "name": "com.DefaultCompany.UntitledTekGame",
-        "processId": 9213,
+        "name": "com.OtterProd.UntitledGodGame",
+        "processId": 29332,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -42,6 +42,30 @@
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.DefaultCompany.UntitledTekGame",
             "processId": 9213,
+            "exited": false
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 5317,
+            "exited": false
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 18610,
+            "exited": false
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 25205,
+            "exited": false
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 29332,
             "exited": false
         }
     ],

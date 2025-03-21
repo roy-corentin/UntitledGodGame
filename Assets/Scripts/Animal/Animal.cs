@@ -125,6 +125,13 @@ public class Animal : MonoBehaviour
             transform.position = new Vector3(hit.point.x, hit.point.y + height / 2, hit.point.z);
         }
 
+        decreaseThirstPerSecond = Random.Range(decreaseThirstPerSecond * 0.5f, decreaseThirstPerSecond * 1.5f);
+        decreaseHungerPerSecond = Random.Range(decreaseHungerPerSecond * 0.5f, decreaseHungerPerSecond * 1.5f);
+        decreaseSleepPerSecond = Random.Range(decreaseSleepPerSecond * 0.5f, decreaseSleepPerSecond * 1.5f);
+        drinkRefillSpeed = Random.Range(drinkRefillSpeed * 0.5f, drinkRefillSpeed * 1.5f);
+        eatSpeed = Random.Range(eatSpeed * 0.5f, eatSpeed * 1.5f);
+        sleepSpeed = Random.Range(sleepSpeed * 0.5f, sleepSpeed * 1.5f);
+
         LockAnimation(true);
     }
 
@@ -134,6 +141,20 @@ public class Animal : MonoBehaviour
         if (navAgent == null) return;
 
         DecisionTree.Instance.Callback(this);
+
+        if (!navAgent.isOnNavMesh)
+        {
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 5, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                navAgent.Warp(hit.position);
+            }
+            else
+            {
+                Die();
+                return;
+            }
+        }
 
         if (animator)
             animator.SetFloat("Speed", navAgent.velocity.magnitude);
@@ -376,6 +397,8 @@ public class Animal : MonoBehaviour
     public void UpdateSpeed()
     {
         navAgent.speed = moveSpeed * DayNightCycle.Instance.timeMultiplier;
+        navAgent.angularSpeed = angularSpeed * DayNightCycle.Instance.timeMultiplier;
+        navAgent.acceleration = acceleration * DayNightCycle.Instance.timeMultiplier;
         animator.speed = DayNightCycle.Instance.timeMultiplier;
     }
 }

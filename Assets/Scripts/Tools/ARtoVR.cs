@@ -122,6 +122,7 @@ public class ARtoVR : MonoBehaviour
                 LocationManager.Instance.UpdateGroundDots();
                 NavMeshHandler.Instance.Rebake();
                 AnimalSpawner.Instance.EnableAll();
+                AnimalSpawner.Instance.UpdateAllSpeeds();
                 currentMode = GameMode.VR;
             });
 
