@@ -19,6 +19,7 @@ public class Flatten : ToolAction
                 int dotIndex = currentLayer.IndexOf(selectedDot);
                 int nummberOfDots = currentLayer.Count;
                 float moveValue = Mathf.Lerp(currentY, finalY, (float)(dotIndex + 1) / nummberOfDots);
+                moveValue = Mathf.Clamp(moveValue, MapGenerator.Map.Instance.minHeight, MapGenerator.Map.Instance.maxHeight);
 
                 selectedDot.dot.SetYPosition(moveValue);
                 if (selectedDot.dot.element)

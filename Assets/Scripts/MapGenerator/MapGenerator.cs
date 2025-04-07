@@ -28,6 +28,8 @@ namespace MapGenerator
         [SerializeField] private int elementQuantity = 50;
         private float startPressTime;
         public float timeToLongPress = 1.5f;
+        public float maxHeight = 1;
+        public float minHeight = -1f;
 
         private void Awake()
         {

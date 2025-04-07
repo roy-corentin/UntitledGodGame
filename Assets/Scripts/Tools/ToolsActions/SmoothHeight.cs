@@ -20,6 +20,7 @@ public class SmoothHeight : ToolAction
             {
                 float currentY = selectedDot.dot.transform.position.y;
                 float smoothedY = Mathf.Lerp(currentY, finalY, smoothingFactor * Time.deltaTime);
+                smoothedY = Mathf.Clamp(smoothedY, MapGenerator.Map.Instance.minHeight, MapGenerator.Map.Instance.maxHeight);
 
                 selectedDot.dot.SetYPosition(smoothedY);
                 if (selectedDot.dot.element)

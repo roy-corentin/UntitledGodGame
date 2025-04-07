@@ -15,6 +15,7 @@ public class ChangeHeight : ToolAction
         {
             List<SelectedDot> currentLayer = selectedDots.surroundingDotsLayers[layerIndex];
             float moveValue = Mathf.Lerp(centerMoveValue, surroundingMoveValue, (float)(layerIndex + 1) / actionRange);
+            moveValue = Mathf.Clamp(moveValue, MapGenerator.Map.Instance.minHeight, MapGenerator.Map.Instance.maxHeight);
 
             foreach (SelectedDot selectedDot in currentLayer)
             {
