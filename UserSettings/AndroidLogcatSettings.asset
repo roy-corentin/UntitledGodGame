@@ -11,12 +11,6 @@
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.OtterProd.UntitledGodGame",
-            "processId": 5317,
-            "exited": true
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.OtterProd.UntitledGodGame",
             "processId": 18610,
             "exited": true
         },
@@ -36,6 +30,12 @@
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.oculus.xrstreamingclient",
             "processId": 17811,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.oculus.panelapp.settings:QuickSettingsActivity",
+            "processId": 17571,
             "exited": false
         }
     ],
