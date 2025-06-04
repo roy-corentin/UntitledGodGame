@@ -52,7 +52,6 @@ namespace MapGenerator
                 if (OVRInput.GetDown(OVRInput.Button.Three)) startPressTime = Time.time;
                 if (OVRInput.GetUp(OVRInput.Button.Three))
                 {
-                    AnimalSpawner.Instance.RemoveAll();
                     if (Time.time - startPressTime > timeToLongPress) FlatAll();
                     else GenerateAll();
                 }

@@ -30,7 +30,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: maxMoveTime
-      value: 60
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: -8264934038213892515, guid: 220ad0de1e362494dbef72b2bbadedd8, type: 3}
       propertyPath: acceleration

@@ -134,11 +134,10 @@ public class DownloadBundles : MonoBehaviour
 
         foreach (GameObject obj in assetRequest.allAssets)
         {
-            GameObject instance = Instantiate(obj);
-            AnimalSpawner.Instance.animalPrefabs.Add(instance);
-            loadedObjects.Add(instance);
-            Debug.Log("Objet ajouté à la liste : " + instance.name);
-            AnimalUI.Instance.AddButton(instance.name, loadedObjects.Count - 1);
+            AnimalSpawner.Instance.animalPrefabs.Add(obj);
+            loadedObjects.Add(obj);
+            Debug.Log("Objet ajouté à la liste : " + obj.name);
+            AnimalUI.Instance.AddButton(obj.name, AnimalSpawner.Instance.animalPrefabs.Count - 1);
         }
 
         bundle.Unload(false);

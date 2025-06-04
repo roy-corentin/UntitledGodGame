@@ -67,6 +67,12 @@ public class AnimalSpawner : MonoBehaviour
             Destroy(animal);
         }
 
+        foreach (Transform child in spawnParent)
+        {
+            if (child == null) continue;
+            Destroy(child.gameObject);
+        }
+
         spawnedAnimals.Clear();
     }
 

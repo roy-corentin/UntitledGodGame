@@ -141,6 +141,7 @@ public class Animal : MonoBehaviour
         if (navAgent == null) return;
 
         DecisionTree.Instance.Callback(this);
+        Debug.Log("Update Animal: " + gameObject.name);
 
         if (!navAgent.isOnNavMesh)
         {
@@ -175,13 +176,13 @@ public class Animal : MonoBehaviour
     public void Disable()
     {
         if (navAgent != null) Destroy(navAgent);
-        animator.speed = 0;
+        if (animator != null) animator.speed = 0;
     }
 
     public void Enable()
     {
         SetupNavAgent();
-        animator.speed = 1;
+        if (animator != null) animator.speed = 1;
     }
 
     void UpdateValues()
@@ -323,7 +324,7 @@ public class Animal : MonoBehaviour
 
     public void Die()
     {
-        if (animator.GetBool("Die")) return;
+        if (!animator || animator.GetBool("Die")) return;
 
         if (animator && !animator.GetBool("Die")) animator.SetBool("Die", true);
         AnimalSpawner.Instance.spawnedAnimals.Remove(gameObject);
@@ -396,10 +397,16 @@ public class Animal : MonoBehaviour
 
     public void UpdateSpeed()
     {
-        navAgent.speed = moveSpeed * DayNightCycle.Instance.timeMultiplier;
-        navAgent.angularSpeed = angularSpeed * DayNightCycle.Instance.timeMultiplier;
-        navAgent.acceleration = acceleration * DayNightCycle.Instance.timeMultiplier;
-        animator.speed = DayNightCycle.Instance.timeMultiplier;
+        if (navAgent != null)
+        {
+            navAgent.speed = moveSpeed * DayNightCycle.Instance.timeMultiplier;
+            navAgent.angularSpeed = angularSpeed * DayNightCycle.Instance.timeMultiplier;
+            navAgent.acceleration = acceleration * DayNightCycle.Instance.timeMultiplier;
+        }
+        if (animator != null)
+        {
+            animator.speed = DayNightCycle.Instance.timeMultiplier;
+        }
     }
 }
 

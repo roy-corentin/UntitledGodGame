@@ -1,71 +1,41 @@
 {
     "m_SelectedDeviceId": "2G0YC1ZF7P0FD3",
     "m_SelectedProcess": {
-        "deviceId": "2G0YC1ZF7P0FD3",
-        "name": "com.OtterProd.UntitledGodGame",
-        "processId": 29332,
+        "deviceId": "",
+        "name": "",
+        "processId": 0,
         "exited": false
     },
     "m_SelectedPriority": 0,
     "m_KnownProcessesForSerialization": [
         {
             "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 26797,
-            "exited": true
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 28594,
-            "exited": true
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 30449,
-            "exited": true
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 32079,
-            "exited": true
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 3422,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.DefaultCompany.UntitledTekGame",
-            "processId": 9213,
-            "exited": false
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.OtterProd.UntitledGodGame",
             "processId": 5317,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.OtterProd.UntitledGodGame",
             "processId": 18610,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.OtterProd.UntitledGodGame",
             "processId": 25205,
-            "exited": false
+            "exited": true
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.OtterProd.UntitledGodGame",
             "processId": 29332,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.oculus.xrstreamingclient",
+            "processId": 17811,
             "exited": false
         }
     ],

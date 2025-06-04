@@ -42,6 +42,7 @@ public class AnimalUI : MonoBehaviour
 
     public void AddButton(string animalName, int prefabIndex)
     {
+        Debug.Log($"Adding button for animal: {animalName} with prefab index: {prefabIndex}");
         GameObject button = Instantiate(AnimalButtonPrefab, AnimalButtonParent);
 
         GameObject firstChild = button.transform.GetChild(0).gameObject;
