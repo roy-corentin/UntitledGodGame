@@ -141,7 +141,12 @@ public class Animal : MonoBehaviour
         if (navAgent == null) return;
 
         DecisionTree.Instance.Callback(this);
-        Debug.Log("Update Animal: " + gameObject.name);
+
+        if (isDead)
+        {
+            RemoveTarget();
+            return;
+        }
 
         if (!navAgent.isOnNavMesh)
         {
@@ -149,11 +154,6 @@ public class Animal : MonoBehaviour
             {
                 transform.position = hit.position;
                 navAgent.Warp(hit.position);
-            }
-            else
-            {
-                Die();
-                return;
             }
         }
 
@@ -322,15 +322,30 @@ public class Animal : MonoBehaviour
         }
     }
 
-    public void Die()
+    public void Die(bool instant = false)
     {
-        if (!animator || animator.GetBool("Die")) return;
+        if (instant)
+        {
+            isDead = true;
+            RemoveTarget();
+            Destroy(gameObject);
+            return;
+        }
 
+        if (!animator || animator.GetBool("Die")) return;
         if (animator && !animator.GetBool("Die")) animator.SetBool("Die", true);
-        AnimalSpawner.Instance.spawnedAnimals.Remove(gameObject);
+
+        isDead = true;
         RemoveTarget();
-        Destroy(gameObject, 5 / DayNightCycle.Instance.timeMultiplier);
+        Invoke(nameof(DieAfterDelay), 3 / DayNightCycle.Instance.timeMultiplier);
+    }
+
+    private void DieAfterDelay()
+    {
+        AnimalSpawner.Instance.SpawnedAnimals.Remove(gameObject);
+        Destroy(gameObject);
         StatsManager.Instance.deadCount++;
+
     }
 
     public bool SetTarget(Transform target)

@@ -35,13 +35,13 @@ public class Decision
         // Spawn Deer
         animalSpawner.SpawnAnimal(0);
         yield return null;
-        Animal deer = animalSpawner.spawnedAnimals[0].GetComponent<Animal>();
+        Animal deer = animalSpawner.SpawnedAnimals[0].GetComponent<Animal>();
         Assert.IsNotNull(deer);
 
         // Spawn Tiger
         animalSpawner.SpawnAnimal(1);
         yield return null;
-        Animal tiger = animalSpawner.spawnedAnimals[1].GetComponent<Animal>();
+        Animal tiger = animalSpawner.SpawnedAnimals[1].GetComponent<Animal>();
         Assert.IsNotNull(tiger);
 
         // Toggle VR mode
@@ -68,7 +68,7 @@ public class Decision
     {
         // Setup
         yield return Setup();
-        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
+        Animal deer = AnimalSpawner.Instance.SpawnedAnimals[0].GetComponent<Animal>();
         DecisionTree tree = DecisionTree.Instance;
 
         // ----- DecisionTree -----
@@ -83,7 +83,7 @@ public class Decision
     {
         // Setup
         yield return Setup();
-        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
+        Animal deer = AnimalSpawner.Instance.SpawnedAnimals[0].GetComponent<Animal>();
         DecisionTree tree = DecisionTree.Instance;
 
         // SearchWater / Value 0
@@ -112,8 +112,8 @@ public class Decision
     {
         // Setup
         yield return Setup();
-        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
-        Animal tiger = AnimalSpawner.Instance.spawnedAnimals[1].GetComponent<Animal>();
+        Animal deer = AnimalSpawner.Instance.SpawnedAnimals[0].GetComponent<Animal>();
+        Animal tiger = AnimalSpawner.Instance.SpawnedAnimals[1].GetComponent<Animal>();
         DecisionTree tree = DecisionTree.Instance;
 
         // ----- DEER -----
@@ -147,14 +147,14 @@ public class Decision
         yield return null;
 
         // Eat
-        Assert.AreEqual(AnimalSpawner.Instance.spawnedAnimals.Count, 2);
+        Assert.AreEqual(AnimalSpawner.Instance.SpawnedAnimals.Count, 2);
         tiger.forceDestination = true;
         tree.Callback(tiger);
         Assert.AreEqual(tiger.eventType, EventType.Eat);
         yield return new WaitForSeconds(10);
         yield return null;
         Assert.IsTrue(deer == null);
-        Assert.AreEqual(AnimalSpawner.Instance.spawnedAnimals.Count, 1);
+        Assert.AreEqual(AnimalSpawner.Instance.SpawnedAnimals.Count, 1);
         tiger.forceDestination = false;
         yield return null;
 
@@ -171,7 +171,7 @@ public class Decision
     {
         // Setup
         yield return Setup();
-        Animal deer = AnimalSpawner.Instance.spawnedAnimals[0].GetComponent<Animal>();
+        Animal deer = AnimalSpawner.Instance.SpawnedAnimals[0].GetComponent<Animal>();
         DecisionTree tree = DecisionTree.Instance;
 
         // SearchWater / Value 0

@@ -37,7 +37,7 @@ public class NavMeshHandler : MonoBehaviour
 
     public void Rebake()
     {
-        if (needRebake && AnimalSpawner.Instance.spawnedAnimals.Count > 0)
+        if (needRebake && AnimalSpawner.Instance.SpawnedAnimals.Count > 0)
         {
             navmeshSurface.enabled = true;
             ClearNavmesh();

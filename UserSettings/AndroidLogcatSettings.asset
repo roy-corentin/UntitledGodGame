@@ -11,18 +11,6 @@
         {
             "deviceId": "2G0YC1ZF7P0FD3",
             "name": "com.OtterProd.UntitledGodGame",
-            "processId": 5317,
-            "exited": true
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.OtterProd.UntitledGodGame",
-            "processId": 18610,
-            "exited": true
-        },
-        {
-            "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.OtterProd.UntitledGodGame",
             "processId": 25205,
             "exited": true
         },
@@ -34,8 +22,32 @@
         },
         {
             "deviceId": "2G0YC1ZF7P0FD3",
-            "name": "com.oculus.xrstreamingclient",
-            "processId": 17811,
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 13349,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 22881,
+            "exited": true
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 24729,
+            "exited": false
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 31180,
+            "exited": false
+        },
+        {
+            "deviceId": "2G0YC1ZF7P0FD3",
+            "name": "com.OtterProd.UntitledGodGame",
+            "processId": 14230,
             "exited": false
         }
     ],

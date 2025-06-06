@@ -11,7 +11,25 @@ public struct AnimalTarget
 public class AnimalSpawner : MonoBehaviour
 {
     public List<GameObject> animalPrefabs;
-    public readonly List<GameObject> spawnedAnimals = new();
+    private readonly List<GameObject> spawnedAnimals = new();
+    public List<GameObject> SpawnedAnimals
+    {
+        get
+        {
+            var childsCount = spawnParent.childCount;
+            if (childsCount != spawnedAnimals.Count)
+            {
+                Debug.LogWarning("Spawned animals count mismatch! Updating the list.");
+                for (int i = 0; i < childsCount; i++)
+                {
+                    Transform child = spawnParent.GetChild(i);
+                    if (!spawnedAnimals.Contains(child.gameObject))
+                        Destroy(child.gameObject);
+                }
+            }
+            return spawnedAnimals;
+        }
+    }
     public Transform spawnParent;
     public static AnimalSpawner Instance;
     public const float Y_OFFSET = 0.1f;
@@ -61,16 +79,10 @@ public class AnimalSpawner : MonoBehaviour
 
     public void RemoveAll()
     {
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             Destroy(animal);
-        }
-
-        foreach (Transform child in spawnParent)
-        {
-            if (child == null) continue;
-            Destroy(child.gameObject);
         }
 
         spawnedAnimals.Clear();
@@ -78,7 +90,7 @@ public class AnimalSpawner : MonoBehaviour
 
     public void AddNavAgentToAll()
     {
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             Animal animalScript = animal.GetComponent<Animal>();
@@ -88,7 +100,7 @@ public class AnimalSpawner : MonoBehaviour
 
     public void DisableAll()
     {
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             Animal animalScript = animal.GetComponent<Animal>();
@@ -114,7 +126,7 @@ public class AnimalSpawner : MonoBehaviour
             distance = float.MaxValue
         };
 
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             if (animal == currentAnimal) continue;
@@ -136,7 +148,7 @@ public class AnimalSpawner : MonoBehaviour
 
     public void LockAnimations(bool status)
     {
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             Animal animalScript = animal.GetComponent<Animal>();
@@ -146,7 +158,7 @@ public class AnimalSpawner : MonoBehaviour
 
     public void ResetReachablesInfos()
     {
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             Animal animalScript = animal.GetComponent<Animal>();
@@ -158,7 +170,7 @@ public class AnimalSpawner : MonoBehaviour
     {
         List<GameObject> animalsToRemove = new();
 
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             Animal animalScript = animal.GetComponent<Animal>();
@@ -175,7 +187,7 @@ public class AnimalSpawner : MonoBehaviour
 
     public void UpdateAllSpeeds()
     {
-        foreach (GameObject animal in spawnedAnimals)
+        foreach (GameObject animal in SpawnedAnimals)
         {
             if (animal == null) continue;
             Animal animalScript = animal.GetComponent<Animal>();

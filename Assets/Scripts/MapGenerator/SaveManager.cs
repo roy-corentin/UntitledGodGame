@@ -179,7 +179,7 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        foreach (GameObject animal in AnimalSpawner.Instance.spawnedAnimals)
+        foreach (GameObject animal in AnimalSpawner.Instance.SpawnedAnimals)
         {
             Animal animalScript = animal.GetComponent<Animal>();
             AnimalData animalData = new()

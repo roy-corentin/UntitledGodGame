@@ -51,13 +51,13 @@ public class StatsManager : MonoBehaviour
     {
         int carnivorsCount = 0;
         int herbivorsCount = 0;
-        foreach (GameObject animal in AnimalSpawner.Instance.spawnedAnimals)
+        foreach (GameObject animal in AnimalSpawner.Instance.SpawnedAnimals)
         {
             if (animal.GetComponent<Animal>().foodType == FoodType.Carnivore) carnivorsCount++;
             else herbivorsCount++;
         }
 
-        animals.text = AnimalSpawner.Instance.spawnedAnimals.Count.ToString();
+        animals.text = AnimalSpawner.Instance.SpawnedAnimals.Count.ToString();
         dead.text = deadCount.ToString();
         carnivors.text = carnivorsCount.ToString();
         herbivors.text = herbivorsCount.ToString();
